@@ -1,0 +1,19 @@
+package com.mikeo.mykotlinplayground
+
+sealed class GameEvent {
+
+    object AttackEnemy : GameEvent()
+
+    data class TakeDamage(val amount: Int = 10) : GameEvent()
+
+    data class AddGold(val amount: Int = 25) : GameEvent()
+
+    data class Heal(val amount: Int = 10) : GameEvent()
+
+    object Flee : GameEvent()
+
+    data class GainXp(val amount: Int = 50) : GameEvent()
+
+    data class UsePotion(val amount: Int = 1) : GameEvent()
+}
+

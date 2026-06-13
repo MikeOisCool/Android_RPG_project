@@ -1,0 +1,212 @@
+package com.mikeo.mykotlinplayground.ui
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import com.mikeo.mykotlinplayground.GameEvent
+import com.mikeo.mykotlinplayground.GameViewModel
+import com.mikeo.mykotlinplayground.ItemNamen
+
+
+@Composable
+fun GameScreenQuer(
+    viewModel: GameViewModel,
+    listState: LazyListState,
+    onGameOver: () -> Unit,
+    onInventory: () -> Unit
+) {
+    val player by viewModel.player.collectAsState()
+
+
+    val log by viewModel.log.collectAsState()
+
+    val enemy by viewModel.enemy.collectAsState()
+
+    LaunchedEffect(log.size) {
+        if (log.isNotEmpty())
+            listState.animateScrollToItem(log.size - 1)
+    }
+
+    if (player.isDead) {
+        onGameOver()
+        return
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(8.dp)
+            .clip(RoundedCornerShape(48.dp))
+            .background(Color(0xFF4CAF50))
+            .padding(12.dp)
+    ) {
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        "Spieler HP: ${player.hp}/${player.maxHp}",
+                        modifier = Modifier.padding(start = 30.dp)
+                    )
+                    HpBar(
+                        currentHp = player.hp,
+                        maxHp = player.maxHp
+                    )
+                }
+
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        "Gegner HP: ${enemy.hp}/${enemy.maxHp}",
+                        modifier = Modifier.padding(start = 30.dp)
+                    )
+                    HpBar(
+                        currentHp = enemy.hp,
+                        maxHp = enemy.maxHp
+                    )
+                }
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            ) {
+
+                Column(
+                    modifier = Modifier
+                        .weight(5f)
+                        .padding(start = 30.dp)
+                ) {
+                    Text("Name: ${player.name}")
+                    Text("Level: ${player.level}")
+                    Text("XP: ${player.xp}/${player.xpToNextLevel}")
+                    Text("Gold: ${player.gold}")
+
+
+                }
+
+                Column(
+                    modifier = Modifier
+                        .weight(5f)
+                        .padding(start = 180.dp)
+                ) {
+                    Text("Gegner: ${enemy.name}")
+                    Text("Level: ${enemy.level}")
+                    Text("HP: ${enemy.hp}")
+                    Text("Schaden: ${enemy.damage}")
+                }
+
+
+
+                Column(
+                    modifier = Modifier
+                        .weight(5f)
+                        .offset(x = (0).dp),
+                    verticalArrangement = Arrangement.spacedBy(0.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+
+                        GameButtonQuer(
+                            text = "Take Damage",
+                            onClick = { viewModel.onEvent(GameEvent.TakeDamage()) }
+                        )
+
+                        Box(
+                            modifier = Modifier.padding(end = 30.dp)
+                        ) {
+                            GameButtonQuer(
+                                text = "Add Gold",
+                                onClick = { viewModel.onEvent(GameEvent.AddGold()) }
+                            )
+                        }
+
+                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        GameButtonQuer(
+                            text = "Heilen",
+                            onClick = { viewModel.onEvent(GameEvent.Heal()) }
+                        )
+                        Box(
+                            modifier = Modifier.padding(end = 30.dp)
+                        ) {
+                            GameButtonQuer(
+                                text = "XP sammeln",
+                                onClick = { viewModel.onEvent(GameEvent.GainXp()) }
+                            )
+                        }
+                    }
+
+                    val potionAmount =
+                        player.inventory.items.find { it.name == ItemNamen.HEILTRANK }
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        GameButtonQuer(
+                            text = "Heiltrank (${potionAmount?.amount ?: 0})",
+                            onClick = {
+                                viewModel.onEvent(GameEvent.UsePotion())
+                            }
+                        )
+
+                        GameButtonQuer(
+                            text = "Inventar öffnen",
+                            onClick = {
+                                onInventory()
+                            }
+                        )
+                    }
+
+
+                    GameButtonQuer(
+                        text = "Angreifen",
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        containerColor = Color.Red,
+                        onClick = { viewModel.onEvent(GameEvent.AttackEnemy) }
+                    )
+
+                    GameButtonQuer(
+                        text = "Fliehen",
+                        modifier = Modifier
+                            .width(180.dp)
+                            .height(60.dp),
+                        onClick = { viewModel.onEvent(GameEvent.Flee) }
+                    )
+                }
+
+
+            }
+
+        }
+        GameLog(
+            log = log,
+            listState = listState,
+            modifier = Modifier
+                .align(androidx.compose.ui.Alignment.BottomStart)
+                .fillMaxWidth(0.65f)
+                .height(210.dp)
+                .padding(start = 25.dp, end = 30.dp, bottom = 20.dp)
+        )
+    }
+}
