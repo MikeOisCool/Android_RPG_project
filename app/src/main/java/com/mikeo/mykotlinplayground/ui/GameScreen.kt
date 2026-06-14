@@ -45,6 +45,7 @@ fun GameScreen(
             confirmButton = {
                 TextButton(
                     onClick = {
+                        viewModel.resetGame()
                         onExitGame()
                     }
                 ) {

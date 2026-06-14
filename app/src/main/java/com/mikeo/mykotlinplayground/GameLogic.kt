@@ -49,132 +49,168 @@ fun handleEvent(
         }
 
         is GameEvent.UsePotion -> {
-            val potionAmount = player.inventory.items.find { it.name == "${ItemNamen.HEILTRANK}" }?.amount ?: 0
+            val potionAmount =
+                player.inventory.items.find { it.name == ItemNamen.HEILTRANK }?.amount ?: 0
             if (potionAmount <= 0) {
                 player
             } else {
                 val healAmount = calculatePotionHeal(player.level)
                 val newHp = (player.hp + healAmount).coerceAtMost(player.maxHp)
                 val newItems = player.inventory.items.map { item ->
-                    if (item.name == "${ItemNamen.HEILTRANK}") {
+                    if (item.name == ItemNamen.HEILTRANK) {
                         item.copy(amount = item.amount - 1)
                     } else {
                         item
                     }
-                }.filter {
-                    item -> item.amount > 0
+                }.filter { item ->
+                    item.amount > 0
                 }
-                    val updateInventory = player.inventory.copy(
-                        items = newItems
-                    )
-                    player.copy(
-                        hp = newHp,
-                        inventory = updateInventory
-                    )
-
-
-                }
-            }
-
-            is GameEvent.Flee -> {
-
-                val fleeCost = 20 + (player.level - 1) * 10
-
-                if (player.gold < fleeCost) {
-                    player
-                } else {
-                    player.copy(
-                        gold = player.gold - fleeCost
-                    )
-                }
-            }
-
-            is GameEvent.AttackEnemy -> {
-                player
-            }
-
-
-            is GameEvent.GainXp -> {
-                var remainingXp = player.xp + event.amount
-                var newLevel = player.level
-                var newMaxHp = player.maxHp
-                var newXpToNextLevel = player.xpToNextLevel
-
-                while (remainingXp >= newXpToNextLevel) {
-                    remainingXp -= newXpToNextLevel
-                    newLevel++
-                    newMaxHp += 10
-                    newXpToNextLevel = newLevel * 100
-                }
-                val hpNachXp = if (newLevel > player.level) {
-                    newMaxHp
-                } else {
-                    player.hp
-                }
-
+                val updateInventory = player.inventory.copy(
+                    items = newItems
+                )
                 player.copy(
-                    level = newLevel,
-                    maxHp = newMaxHp,
-                    hp = hpNachXp,
-                    xp = remainingXp,
-                    xpToNextLevel = newXpToNextLevel
+                    hp = newHp,
+                    inventory = updateInventory
+                )
+
+
+            }
+        }
+
+        is GameEvent.UseBigPotion -> {
+            val potionBigAmount =
+                player.inventory.items.find { it.name == ItemNamen.GROSSER_HEILTRANK }?.amount ?: 0
+            if (potionBigAmount <= 0) {
+                player
+            } else {
+                val healBigAmount = calculateBigPotionHeal(player.level)
+                val newHp = (player.hp + healBigAmount).coerceAtMost(player.maxHp)
+                val newItems = player.inventory.items.map { item ->
+                    if (item.name == ItemNamen.GROSSER_HEILTRANK) {
+                        item.copy(amount = item.amount - 1)
+                    } else {
+                        item
+                    }
+                }.filter { item ->
+                    item.amount > 0
+                }
+                val updateInventory = player.inventory.copy(
+                    items = newItems
+                )
+                player.copy(
+                    hp = newHp,
+                    inventory = updateInventory
+                )
+
+
+            }
+        }
+
+        is GameEvent.Flee -> {
+
+            val fleeCost = 20 + (player.level - 1) * 10
+
+            if (player.gold < fleeCost) {
+                player
+            } else {
+                player.copy(
+                    gold = player.gold - fleeCost
                 )
             }
         }
-    }
 
-    fun damageEnemy(
-        enemy: Enemy,
-        damage: Int
-    ): Enemy {
+        is GameEvent.AttackEnemy -> {
+            player
+        }
 
-        return enemy.copy(
-            hp = (enemy.hp - damage).coerceAtLeast(0)
-        )
-    }
 
-    fun calculateDamage(
-        baseDamage: Int,
-        chance: Int,
-        critMultiplier: Int,
+        is GameEvent.GainXp -> {
+            var remainingXp = player.xp + event.amount
+            var newLevel = player.level
+            var newMaxHp = player.maxHp
+            var newXpToNextLevel = player.xpToNextLevel
 
-        ): Pair<Int, Boolean> {
-        val criticalHit = chance(chance)
-        return if (criticalHit) {
-            Pair(
-                baseDamage * critMultiplier,
-                true
+            while (remainingXp >= newXpToNextLevel) {
+                remainingXp -= newXpToNextLevel
+                newLevel++
+                newMaxHp += 10
+                newXpToNextLevel = newLevel * 100
+            }
+            val hpNachXp = if (newLevel > player.level) {
+                newMaxHp
+            } else {
+                player.hp
+            }
+
+            player.copy(
+                level = newLevel,
+                maxHp = newMaxHp,
+                hp = hpNachXp,
+                xp = remainingXp,
+                xpToNextLevel = newXpToNextLevel
             )
-        } else {
-            Pair(baseDamage, false)
         }
     }
+}
 
-    fun chance(
-        chance: Int
-    ): Boolean {
-        val roll = (1..100).random()
-        Log.d("GameLogic", "Würfle $roll auf $chance%")
-        return roll <= chance
-    }
+fun damageEnemy(
+    enemy: Enemy,
+    damage: Int
+): Enemy {
 
-    fun calculatePotionHeal(
-        level: Int
-    ): Int {
-        return 20 + (level - 1) * 7
-    }
+    return enemy.copy(
+        hp = (enemy.hp - damage).coerceAtLeast(0)
+    )
+}
 
-    fun createScaledEnemy(
-        baseEnemy: Enemy,
-        playerLevel: Int
-    ): Enemy {
-        return baseEnemy.copy(
-            level = playerLevel,
-            hp = baseEnemy.hp + (playerLevel - 1) * 10,
-            maxHp = baseEnemy.maxHp + (playerLevel - 1) * 10,
-            damage = baseEnemy.damage + (playerLevel - 1) * 2,
-            goldReward = baseEnemy.goldReward + (playerLevel - 1) * 5,
-            xpReward = baseEnemy.xpReward + (playerLevel - 1) * 10
+fun calculateDamage(
+    baseDamage: Int,
+    chance: Int,
+    critMultiplier: Int,
 
+    ): Pair<Int, Boolean> {
+    val criticalHit = chance(chance)
+    return if (criticalHit) {
+        Pair(
+            baseDamage * critMultiplier,
+            true
         )
+    } else {
+        Pair(baseDamage, false)
     }
+}
+
+fun chance(
+    chance: Int
+): Boolean {
+    val roll = (1..100).random()
+    Log.d("GameLogic", "Würfle $roll auf $chance%")
+    return roll <= chance
+}
+
+fun calculatePotionHeal(
+    level: Int
+): Int {
+    return 20 + (level - 1) * 7
+}
+
+fun calculateBigPotionHeal(
+    level: Int
+): Int {
+    return 50 + (level - 1) * 15
+}
+
+fun createScaledEnemy(
+    baseEnemy: Enemy,
+    playerLevel: Int
+): Enemy {
+    return baseEnemy.copy(
+        level = playerLevel,
+        hp = baseEnemy.hp + (playerLevel - 1) * 10,
+        maxHp = baseEnemy.maxHp + (playerLevel - 1) * 10,
+        damage = baseEnemy.damage + (playerLevel - 1) * 2,
+        goldReward = baseEnemy.goldReward + (playerLevel - 1) * 5,
+        xpReward = baseEnemy.xpReward + (playerLevel - 1) * 10
+
+    )
+}

@@ -106,22 +106,33 @@ fun GameScreenHoch(
                 text = "Add Gold",
                 onClick = { viewModel.onEvent(GameEvent.AddGold()) }
             )
+            Row {
+                GameButtonHoch(
+                    text = "Heilen",
+                    onClick = { viewModel.onEvent(GameEvent.Heal()) }
+                )
+                val potionBigAmount =
+                    player.inventory.items.find { it.name == ItemNamen.GROSSER_HEILTRANK }?.amount ?: 0
+                GameButtonHoch(
+                    text = "Big Heal (${potionBigAmount})",
+                    onClick = { viewModel.onEvent(GameEvent.UseBigPotion()) }
+                )
+            }
 
-            GameButtonHoch(
-                text = "Heilen",
-                onClick = { viewModel.onEvent(GameEvent.Heal()) }
-            )
 
             GameButtonHoch(
                 text = "XP sammeln",
                 onClick = { viewModel.onEvent(GameEvent.GainXp()) }
             )
 
-            val potionAmount = player.inventory.items.find { it.name == "${ItemNamen.HEILTRANK}" }?.amount ?: 0
+
             Row(
                 modifier = Modifier.padding(bottom = 10.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
+
+                val potionAmount =
+                    player.inventory.items.find { it.name == ItemNamen.HEILTRANK }?.amount ?: 0
                 GameButtonHoch(
                     text = "Heiltrank (${potionAmount})",
                     onClick = {

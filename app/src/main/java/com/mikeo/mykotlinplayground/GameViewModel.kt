@@ -115,7 +115,8 @@ class GameViewModel : ViewModel() {
 
             is GameEvent.UsePotion -> {
                 val potionAmount =
-                    player.value.inventory.items.find { it.name == "${ItemNamen.HEILTRANK}" }?.amount ?: 0
+                    player.value.inventory.items.find { it.name == ItemNamen.HEILTRANK }?.amount
+                        ?: 0
 
                 if (potionAmount <= 0) {
                     addLog("🧪 Keine Tränke mehr!")
@@ -130,6 +131,26 @@ class GameViewModel : ViewModel() {
                 val healAmount = _player.value.hp - oldHp
 
                 addLog("❤️ Heiltrank verwendet! ${_player.value.name} erhält $healAmount HP")
+            }
+
+            is GameEvent.UseBigPotion -> {
+                val potionBigAmount =
+                    player.value.inventory.items.find { it.name == ItemNamen.GROSSER_HEILTRANK }?.amount
+                        ?: 0
+
+                if (potionBigAmount <= 0) {
+                    addLog("🧪 Keine großen Tränke mehr!")
+                    return
+                }
+                val oldHp = _player.value.hp
+                if (_player.value.hp >= _player.value.maxHp) {
+                    addLog("❤️ Großer Heiltrank hat keinen Effekt! HP ist bereits voll")
+                    return
+                }
+                applyEvent(event)
+                val healAmount = _player.value.hp - oldHp
+
+                addLog("❤️ Großer Heiltrank verwendet! ${_player.value.name} erhält $healAmount HP")
             }
 
             is GameEvent.Heal -> {
@@ -207,21 +228,61 @@ class GameViewModel : ViewModel() {
 
     private fun handleAttackEnemy() {
 
-        val playerCritChance = 20 /* 20 Prozent Wahrscheinlichkeit */
-        val enemyCritChance = 15 // 15 Prozent Wahrscheinlichkeit
-        val critMultiplier = 2
-        val dodgeChance = 10
-        val enemyDodgeChance = 10
-
         val currentEnemy = _enemy.value
 
-        val enemyDodges = chance(enemyDodgeChance)
+        if (enemyDodges(currentEnemy)) return
 
-        if (enemyDodges) {
-            addLog("💨 ${currentEnemy.name} weicht dem Angriff von ${_player.value.name} aus!")
+        val updatedEnemy = playerAttacksEnemy(currentEnemy)
+
+        if (updatedEnemy.hp <= 0) {
+            handleEnemyDefeated(currentEnemy)
             return
         }
 
+        enemyAttacksPlayer(updatedEnemy)
+
+    }
+
+
+    private fun enemyAttacksPlayer(updatedEnemy: Enemy) {
+        val dodgeChance = 10
+        val enemyCritChance = 15 // 15 Prozent Wahrscheinlichkeit
+        val critMultiplier = 2
+
+        if (chance(dodgeChance)) {
+
+            addLog(
+                "🌀 ${_player.value.name} weicht dem Angriff von ${updatedEnemy.name} aus!"
+            )
+            return
+
+        }
+
+        val enemyDamage = calculateDamage(
+            updatedEnemy.damage,
+            enemyCritChance,
+            critMultiplier
+        )
+        if (enemyDamage.second) {
+            addLog("💥 KRITISCHER TREFFER! 👹 ${updatedEnemy.name} macht ${enemyDamage.first} Schaden!")
+        } else {
+            addLog(
+                "👹 ${updatedEnemy.name} schlägt zurück für ${enemyDamage.first} Schaden!"
+            )
+        }
+        applyEvent(
+            GameEvent.TakeDamage(enemyDamage.first)
+        )
+        if (_player.value.isDead) {
+            addLog("💀 ${_player.value.name} ist gestorben!")
+            return
+        }
+
+    }
+
+    private fun playerAttacksEnemy(currentEnemy: Enemy): Enemy {
+        val playerCritChance = 20 /* 20 Prozent Wahrscheinlichkeit */
+        val critMultiplier = 2
 
         val playerDamage = calculateDamage(
             _player.value.attack,
@@ -235,103 +296,38 @@ class GameViewModel : ViewModel() {
             addLog("⚔️ ${_player.value.name} trifft ${currentEnemy.name} für ${playerDamage.first} Schaden!")
         }
 
-        val updateEnemy = damageEnemy(
+        val updatedEnemy = damageEnemy(
             currentEnemy,
             playerDamage.first
         )
 
-        _enemy.value = updateEnemy
+        _enemy.value = updatedEnemy
 
-        if (updateEnemy.hp <= 0) {
-            handleEnemyDefeated(currentEnemy)
-            return
+        return updatedEnemy
+    }
+
+    private fun enemyDodges(enemy: Enemy): Boolean {
+        val enemyDodgeChance = 10
+
+        if (chance(enemyDodgeChance)) {
+            addLog("💨 ${enemy.name} weicht dem Angriff von ${_player.value.name} aus!")
+            return true
         }
-
-        val playerDodges = chance(dodgeChance)
-
-        if (playerDodges) {
-
-            addLog(
-                "🌀 ${_player.value.name} weicht dem Angriff von ${currentEnemy.name} aus!"
-            )
-            return
-
-        }
-
-        val enemyDamage = calculateDamage(
-            currentEnemy.damage,
-            enemyCritChance,
-            critMultiplier
-        )
-
-        if (enemyDamage.second) {
-            addLog("💥 KRITISCHER TREFFER! 👹 ${currentEnemy.name} macht ${enemyDamage.first} Schaden!")
-        } else {
-            addLog(
-                "👹 ${currentEnemy.name} schlägt zurück für ${enemyDamage.first} Schaden!"
-            )
-        }
-        applyEvent(
-            GameEvent.TakeDamage(enemyDamage.first)
-        )
-        if (_player.value.isDead) {
-            addLog("💀 ${_player.value.name} ist gestorben!")
-            return
-        }
+        return false
     }
 
     private fun handleEnemyDefeated(enemy: Enemy) {
-        val healDropValue = calculatePotionHeal(_player.value.level)
+
         val healDropChance = 30
         val potionsDropChance = 30
+        val bigPotionDropChance = 20
         addLog("🏆 ${enemy.name} wurde besiegt!")
 
-        val healDrop = chance(healDropChance)
-        val potionsDrop = chance(potionsDropChance)
+        if (chance(bigPotionDropChance)) dropBigPotion()
 
-        if (potionsDrop) {
-            val oldPotions = _player.value.inventory.items.find { it.name == ItemNamen.HEILTRANK }?.amount ?: 0
-            val newPotions = (oldPotions + 1).coerceAtMost(10)
+        if (chance(potionsDropChance)) dropPotion()
 
-            val newPotion = Item(
-                name = ItemNamen.HEILTRANK,
-                description = "Heilt den Spieler",
-                amount = newPotions
-            )
-
-            if (oldPotions >= 10) {
-                addLog("🧪 Trank inventar voll, Trank kann nicht genommen werden!")
-            } else {
-                val newItems = listOf(newPotion)
-                val updatedInventory =
-                    _player.value.inventory.copy(
-                        items = newItems
-                    )
-                _player.value = _player.value.copy(inventory = updatedInventory)
-
-                addLog(
-                    "🧪 ${
-                        _player.value
-                            .name
-                    } erhält einen neuen Trank! ${oldPotions} -> $newPotions"
-                )
-
-            }
-        }
-
-        if (healDrop) {
-            val healedHp = (_player.value.hp + healDropValue)
-                .coerceAtMost(_player.value.maxHp)
-            _player.value = _player.value.copy(
-                hp = healedHp
-            )
-            addLog(
-                "❤️ ${
-                    _player.value
-                        .name
-                } erhält $healDropValue HP nach dem Kampf!"
-            )
-        }
+        if (chance(healDropChance)) healDrop()
 
         val levelVorher = _player.value.level
 
@@ -365,10 +361,101 @@ class GameViewModel : ViewModel() {
             )
         }
 
+        spawnNextEnemy()
+    }
+
+    private fun spawnNextEnemy() {
         val nextEnemy = createRandomEnemy(_player.value.level)
         _enemy.value = nextEnemy
 
         addLog("👹 Ein neuer Gegner erscheint: ${nextEnemy.name} (${nextEnemy.hp} HP)!")
+    }
+
+    private fun healDrop() {
+
+        val healDropValue = calculatePotionHeal(_player.value.level)
+        val healedHp = (_player.value.hp + healDropValue)
+            .coerceAtMost(_player.value.maxHp)
+        _player.value = _player.value.copy(
+            hp = healedHp
+        )
+        addLog(
+            "❤️ ${
+                _player.value
+                    .name
+            } erhält $healDropValue HP nach dem Kampf!"
+        )
+
+    }
+
+    private fun dropPotion() {
+
+
+        val oldPotions =
+            _player.value.inventory.items.find { it.name == ItemNamen.HEILTRANK }?.amount ?: 0
+        val newPotions = (oldPotions + 1).coerceAtMost(10)
+
+        val newPotion = Item(
+            name = ItemNamen.HEILTRANK,
+            description = "Heilt den Spieler",
+            amount = newPotions
+        )
+
+        if (oldPotions >= 10) {
+            addLog("🧪 Heiltrank inventar (10) voll, Trank kann nicht genommen werden!")
+        } else {
+            val newItems = _player.value.inventory.items
+                .filter { it.name != ItemNamen.HEILTRANK } +
+                    newPotion
+
+            val updatedInventory =
+                _player.value.inventory.copy(
+                    items = newItems
+                )
+            _player.value = _player.value.copy(inventory = updatedInventory)
+
+            addLog(
+                "🧪 ${
+                    _player.value
+                        .name
+                } erhält einen Heiltrank! ${oldPotions} -> $newPotions"
+            )
+        }
+    }
+
+    private fun dropBigPotion() {
+
+        val oldBigPotions =
+            _player.value.inventory.items.find { it.name == ItemNamen.GROSSER_HEILTRANK }?.amount
+                ?: 0
+        val newBigPotions = (oldBigPotions + 1).coerceAtMost(10)
+
+        val newBigPotion = Item(
+            name = ItemNamen.GROSSER_HEILTRANK,
+            description = "Heilt den Spieler stark",
+            amount = newBigPotions
+        )
+
+        if (oldBigPotions >= 10) {
+            addLog("🧪 Großer Heiltrank inventar (10) voll, Trank kann nicht genommen werden!")
+        } else {
+            val newItems = _player.value.inventory.items
+                .filter { it.name != ItemNamen.GROSSER_HEILTRANK } +
+                    newBigPotion
+
+            val updatedInventory =
+                _player.value.inventory.copy(
+                    items = newItems
+                )
+            _player.value = _player.value.copy(inventory = updatedInventory)
+
+            addLog(
+                "🧪 ${
+                    _player.value
+                        .name
+                } erhält einen großen Heiltrank! ${oldBigPotions} -> $newBigPotions"
+            )
+        }
     }
 
     private fun addLog(message: String) {
@@ -385,4 +472,6 @@ class GameViewModel : ViewModel() {
         _log.value = emptyList()
     }
 }
+
+
 

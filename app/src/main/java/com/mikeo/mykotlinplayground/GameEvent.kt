@@ -15,5 +15,7 @@ sealed class GameEvent {
     data class GainXp(val amount: Int = 50) : GameEvent()
 
     data class UsePotion(val amount: Int = 1) : GameEvent()
+
+    data class UseBigPotion(val amount: Int = 1) : GameEvent()
 }
 

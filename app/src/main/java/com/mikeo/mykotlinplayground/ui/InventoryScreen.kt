@@ -45,10 +45,17 @@ fun InventoryScreen(
             fontSize = 24.sp
         )
 
-        items.forEach { item ->
-            Text(text = "${item.name} x${item.amount}")
-        }
+        if (items.isEmpty()) {
+            Text (
+                text = "Es sind keine Items im Inventar",
+                fontSize = 20.sp
+            )
+        } else {
 
+            items.forEach { item ->
+                Text(text = "${item.name} x${item.amount}")
+            }
+        }
         GameButtonHoch(
             text = "Inventar Schließen",
             fontSize = 24.sp,

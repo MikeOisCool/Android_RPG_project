@@ -132,7 +132,7 @@ fun GameScreenQuer(
                         )
 
                         Box(
-                            modifier = Modifier.padding(end = 30.dp)
+                            modifier = Modifier.padding(end = 25.dp)
                         ) {
                             GameButtonQuer(
                                 text = "Add Gold",
@@ -150,7 +150,7 @@ fun GameScreenQuer(
                             onClick = { viewModel.onEvent(GameEvent.Heal()) }
                         )
                         Box(
-                            modifier = Modifier.padding(end = 30.dp)
+                            modifier = Modifier.padding(end = 25.dp)
                         ) {
                             GameButtonQuer(
                                 text = "XP sammeln",
@@ -161,38 +161,62 @@ fun GameScreenQuer(
 
                     val potionAmount =
                         player.inventory.items.find { it.name == ItemNamen.HEILTRANK }
-                    Row(modifier = Modifier.fillMaxWidth()) {
+                    val potionBigAmount =
+                        player.inventory.items.find { it.name == ItemNamen.GROSSER_HEILTRANK }
+
+
+                    Row(modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween) {
                         GameButtonQuer(
-                            text = "Heiltrank (${potionAmount?.amount ?: 0})",
+                            text = "Heil (${potionAmount?.amount ?: 0})",
                             onClick = {
                                 viewModel.onEvent(GameEvent.UsePotion())
                             }
                         )
+                        Box(
+                            modifier = Modifier.padding(end = 25.dp)
+                        ) {
+                            GameButtonQuer(
+                                text = "Gr-Heil (${potionBigAmount?.amount ?: 0})",
+                                onClick = {
+                                    viewModel.onEvent(GameEvent.UseBigPotion())
+                                }
+                            )
+                        }
 
-                        GameButtonQuer(
-                            text = "Inventar öffnen",
-                            onClick = {
-                                onInventory()
-                            }
-                        )
                     }
 
+                    Box(
+                        modifier = Modifier.padding(end = 25.dp)
+                    ) {
+                        GameButtonQuer(
+                            text = "Angreifen",
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            containerColor = Color.Red,
+                            onClick = { viewModel.onEvent(GameEvent.AttackEnemy) }
+                        )
+                    }
+                    Row (modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween){
+                        GameButtonQuer(
+                            text = "Fliehen",
 
-                    GameButtonQuer(
-                        text = "Angreifen",
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        containerColor = Color.Red,
-                        onClick = { viewModel.onEvent(GameEvent.AttackEnemy) }
-                    )
+                            onClick = { viewModel.onEvent(GameEvent.Flee) }
+                        )
+                        Box(
+                            modifier = Modifier.padding(end = 25.dp)
+                        ) {
+                            GameButtonQuer(
+                                text = "Inventar",
 
-                    GameButtonQuer(
-                        text = "Fliehen",
-                        modifier = Modifier
-                            .width(180.dp)
-                            .height(60.dp),
-                        onClick = { viewModel.onEvent(GameEvent.Flee) }
-                    )
+                                onClick = {
+                                    onInventory()
+                                }
+                            )
+                        }
+                    }
+
                 }
 
 
