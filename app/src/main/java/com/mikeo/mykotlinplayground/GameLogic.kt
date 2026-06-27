@@ -106,6 +106,19 @@ fun handleEvent(
             }
         }
 
+        is GameEvent.EquipWeapon -> {
+            val hasWeapon = player.inventory.items.any {
+                it.name == event.weaponName
+            }
+            if (hasWeapon) {
+                player.copy(
+                    equippedWeapon = event.weaponName
+                )
+            } else {
+                player
+            }
+        }
+
         is GameEvent.Flee -> {
 
             val fleeCost = 20 + (player.level - 1) * 10

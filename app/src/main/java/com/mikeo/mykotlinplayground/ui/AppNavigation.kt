@@ -77,10 +77,14 @@ fun AppNavigation() {
                 player = player,
                 log = log,
                 listState = listState,
+                onInventory = {
+                    navController.navigate("inventory_screen")
+                },
                 onRestart = {
                     viewModel.resetGame()
                     navController.navigate("start_screen") {
                         popUpTo("start_screen") { inclusive = true }
+
                     }
                 }
             )

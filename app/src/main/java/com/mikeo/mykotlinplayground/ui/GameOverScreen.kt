@@ -27,8 +27,10 @@ fun GameOverScreen(
     player: Player,
     log: List<String>,
     listState: LazyListState,
-    onRestart: () -> Unit
+    onRestart: () -> Unit,
+    onInventory: () -> Unit
 ) {
+    val textSize = 24.sp
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -69,6 +71,19 @@ fun GameOverScreen(
         )
 
         Spacer(modifier = Modifier.height(24.dp))
+
+        GameButtonHoch(
+            text = "Inventar öffnen",
+            fontSize = 24.sp,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(70.dp),
+
+            containerColor = Color.Black,
+            onClick = {
+                onInventory()
+            }
+        )
 
         GameButtonHoch(
             text = "Restart",

@@ -2,7 +2,6 @@ package com.mikeo.mykotlinplayground
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mikeo.mykotlinplayground.ItemNamen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -192,6 +191,12 @@ class GameViewModel : ViewModel() {
                 }
             }
 
+            is GameEvent.EquipWeapon -> {
+                applyEvent(event)
+                addLog("⚔️ Waffe: ${_player.value.equippedWeapon} mit ${_player.value.attack} Attack")
+            }
+
+
             is GameEvent.Flee -> {
 
                 val goldVorher = _player.value.gold
@@ -284,11 +289,15 @@ class GameViewModel : ViewModel() {
         val playerCritChance = 20 /* 20 Prozent Wahrscheinlichkeit */
         val critMultiplier = 2
 
+        val woodWeaponbonus =
+            if (_player.value.equippedWeapon == ItemNamen.HOLZSCHWERT ) 15 else 0
         val playerDamage = calculateDamage(
-            _player.value.attack,
+            _player.value.attack + woodWeaponbonus,
             playerCritChance,
             critMultiplier
         )
+
+
 
         if (playerDamage.second) {
             addLog("💥 KRITISCHER TREFFER! ${_player.value.name} macht ${playerDamage.first} Schaden!")
@@ -318,6 +327,7 @@ class GameViewModel : ViewModel() {
 
     private fun handleEnemyDefeated(enemy: Enemy) {
 
+        val woodWeaponDropChance = 80
         val healDropChance = 30
         val potionsDropChance = 30
         val bigPotionDropChance = 20
@@ -328,6 +338,8 @@ class GameViewModel : ViewModel() {
         if (chance(potionsDropChance)) dropPotion()
 
         if (chance(healDropChance)) healDrop()
+        if (_player.value.level > 2) if (chance(woodWeaponDropChance)) dropWoodweapon()
+
 
         val levelVorher = _player.value.level
 
@@ -386,6 +398,40 @@ class GameViewModel : ViewModel() {
             } erhält $healDropValue HP nach dem Kampf!"
         )
 
+    }
+
+    private fun dropWoodweapon() {
+
+        val woodWeapon = _player.value.inventory.items.find {
+            it.name == ItemNamen.HOLZSCHWERT
+        }
+
+        val newWeapon = Item(
+            name = ItemNamen.HOLZSCHWERT,
+            description = "Schaden + 15",
+            amount = 1
+        )
+
+        if (woodWeapon != null) {
+            addLog("Du hast schon ein Holzschwert! Waffe kann nicht genommen werden")
+        } else {
+            val newItems = _player.value.inventory.items
+                .filter { it.name != ItemNamen.HOLZSCHWERT } +
+                    newWeapon
+
+            val updatedInventory =
+                _player.value.inventory.copy(
+                    items = newItems
+                )
+            _player.value = _player.value.copy(inventory = updatedInventory)
+
+            addLog(
+                "🧪 ${
+                    _player.value
+                        .name
+                } \uD83D\uDDE1\uFE0F hat ein Holzschwert gefunden! Angriff +15"
+            )
+        }
     }
 
     private fun dropPotion() {

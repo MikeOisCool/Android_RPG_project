@@ -17,5 +17,7 @@ sealed class GameEvent {
     data class UsePotion(val amount: Int = 1) : GameEvent()
 
     data class UseBigPotion(val amount: Int = 1) : GameEvent()
+
+    data class EquipWeapon(val weaponName: String) : GameEvent()
 }
 
