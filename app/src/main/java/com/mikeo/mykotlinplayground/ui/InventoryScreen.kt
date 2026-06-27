@@ -37,9 +37,9 @@ fun InventoryScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(12.dp)
+            .padding(8.dp)
             .clip(RoundedCornerShape(48.dp))
-            .background(Color.Cyan),
+            .background(Color(0xFF26C6DA)),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
 
@@ -50,7 +50,7 @@ fun InventoryScreen(
             fontSize = 24.sp,
             textDecoration = TextDecoration.Underline
         )
-        Spacer( modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         val potions = items.filter {
             it.name == ItemNamen.HEILTRANK ||
@@ -59,6 +59,7 @@ fun InventoryScreen(
 
         val weapons = items.filter {
             it.name == ItemNamen.HOLZSCHWERT
+                    || it.name == ItemNamen.EISENSCHWERT
         }
 
         Text("Tränke", fontSize = 20.sp)
@@ -75,9 +76,11 @@ fun InventoryScreen(
             }
         }
 
-        Spacer( modifier = Modifier.height(8.dp) )
+        Spacer(modifier = Modifier.height(8.dp) )
 
         Text("Waffen", fontSize = 20.sp)
+
+        Spacer(modifier = Modifier.height(8.dp) )
 
         if (weapons.isEmpty()) {
             Text (
@@ -89,16 +92,22 @@ fun InventoryScreen(
             weapons.forEach { item ->
                 Text(text = "${item.name} x${item.amount}")
 
+                Spacer(modifier = Modifier.height(16.dp))
+
                 GameButtonHoch(
                     text = if (player.equippedWeapon == item.name) "Ausgerüstet" else "Ausrüsten",
                     fontSize = 18.sp,
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .fillMaxWidth(0.7f)
                         .height(50.dp),
                     onClick = {
-                        viewModel.onEvent(GameEvent.EquipWeapon(item.name))
+                        if (player.equippedWeapon != item.name) {
+                            viewModel.onEvent(GameEvent.EquipWeapon(item.name))
+                        }
+
                     }
                 )
+                Spacer(modifier = Modifier.height(8.dp) )
             }
         }
 
@@ -110,8 +119,8 @@ fun InventoryScreen(
             text = "Inventar Schließen",
             fontSize = 24.sp,
             modifier = Modifier
-                .fillMaxWidth()
-                .height(70.dp),
+                .fillMaxWidth(0.7f)
+                .height(55.dp),
             onClick = { onBackToGame() }
         )
     }

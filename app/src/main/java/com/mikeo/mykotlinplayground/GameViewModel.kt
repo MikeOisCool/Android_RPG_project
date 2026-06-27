@@ -20,13 +20,27 @@ class GameViewModel : ViewModel() {
                 Item(
                     name = "Heiltrank",
                     description = "Heilt den Spieler",
-                    amount = 5
+                    amount = 5,
+                    damage = 0
                 )
             )
         ),
         gold = 50,
         isDead = false,
         level = 1
+    )
+
+    val woodWeapon = Item(
+        name = ItemNamen.HOLZSCHWERT,
+        description = "Schaden + 15",
+        amount = 1,
+        damage = 15
+    )
+    val ironWeapon = Item(
+        name = ItemNamen.EISENSCHWERT,
+        description = "Schaden + 35",
+        amount = 1,
+        damage = 35
     )
 
 
@@ -41,51 +55,9 @@ class GameViewModel : ViewModel() {
     val player: StateFlow<Player> = _player
 
 
-    private fun createRandomEnemy(playerLevel: Int): Enemy {
-        val baseEnemy = listOf(
-            Enemy(
-                "Goblin",
-                hp = 30,
-                maxHp = 30,
-                level = 1,
-                damage = 5,
-                goldReward = 20,
-                xpReward = 25
-            ),
-            Enemy(
-                "Wolf",
-                hp = 40,
-                maxHp = 40,
-                level = 1,
-                damage = 8,
-                goldReward = 30,
-                xpReward = 35
-            ),
-            Enemy(
-                "Ork",
-                hp = 60,
-                maxHp = 60,
-                level = 1,
-                damage = 12,
-                goldReward = 50,
-                xpReward = 60
-            ),
-            Enemy(
-                "Stier",
-                hp = 1000000,
-                maxHp = 1000000,
-                level = 500,
-                damage = 50,
-                goldReward = 100,
-                xpReward = 100
-            )
-        ).random()
-
-        return createScaledEnemy(baseEnemy, playerLevel)
-    }
 
     private val _enemy = MutableStateFlow(
-        createRandomEnemy(_player.value.level)
+        EnemyFactory.createRandomEnemy(_player.value.level)
     )
 
     val enemy: StateFlow<Enemy> = _enemy
@@ -206,7 +178,7 @@ class GameViewModel : ViewModel() {
                 } else {
                     addLog("${_player.value.name} rennt davon, vor dem Kampf!")
 
-                    val nextEnemy = createRandomEnemy(_player.value.level)
+                    val nextEnemy = EnemyFactory.createRandomEnemy(_player.value.level)
                     _enemy.value = nextEnemy
 
                     addLog("\uD83D\uDC79 Neuer Gegner erscheint: ${nextEnemy.name} mit ${nextEnemy.hp} HP!")
@@ -289,10 +261,13 @@ class GameViewModel : ViewModel() {
         val playerCritChance = 20 /* 20 Prozent Wahrscheinlichkeit */
         val critMultiplier = 2
 
-        val woodWeaponbonus =
-            if (_player.value.equippedWeapon == ItemNamen.HOLZSCHWERT ) 15 else 0
+        val weapon = player.value.inventory.items.find{
+            it.name == player.value.equippedWeapon
+        }
+
+        val weaponbonus = weapon?.damage ?:0
         val playerDamage = calculateDamage(
-            _player.value.attack + woodWeaponbonus,
+            _player.value.attack + weaponbonus,
             playerCritChance,
             critMultiplier
         )
@@ -327,7 +302,7 @@ class GameViewModel : ViewModel() {
 
     private fun handleEnemyDefeated(enemy: Enemy) {
 
-        val woodWeaponDropChance = 80
+        val weaponDropChance = 80
         val healDropChance = 30
         val potionsDropChance = 30
         val bigPotionDropChance = 20
@@ -338,8 +313,8 @@ class GameViewModel : ViewModel() {
         if (chance(potionsDropChance)) dropPotion()
 
         if (chance(healDropChance)) healDrop()
-        if (_player.value.level > 2) if (chance(woodWeaponDropChance)) dropWoodweapon()
-
+        if (_player.value.level > 2) if (chance(weaponDropChance)) dropWeapon(woodWeapon)
+        if (_player.value.level > 3) if (chance(weaponDropChance)) dropWeapon(ironWeapon)
 
         val levelVorher = _player.value.level
 
@@ -377,7 +352,7 @@ class GameViewModel : ViewModel() {
     }
 
     private fun spawnNextEnemy() {
-        val nextEnemy = createRandomEnemy(_player.value.level)
+        val nextEnemy = EnemyFactory.createRandomEnemy(_player.value.level)
         _enemy.value = nextEnemy
 
         addLog("👹 Ein neuer Gegner erscheint: ${nextEnemy.name} (${nextEnemy.hp} HP)!")
@@ -400,24 +375,18 @@ class GameViewModel : ViewModel() {
 
     }
 
-    private fun dropWoodweapon() {
 
-        val woodWeapon = _player.value.inventory.items.find {
-            it.name == ItemNamen.HOLZSCHWERT
+    private fun dropWeapon(weapon: Item) {
+
+        val weaponName = _player.value.inventory.items.find {
+            it.name == weapon.name
         }
 
-        val newWeapon = Item(
-            name = ItemNamen.HOLZSCHWERT,
-            description = "Schaden + 15",
-            amount = 1
-        )
 
-        if (woodWeapon != null) {
-            addLog("Du hast schon ein Holzschwert! Waffe kann nicht genommen werden")
+        if (weaponName != null) {
+            addLog("Du hast schon ein ${weapon.name}! Waffe kann nicht genommen werden")
         } else {
-            val newItems = _player.value.inventory.items
-                .filter { it.name != ItemNamen.HOLZSCHWERT } +
-                    newWeapon
+            val newItems = _player.value.inventory.items + weapon
 
             val updatedInventory =
                 _player.value.inventory.copy(
@@ -429,7 +398,7 @@ class GameViewModel : ViewModel() {
                 "🧪 ${
                     _player.value
                         .name
-                } \uD83D\uDDE1\uFE0F hat ein Holzschwert gefunden! Angriff +15"
+                } \uD83D\uDDE1\uFE0F hat ein ${weapon.name} gefunden! Angriff +${weapon.damage} nach Auswahl!!"
             )
         }
     }
@@ -444,7 +413,8 @@ class GameViewModel : ViewModel() {
         val newPotion = Item(
             name = ItemNamen.HEILTRANK,
             description = "Heilt den Spieler",
-            amount = newPotions
+            amount = newPotions,
+            damage = 0
         )
 
         if (oldPotions >= 10) {
@@ -479,7 +449,8 @@ class GameViewModel : ViewModel() {
         val newBigPotion = Item(
             name = ItemNamen.GROSSER_HEILTRANK,
             description = "Heilt den Spieler stark",
-            amount = newBigPotions
+            amount = newBigPotions,
+            damage = 0
         )
 
         if (oldBigPotions >= 10) {
@@ -514,7 +485,7 @@ class GameViewModel : ViewModel() {
 
     fun resetGame() {
         _player.value = initialPlayer.copy(name = _player.value.name)
-        _enemy.value = createRandomEnemy(_player.value.level)
+        _enemy.value = EnemyFactory.createRandomEnemy(_player.value.level)
         _log.value = emptyList()
     }
 }

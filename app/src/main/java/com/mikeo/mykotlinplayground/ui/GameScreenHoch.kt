@@ -151,7 +151,7 @@ fun GameScreenHoch(
                 text = "Angreifen",
                 fontSize = 24.sp,
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxWidth(0.7f)
                     .height(70.dp),
                 containerColor = Color.Red,
                 onClick = { viewModel.onEvent(GameEvent.AttackEnemy) }

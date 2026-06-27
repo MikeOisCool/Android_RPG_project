@@ -14,22 +14,7 @@ data class Player(
     val xpToNextLevel: Int = 100
 )
 
-data class Enemy(
-    val name: String,
-    val hp: Int,
-    val maxHp: Int,
-    val level: Int,
-    val damage: Int,
-    val goldReward: Int,
-    val xpReward: Int
-)
 
-data class Item(
-    val name: String,
-    val description: String,
-    val amount: Int
-)
 
-data class Inventory(
-    val items: List<Item>
-)
+
+

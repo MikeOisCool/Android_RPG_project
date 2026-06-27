@@ -33,9 +33,9 @@ fun StartScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(12.dp)
+            .padding(8.dp)
             .clip(RoundedCornerShape(48.dp))
-            .background(Color.Cyan),
+            .background(Color(0xFF26C6DA)),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
 
@@ -57,7 +57,7 @@ fun StartScreen(
             text = "Spielen!",
             fontSize = 24.sp,
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxWidth(0.7f)
                 .height(70.dp),
             onClick = { onNameEntered(name)}
         )
