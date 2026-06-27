@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import com.mikeo.mykotlinplayground.GameEvent
 import com.mikeo.mykotlinplayground.GameViewModel
 import com.mikeo.mykotlinplayground.ItemNamen
+import com.mikeo.mykotlinplayground.ItemType
 
 @Composable
 fun InventoryScreen(
@@ -53,13 +54,11 @@ fun InventoryScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         val potions = items.filter {
-            it.name == ItemNamen.HEILTRANK ||
-                    it.name == ItemNamen.GROSSER_HEILTRANK
+            it.type == ItemType.POTION && it.amount > 0
         }
 
         val weapons = items.filter {
-            it.name == ItemNamen.HOLZSCHWERT
-                    || it.name == ItemNamen.EISENSCHWERT
+            it.type == ItemType.WEAPON && it.amount > 0
         }
 
         Text("Tränke", fontSize = 20.sp)

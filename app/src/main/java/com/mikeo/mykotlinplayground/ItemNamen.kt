@@ -8,3 +8,8 @@ object ItemNamen {
 
 
 }
+
+enum class ItemType {
+    POTION,
+    WEAPON
+}

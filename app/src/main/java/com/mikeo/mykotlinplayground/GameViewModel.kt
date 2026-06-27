@@ -20,6 +20,7 @@ class GameViewModel : ViewModel() {
                 Item(
                     name = "Heiltrank",
                     description = "Heilt den Spieler",
+                    type = ItemType.POTION,
                     amount = 5,
                     damage = 0
                 )
@@ -32,12 +33,14 @@ class GameViewModel : ViewModel() {
 
     val woodWeapon = Item(
         name = ItemNamen.HOLZSCHWERT,
+        type = ItemType.WEAPON,
         description = "Schaden + 15",
         amount = 1,
         damage = 15
     )
     val ironWeapon = Item(
         name = ItemNamen.EISENSCHWERT,
+        type = ItemType.WEAPON,
         description = "Schaden + 35",
         amount = 1,
         damage = 35
@@ -414,6 +417,7 @@ class GameViewModel : ViewModel() {
             name = ItemNamen.HEILTRANK,
             description = "Heilt den Spieler",
             amount = newPotions,
+            type = ItemType.POTION,
             damage = 0
         )
 
@@ -450,6 +454,7 @@ class GameViewModel : ViewModel() {
             name = ItemNamen.GROSSER_HEILTRANK,
             description = "Heilt den Spieler stark",
             amount = newBigPotions,
+            type = ItemType.POTION,
             damage = 0
         )
 
