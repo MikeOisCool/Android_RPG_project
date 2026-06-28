@@ -485,6 +485,11 @@ class GameViewModel : ViewModel() {
         _log.value = _log.value + message
         Log.d("LOG", "Loggröße: ${_log.value.size} | letzter Eintrag: $message")
     }
+    fun fillPreviewLog() {
+        repeat(10) {
+            addLog("Logeintrag ${it + 1}")
+        }
+    }
 
     private fun applyEvent(event: GameEvent) {
         _player.value = handleEvent(_player.value, event)

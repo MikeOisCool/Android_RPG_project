@@ -2,14 +2,15 @@ package com.mikeo.mykotlinplayground.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,13 +21,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mikeo.mykotlinplayground.GameEvent
 import com.mikeo.mykotlinplayground.GameViewModel
 import com.mikeo.mykotlinplayground.ItemNamen
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.ui.tooling.preview.Preview
 
 
 @Composable
@@ -70,19 +70,16 @@ fun GameScreenHoch(
 
             GameLog(log = log, listState = listState, modifier = Modifier.height(120.dp))
 
-            Text(text = "Level: ${player.level}", fontSize = textSize)
-            Text(text = "XP: ${player.xp}/${player.xpToNextLevel}", fontSize = textSize)
+
+
 
 
             Text(
-                text = "Name: ${player.name}",
+                text = "Name: ${player.name} Level: ${player.level}",
                 fontSize = 24.sp
             )
+            Text(text = "HP: ${player.hp}/${player.maxHp} Gold: ${player.gold}", fontSize = 20.sp)
 
-            Text(
-                text = "HP: ${player.hp}",
-                fontSize = textSize
-            )
 
             HpBar(
                 currentHp = player.hp,
@@ -90,31 +87,56 @@ fun GameScreenHoch(
             )
 
             Text(
-                text = "Gold: ${player.gold}",
-                fontSize = textSize
+                text = "XP: ${player.xp}/${player.xpToNextLevel}",
+                fontSize = 18.sp
             )
+
+            Column {
+                val weaponBonus = player.equippedWeapon?.damage ?: 0
+                val armorDefense = player.equippedArmor?.defense ?: 0
+                Row {
+                    Text("Angriff:", modifier = Modifier.width(120.dp))
+                    Text("${player.attack + weaponBonus}")
+                }
+                Row {
+                    Text("Verteidigung:", modifier = Modifier.width(120.dp))
+                    Text("$armorDefense")
+                }
+                Row {
+                    Text("Waffe:", modifier = Modifier.width(120.dp))
+                    Text(player.equippedWeapon?.name ?: "Keine")
+                }
+                Row {
+                    Text("Rüstung:", modifier = Modifier.width(120.dp))
+                    Text(player.equippedArmor?.name ?: "Keine")
+                }
+            }
         }
 
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            GameButtonHoch(
-                text = "Take Damage",
-                onClick = { viewModel.onEvent(GameEvent.TakeDamage()) }
-            )
 
-            GameButtonHoch(
-                text = "Add Gold",
-                onClick = { viewModel.onEvent(GameEvent.AddGold()) }
-            )
+            Row {
+                GameButtonHoch(
+                    text = "Take Damage",
+                    onClick = { viewModel.onEvent(GameEvent.TakeDamage()) }
+                )
+
+                GameButtonHoch(
+                    text = "Add Gold",
+                    onClick = { viewModel.onEvent(GameEvent.AddGold()) }
+                )
+            }
             Row {
                 GameButtonHoch(
                     text = "Heilen",
                     onClick = { viewModel.onEvent(GameEvent.Heal()) }
                 )
                 val potionBigAmount =
-                    player.inventory.items.find { it.name == ItemNamen.GROSSER_HEILTRANK }?.amount ?: 0
+                    player.inventory.items.find { it.name == ItemNamen.GROSSER_HEILTRANK }?.amount
+                        ?: 0
                 GameButtonHoch(
                     text = "Big Heal (${potionBigAmount})",
                     onClick = { viewModel.onEvent(GameEvent.UseBigPotion()) }
@@ -176,7 +198,8 @@ fun GameScreenHoch(
 
 @Preview(
     name = "Game Screen Hoch",
-    showBackground = true)
+    showBackground = true
+)
 @Composable
 fun GameScreenHochPreview() {
     GameScreenHoch(

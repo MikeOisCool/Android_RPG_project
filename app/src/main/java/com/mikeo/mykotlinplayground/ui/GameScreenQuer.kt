@@ -5,11 +5,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -72,10 +74,16 @@ fun GameScreenQuer(
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        "Spieler HP: ${player.hp}/${player.maxHp}",
-                        modifier = Modifier.padding(start = 30.dp)
-                    )
+                    Row {
+                        Text(
+                            text = player.name,
+                            modifier = Modifier
+                                .padding(start = 30.dp)
+                                .width(100.dp)
+                        )
+
+                        Text("HP: ${player.hp}/${player.maxHp}")
+                    }
                     HpBar(
                         currentHp = player.hp,
                         maxHp = player.maxHp
@@ -104,11 +112,49 @@ fun GameScreenQuer(
                         .weight(5f)
                         .padding(start = 30.dp)
                 ) {
-                    Text("Name: ${player.name}")
-                    Text("Level: ${player.level}")
-                    Text("XP: ${player.xp}/${player.xpToNextLevel}")
-                    Text("Gold: ${player.gold}")
+                    val weaponBonus = player.equippedWeapon?.damage ?: 0
+                    val armorDefense = player.equippedArmor?.defense ?: 0
 
+                    val labelWidth = 65.dp
+                    val valueWidth = 65.dp
+
+                    Column {
+
+                        Row {
+                            Text("Level:", modifier = Modifier.width(labelWidth))
+                            Text("${player.level}", modifier = Modifier.width(valueWidth))
+
+                            Text("Gold:", modifier = Modifier.width(labelWidth))
+                            Text("${player.gold}")
+                        }
+
+                        Row {
+                            Text("XP:", modifier = Modifier.width(labelWidth))
+                            Text("${player.xp}/${player.xpToNextLevel}")
+                        }
+
+                        Spacer(modifier = Modifier.height(6.dp))
+
+                        Row {
+                            Text("ATK:", modifier = Modifier.width(labelWidth))
+                            Text("${player.attack + weaponBonus}", modifier = Modifier.width(65.dp))
+
+                            Text("DEF:", modifier = Modifier.width(60.dp))
+                            Text("$armorDefense")
+                        }
+
+                        Spacer(modifier = Modifier.height(6.dp))
+
+                        Row {
+                            Text("Waffe:", modifier = Modifier.width(70.dp))
+                            Text(player.equippedWeapon?.name ?: "-")
+                        }
+
+                        Row {
+                            Text("Rüstung:", modifier = Modifier.width(70.dp))
+                            Text(player.equippedArmor?.name ?: "-")
+                        }
+                    }
 
                 }
 
@@ -117,10 +163,13 @@ fun GameScreenQuer(
                         .weight(5f)
                         .padding(start = 180.dp)
                 ) {
+
+
                     Text("Gegner: ${enemy.name}")
                     Text("Level: ${enemy.level}")
                     Text("HP: ${enemy.hp}")
                     Text("Schaden: ${enemy.damage}")
+
                 }
 
 
@@ -175,8 +224,10 @@ fun GameScreenQuer(
                         player.inventory.items.find { it.name == ItemNamen.GROSSER_HEILTRANK }
 
 
-                    Row(modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
                         GameButtonQuer(
                             text = "Heil (${potionAmount?.amount ?: 0})",
                             onClick = {
@@ -207,8 +258,10 @@ fun GameScreenQuer(
                             onClick = { viewModel.onEvent(GameEvent.AttackEnemy) }
                         )
                     }
-                    Row (modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween){
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
                         GameButtonQuer(
                             text = "Fliehen",
 
@@ -253,10 +306,15 @@ fun GameScreenQuer(
 )
 @Composable
 fun GameScreenQuerPreview() {
+
+    val viewModel = GameViewModel()
+    viewModel.fillPreviewLog()
+
     GameScreenQuer(
-        viewModel = GameViewModel(),
+        viewModel = viewModel,
         listState = rememberLazyListState(),
         onGameOver = {},
         onInventory = {}
     )
 }
+
