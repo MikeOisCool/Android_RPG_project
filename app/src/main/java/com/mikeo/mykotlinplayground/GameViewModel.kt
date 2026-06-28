@@ -3,6 +3,7 @@ package com.mikeo.mykotlinplayground
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mikeo.mykotlinplayground.DropManager.dropStackableItem
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -295,9 +296,19 @@ class GameViewModel : ViewModel() {
         val bigPotionDropChance = 20
         addLog("🏆 ${enemy.name} wurde besiegt!")
 
-        if (chance(bigPotionDropChance)) dropBigPotion(GameItems.healBigPotion)
+        if (chance(bigPotionDropChance)) applyDrop(
+            DropManager.dropBigPotion(
+                _player.value,
+                GameItems.healBigPotion
+            )
+        )
 
-        if (chance(potionsDropChance)) dropPotion(GameItems.healPotion)
+        if (chance(potionsDropChance)) applyDrop(
+            DropManager.dropPotion(
+                _player.value,
+                GameItems.healPotion
+            )
+        )
         if (chance(armorDropChance)) dropArmor(GameItems.simpleArmor)
         if (_player.value.level > 3) if (chance(armorDropChance)) dropArmor(GameItems.ironArmor)
 
@@ -305,11 +316,19 @@ class GameViewModel : ViewModel() {
         if (_player.value.level > 2 && _player.value.level < 5) if (chance(weaponDropChance)) dropWeapon(
             GameItems.woodWeapon
         )
-        if (_player.value.level > 3 && _player.value.level < 6) if (chance(weaponDropChance)) dropWeapon(GameItems.ironWeapon)
-        if (_player.value.level > 5 && _player.value.level < 7) if (chance(weaponDropChance)) dropWeapon(GameItems.silverWeapon)
+        if (_player.value.level > 3 && _player.value.level < 6) if (chance(weaponDropChance)) dropWeapon(
+            GameItems.ironWeapon
+        )
+        if (_player.value.level > 5 && _player.value.level < 7) if (chance(weaponDropChance)) dropWeapon(
+            GameItems.silverWeapon
+        )
 
-        if (_player.value.level > 7 && _player.value.level < 8) if (chance(weaponDropChance)) dropWeapon(GameItems.goldenWeapon)
-        if (_player.value.level > 8 && _player.value.level < 10) if (chance(weaponDropChance)) dropWeapon(GameItems.diamondWeapon)
+        if (_player.value.level > 7 && _player.value.level < 8) if (chance(weaponDropChance)) dropWeapon(
+            GameItems.goldenWeapon
+        )
+        if (_player.value.level > 8 && _player.value.level < 10) if (chance(weaponDropChance)) dropWeapon(
+            GameItems.diamondWeapon
+        )
 
         val levelVorher = _player.value.level
 
@@ -425,69 +444,41 @@ class GameViewModel : ViewModel() {
         }
     }
 
-    private fun dropPotion(healPotion: Item) {
+    private fun applyDrop(result: DropResult) {
+        _player.value = result.player
 
-        val oldPotions =
-            _player.value.inventory.items.find { it.name == healPotion.name }?.amount ?: 0
-        val newPotions = (oldPotions + 1).coerceAtMost(10)
-
-        if (oldPotions >= 10) {
-            addLog("🧪 Heiltrank inventar (10) voll, Trank kann nicht genommen werden!")
-        } else {
-            val newItems =
-                _player.value.inventory.items.filter { it.name != healPotion.name } + healPotion.copy(
-                    amount = newPotions
-                )
-
-            val updatedInventory =
-                _player.value.inventory.copy(
-                    items = newItems
-                )
-            _player.value = _player.value.copy(inventory = updatedInventory)
-
-            addLog(
-                "🧪 ${
-                    _player.value
-                        .name
-                } erhält einen Heiltrank! ${oldPotions} -> $newPotions"
-            )
+        result.logs.forEach {
+            addLog(it)
         }
     }
 
-    private fun dropBigPotion(healBigPotion: Item) {
+    private fun dropPotion(
+        player: Player,
+        healPotion: Item
+    ): DropResult {
 
-        val oldBigPotions =
-            _player.value.inventory.items.find { it.name == healBigPotion.name }?.amount
-                ?: 0
-        val newBigPotions = (oldBigPotions + 1).coerceAtMost(10)
+        return dropStackableItem(
+            player = player,
+            item = healPotion
+        )
+    }
 
-        if (oldBigPotions >= 10) {
-            addLog("🧪 Großer Heiltrank inventar (10) voll, Trank kann nicht genommen werden!")
-        } else {
-            val newItems = _player.value.inventory.items
-                .filter { it.name != ItemNamen.GROSSER_HEILTRANK } + healBigPotion.copy(
-                amount = newBigPotions
-            )
+    fun dropBigPotion(
+        player: Player,
+        healBigPotion: Item
+    ): DropResult {
 
-            val updatedInventory =
-                _player.value.inventory.copy(
-                    items = newItems
-                )
-            _player.value = _player.value.copy(inventory = updatedInventory)
-
-            addLog(
-                "🧪 ${
-                    _player.value
-                        .name
-                } erhält einen großen Heiltrank! ${oldBigPotions} -> $newBigPotions"
-            )
-        }
+        return dropStackableItem(
+            player = player,
+            item = healBigPotion
+        )
     }
 
     private fun addLog(message: String) {
         _log.value = _log.value + message
         Log.d("LOG", "Loggröße: ${_log.value.size} | letzter Eintrag: $message")
     }
+
     fun fillPreviewLog() {
         repeat(10) {
             addLog("Logeintrag ${it + 1}")

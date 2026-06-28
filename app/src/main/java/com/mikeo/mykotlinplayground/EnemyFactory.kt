@@ -33,8 +33,8 @@ object EnemyFactory {
             ),
             Enemy(
                 "Stier",
-                hp = 1000000,
-                maxHp = 1000000,
+                hp = 1000,
+                maxHp = 1000,
                 level = 500,
                 damage = 50,
                 goldReward = 100,
