@@ -5,5 +5,7 @@ data class Item(
     val description: String,
     val type: ItemType,
     val amount: Int,
-    val damage: Int
+    val heal: Int,
+    val damage: Int,
+    val defense: Int
 )

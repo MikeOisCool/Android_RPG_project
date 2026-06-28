@@ -17,21 +17,13 @@ class GameViewModel : ViewModel() {
         attack = 10,
         inventory = Inventory(
             items = listOf(
-                Item(
-                    name = "Heiltrank",
-                    description = "Heilt den Spieler",
-                    type = ItemType.POTION,
-                    amount = 5,
-                    damage = 0
-                )
+                GameItems.healPotion
             )
         ),
         gold = 50,
         isDead = false,
         level = 1
     )
-
-
 
 
     private val _player = MutableStateFlow(initialPlayer)
@@ -43,7 +35,6 @@ class GameViewModel : ViewModel() {
     val log: StateFlow<List<String>> = _log
 
     val player: StateFlow<Player> = _player
-
 
 
     private val _enemy = MutableStateFlow(
@@ -66,6 +57,7 @@ class GameViewModel : ViewModel() {
                 addLog("\uD83D\uDC80 ${_player.value.name} hat ${_player.value.hp} HP übrig")
                 if (_player.value.isDead) {
                     addLog("\uD83D\uDC80 ${_player.value.name} ist gestorben")
+                    addLog("${_player.value.name} hat das Level ${_player.value.level} erreicht und hat ${_player.value.xp} XP! Sein Gold: ${_player.value.gold}")
                 }
             }
 
@@ -157,9 +149,15 @@ class GameViewModel : ViewModel() {
                 applyEvent(event)
 
                 val weaponDamage = event.weapon.damage
-                addLog("⚔️ Waffe: ${_player.value.equippedWeapon} mit ${_player.value.attack+weaponDamage} Attack")
+                addLog("⚔️ Waffe: ${_player.value.equippedWeapon} mit ${_player.value.attack + weaponDamage} Attack")
             }
 
+            is GameEvent.EquipArmor -> {
+                applyEvent(event)
+
+                val armorDefense = event.armor.defense
+                addLog("🛡️ Rüstung: ${event.armor.name} mit +$armorDefense Verteidigung ausgerüstet")
+            }
 
             is GameEvent.Flee -> {
 
@@ -226,9 +224,10 @@ class GameViewModel : ViewModel() {
             return
 
         }
-
+        val defens = _player.value.equippedArmor?.defense ?: 0
+        val baseDamage = (updatedEnemy.damage - defens).coerceAtLeast(0)
         val enemyDamage = calculateDamage(
-            updatedEnemy.damage,
+            baseDamage,
             enemyCritChance,
             critMultiplier
         )
@@ -250,10 +249,11 @@ class GameViewModel : ViewModel() {
     }
 
     private fun playerAttacksEnemy(currentEnemy: Enemy): Enemy {
+
         val playerCritChance = 20 /* 20 Prozent Wahrscheinlichkeit */
         val critMultiplier = 2
 
-        val weaponbonus = _player.value.equippedWeapon?.damage ?:0
+        val weaponbonus = _player.value.equippedWeapon?.damage ?: 0
         val playerDamage = calculateDamage(
             _player.value.attack + weaponbonus,
             playerCritChance,
@@ -289,17 +289,21 @@ class GameViewModel : ViewModel() {
     private fun handleEnemyDefeated(enemy: Enemy) {
 
         val weaponDropChance = 80
+        val armorDropChance = 50
         val healDropChance = 30
         val potionsDropChance = 30
         val bigPotionDropChance = 20
         addLog("🏆 ${enemy.name} wurde besiegt!")
 
-        if (chance(bigPotionDropChance)) dropBigPotion()
+        if (chance(bigPotionDropChance)) dropBigPotion(GameItems.healBigPotion)
 
-        if (chance(potionsDropChance)) dropPotion()
+        if (chance(potionsDropChance)) dropPotion(GameItems.healPotion)
+        if (chance(armorDropChance)) dropArmor(GameItems.simpleArmor)
 
         if (chance(healDropChance)) healDrop()
-        if (_player.value.level > 2) if (chance(weaponDropChance)) dropWeapon(GameItems.woodWeapon)
+        if (_player.value.level > 2 && _player.value.level < 5) if (chance(weaponDropChance)) dropWeapon(
+            GameItems.woodWeapon
+        )
         if (_player.value.level > 3) if (chance(weaponDropChance)) dropWeapon(GameItems.ironWeapon)
 
         val levelVorher = _player.value.level
@@ -338,6 +342,7 @@ class GameViewModel : ViewModel() {
     }
 
     private fun spawnNextEnemy() {
+
         val nextEnemy = EnemyFactory.createRandomEnemy(_player.value.level)
         _enemy.value = nextEnemy
 
@@ -346,7 +351,8 @@ class GameViewModel : ViewModel() {
 
     private fun healDrop() {
 
-        val healDropValue = calculatePotionHeal(_player.value.level)
+        val baseHeal = 25
+        val healDropValue = calculateItemHeal(baseHeal, _player.value.level)
         val healedHp = (_player.value.hp + healDropValue)
             .coerceAtMost(_player.value.maxHp)
         _player.value = _player.value.copy(
@@ -368,7 +374,6 @@ class GameViewModel : ViewModel() {
             it.name == weapon.name
         }
 
-
         if (weaponName != null) {
             addLog("Du hast schon ein ${weapon.name}! Waffe kann nicht genommen werden")
         } else {
@@ -389,27 +394,45 @@ class GameViewModel : ViewModel() {
         }
     }
 
-    private fun dropPotion() {
+    private fun dropArmor(armor: Item) {
 
+        val weaponName = _player.value.inventory.items.find {
+            it.name == armor.name
+        }
+
+        if (weaponName != null) {
+            addLog("Du hast schon ein ${armor.name}! Rüstung kann nicht genommen werden")
+        } else {
+            val newItems = _player.value.inventory.items + armor
+
+            val updatedInventory =
+                _player.value.inventory.copy(
+                    items = newItems
+                )
+            _player.value = _player.value.copy(inventory = updatedInventory)
+
+            addLog(
+                "\uD83D\uDEE1\uFE0F ${
+                    _player.value
+                        .name
+                } \uD83D\uDDE1\uFE0F hat eine ${armor.name} gefunden! Verteidigung +${armor.defense} nach Auswahl!!"
+            )
+        }
+    }
+
+    private fun dropPotion(healPotion: Item) {
 
         val oldPotions =
-            _player.value.inventory.items.find { it.name == ItemNamen.HEILTRANK }?.amount ?: 0
+            _player.value.inventory.items.find { it.name == healPotion.name }?.amount ?: 0
         val newPotions = (oldPotions + 1).coerceAtMost(10)
-
-        val newPotion = Item(
-            name = ItemNamen.HEILTRANK,
-            description = "Heilt den Spieler",
-            amount = newPotions,
-            type = ItemType.POTION,
-            damage = 0
-        )
 
         if (oldPotions >= 10) {
             addLog("🧪 Heiltrank inventar (10) voll, Trank kann nicht genommen werden!")
         } else {
-            val newItems = _player.value.inventory.items
-                .filter { it.name != ItemNamen.HEILTRANK } +
-                    newPotion
+            val newItems =
+                _player.value.inventory.items.filter { it.name != healPotion.name } + healPotion.copy(
+                    amount = newPotions
+                )
 
             val updatedInventory =
                 _player.value.inventory.copy(
@@ -426,27 +449,20 @@ class GameViewModel : ViewModel() {
         }
     }
 
-    private fun dropBigPotion() {
+    private fun dropBigPotion(healBigPotion: Item) {
 
         val oldBigPotions =
-            _player.value.inventory.items.find { it.name == ItemNamen.GROSSER_HEILTRANK }?.amount
+            _player.value.inventory.items.find { it.name == healBigPotion.name }?.amount
                 ?: 0
         val newBigPotions = (oldBigPotions + 1).coerceAtMost(10)
-
-        val newBigPotion = Item(
-            name = ItemNamen.GROSSER_HEILTRANK,
-            description = "Heilt den Spieler stark",
-            amount = newBigPotions,
-            type = ItemType.POTION,
-            damage = 0
-        )
 
         if (oldBigPotions >= 10) {
             addLog("🧪 Großer Heiltrank inventar (10) voll, Trank kann nicht genommen werden!")
         } else {
             val newItems = _player.value.inventory.items
-                .filter { it.name != ItemNamen.GROSSER_HEILTRANK } +
-                    newBigPotion
+                .filter { it.name != ItemNamen.GROSSER_HEILTRANK } + healBigPotion.copy(
+                amount = newBigPotions
+            )
 
             val updatedInventory =
                 _player.value.inventory.copy(

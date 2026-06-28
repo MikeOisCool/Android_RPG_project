@@ -40,10 +40,10 @@ fun InventoryScreen(
             .fillMaxSize()
             .padding(8.dp)
             .clip(RoundedCornerShape(48.dp))
-            .background(Color(0xFF26C6DA)),
+            .background(Color(0xFF26C6DA))
+            .padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
-
     ) {
 
         Text(
@@ -60,11 +60,14 @@ fun InventoryScreen(
         val weapons = items.filter {
             it.type == ItemType.WEAPON && it.amount > 0
         }
+        val armor = items.filter {
+            it.type == ItemType.ARMOR && it.amount > 0
+        }
 
         Text("Tränke", fontSize = 20.sp)
 
         if (potions.isEmpty()) {
-            Text (
+            Text(
                 text = "Es sind keine Tränke im Inventar",
                 fontSize = 12.sp
             )
@@ -75,14 +78,46 @@ fun InventoryScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(8.dp) )
+        Spacer(modifier = Modifier.height(8.dp))
 
+        Text("Rüstung", fontSize = 20.sp)
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        if (armor.isEmpty()) {
+            Text(
+                text = "Es sind keine Rüstungen im Inventar",
+                fontSize = 12.sp
+            )
+        } else {
+
+            armor.forEach { item ->
+                Text(text = "${item.name} x${item.amount}")
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                GameButtonHoch(
+                    text = if (player.equippedArmor?.name == item.name) "Rüstung ausgerüstet" else "Ausrüsten",
+                    fontSize = 18.sp,
+                    modifier = Modifier
+                        .fillMaxWidth(0.7f)
+                        .height(50.dp),
+                    onClick = {
+                        if (player.equippedArmor?.name != item.name) {
+                            viewModel.onEvent(GameEvent.EquipArmor(item))
+                        }
+                    }
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+
+        }
         Text("Waffen", fontSize = 20.sp)
 
-        Spacer(modifier = Modifier.height(8.dp) )
+        Spacer(modifier = Modifier.height(8.dp))
 
         if (weapons.isEmpty()) {
-            Text (
+            Text(
                 text = "Es sind keine Waffen im Inventar",
                 fontSize = 12.sp
             )
@@ -94,7 +129,7 @@ fun InventoryScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 GameButtonHoch(
-                    text = if (player.equippedWeapon?.name == item.name) "Ausgerüstet" else "Ausrüsten",
+                    text = if (player.equippedWeapon?.name == item.name) "Waffe ausgerüstet" else "Ausrüsten",
                     fontSize = 18.sp,
                     modifier = Modifier
                         .fillMaxWidth(0.7f)
@@ -103,16 +138,13 @@ fun InventoryScreen(
                         if (player.equippedWeapon?.name != item.name) {
                             viewModel.onEvent(GameEvent.EquipWeapon(item))
                         }
-
                     }
                 )
-                Spacer(modifier = Modifier.height(8.dp) )
+                Spacer(modifier = Modifier.height(8.dp))
             }
         }
 
         Spacer(modifier = Modifier.height(8.dp))
-
-
 
         GameButtonHoch(
             text = "Inventar Schließen",
@@ -124,3 +156,5 @@ fun InventoryScreen(
         )
     }
 }
+
+
