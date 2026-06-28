@@ -297,37 +297,61 @@ class GameViewModel : ViewModel() {
         addLog("🏆 ${enemy.name} wurde besiegt!")
 
         if (chance(bigPotionDropChance)) applyDrop(
-            DropManager.dropBigPotion(
+            DropManager.dropStackableItem(
                 _player.value,
                 GameItems.healBigPotion
             )
         )
 
         if (chance(potionsDropChance)) applyDrop(
-            DropManager.dropPotion(
+            DropManager.dropStackableItem(
                 _player.value,
                 GameItems.healPotion
             )
         )
-        if (chance(armorDropChance)) dropArmor(GameItems.simpleArmor)
-        if (_player.value.level > 3) if (chance(armorDropChance)) dropArmor(GameItems.ironArmor)
+        if (chance(armorDropChance)) applyDrop(
+            DropManager.dropArmor(
+                _player.value,
+                GameItems.simpleArmor
+            )
+        )
+        if (_player.value.level > 3) if (chance(armorDropChance)) applyDrop(
+            DropManager.dropArmor(
+                _player.value,
+                GameItems.ironArmor
+            )
+        )
 
         if (chance(healDropChance)) healDrop()
-        if (_player.value.level > 2 && _player.value.level < 5) if (chance(weaponDropChance)) dropWeapon(
-            GameItems.woodWeapon
+        if (_player.value.level > 2 && _player.value.level < 5) if (chance(weaponDropChance)) applyDrop(
+            DropManager.dropWeapon(
+                _player.value,
+                GameItems.woodWeapon
+            )
         )
-        if (_player.value.level > 3 && _player.value.level < 6) if (chance(weaponDropChance)) dropWeapon(
-            GameItems.ironWeapon
+        if (_player.value.level > 3 && _player.value.level < 6) if (chance(weaponDropChance)) applyDrop(
+            DropManager.dropWeapon(
+                _player.value,
+                GameItems.ironWeapon
+            )
         )
-        if (_player.value.level > 5 && _player.value.level < 7) if (chance(weaponDropChance)) dropWeapon(
-            GameItems.silverWeapon
+        if (_player.value.level > 5 && _player.value.level < 7) if (chance(weaponDropChance)) applyDrop(
+            DropManager.dropWeapon(
+                _player.value,
+                GameItems.silverWeapon
+            )
         )
 
-        if (_player.value.level > 7 && _player.value.level < 8) if (chance(weaponDropChance)) dropWeapon(
-            GameItems.goldenWeapon
+        if (_player.value.level > 7 && _player.value.level < 8) if (chance(weaponDropChance)) applyDrop(
+            DropManager.dropWeapon(
+                _player.value,
+                GameItems.goldenWeapon
+            )
         )
-        if (_player.value.level > 8 && _player.value.level < 10) if (chance(weaponDropChance)) dropWeapon(
+        if (_player.value.level > 8 && _player.value.level < 10) if (chance(weaponDropChance)) applyDrop(DropManager.dropWeapon(
+            _player.value,
             GameItems.diamondWeapon
+        )
         )
 
         val levelVorher = _player.value.level
@@ -392,86 +416,12 @@ class GameViewModel : ViewModel() {
     }
 
 
-    private fun dropWeapon(weapon: Item) {
-
-        val weaponName = _player.value.inventory.items.find {
-            it.name == weapon.name
-        }
-
-        if (weaponName != null) {
-            addLog("Du hast schon ein ${weapon.name}! Waffe kann nicht genommen werden")
-        } else {
-            val newItems = _player.value.inventory.items + weapon
-
-            val updatedInventory =
-                _player.value.inventory.copy(
-                    items = newItems
-                )
-            _player.value = _player.value.copy(inventory = updatedInventory)
-
-            addLog(
-                "🧪 ${
-                    _player.value
-                        .name
-                } \uD83D\uDDE1\uFE0F hat ein ${weapon.name} gefunden! Angriff +${weapon.damage} nach Auswahl!!"
-            )
-        }
-    }
-
-    private fun dropArmor(armor: Item) {
-
-        val weaponName = _player.value.inventory.items.find {
-            it.name == armor.name
-        }
-
-        if (weaponName != null) {
-            addLog("Du hast schon ein ${armor.name}! Rüstung kann nicht genommen werden")
-        } else {
-            val newItems = _player.value.inventory.items + armor
-
-            val updatedInventory =
-                _player.value.inventory.copy(
-                    items = newItems
-                )
-            _player.value = _player.value.copy(inventory = updatedInventory)
-
-            addLog(
-                "\uD83D\uDEE1\uFE0F ${
-                    _player.value
-                        .name
-                } \uD83D\uDDE1\uFE0F hat eine ${armor.name} gefunden! Verteidigung +${armor.defense} nach Auswahl!!"
-            )
-        }
-    }
-
     private fun applyDrop(result: DropResult) {
         _player.value = result.player
 
         result.logs.forEach {
             addLog(it)
         }
-    }
-
-    private fun dropPotion(
-        player: Player,
-        healPotion: Item
-    ): DropResult {
-
-        return dropStackableItem(
-            player = player,
-            item = healPotion
-        )
-    }
-
-    fun dropBigPotion(
-        player: Player,
-        healBigPotion: Item
-    ): DropResult {
-
-        return dropStackableItem(
-            player = player,
-            item = healBigPotion
-        )
     }
 
     private fun addLog(message: String) {

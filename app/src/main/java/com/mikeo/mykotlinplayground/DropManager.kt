@@ -7,11 +7,11 @@ object DropManager {
         item: Item
     ): DropResult {
         val oldAmount =
-            player.inventory.items.find { it.name == item.name }?.amount ?:0
+            player.inventory.items.find { it.name == item.name }?.amount ?: 0
 
         val newAmount = (oldAmount + 1).coerceAtMost(10)
 
-        if(oldAmount >= 10) {
+        if (oldAmount >= 10) {
             return DropResult(
                 player = player,
                 logs = listOf("🧪 ${item.name} Inventar (10) voll, Trank kann nicht genommen werden!")
@@ -27,69 +27,64 @@ object DropManager {
 
         return DropResult(
             player = updatedPlayer,
-            logs = listOf("🧪 ${player.name} erhält einen ${item.name}! $oldAmount -> $newAmount")
+            logs = listOf("🧪 ${player.name} erhält ${item.article} ${item.name}! $oldAmount -> $newAmount")
         )
-
 
     }
 
-    fun dropPotion(
+    fun dropWeapon(
         player: Player,
-        healPotion: Item
+        weapon: Item
     ): DropResult {
-        val oldPotions =
-            player.inventory.items.find { it.name == healPotion.name }?.amount ?: 0
-
-        val newPotions = (oldPotions + 1).coerceAtMost(10)
-
-        if (oldPotions >= 10) {
+        val weaponName = player.inventory.items.find {
+            it.name == weapon.name
+        }
+        if (weaponName != null) {
             return DropResult(
                 player = player,
-                logs = listOf("🧪 Heiltrank Inventar (10) voll, Trank kann nicht genommen werden!")
+                logs = listOf("Du hast schon ${weapon.article} ${weapon.name}! Waffe kann nicht genommen werden")
             )
         }
 
-        val newItems =
-            player.inventory.items.filter { it.name != healPotion.name } +
-                    healPotion.copy(amount = newPotions)
+        val newItems = player.inventory.items + weapon
 
-        val updatedInventory = player.inventory.copy(items = newItems)
-
-        val updatedPlayer = player.copy(inventory = updatedInventory)
+        val updatedInventory =
+            player.inventory.copy(
+                items = newItems
+            )
 
         return DropResult(
-            player = updatedPlayer,
-            logs = listOf("🧪 ${player.name} erhält einen Heiltrank! $oldPotions -> $newPotions")
+            player = player.copy(inventory = updatedInventory),
+            logs = listOf("🧪 ${player.name} \uD83D\uDDE1\uFE0F hat ${weapon.article} ${weapon.name} gefunden! Angriff +${weapon.damage} nach Auswahl!!")
+
         )
     }
 
-    fun dropBigPotion(
+    fun dropArmor(
         player: Player,
-        healBigPotion: Item
+        armor: Item
     ): DropResult {
-        val oldPotions =
-            player.inventory.items.find { it.name == healBigPotion.name }?.amount ?: 0
-
-        val newPotions = (oldPotions + 1).coerceAtMost(10)
-
-        if (oldPotions >= 10) {
+        val weaponName = player.inventory.items.find {
+            it.name == armor.name
+        }
+        if (weaponName != null) {
             return DropResult(
                 player = player,
-                logs = listOf("🧪 Großer Heiltrank Inventar (10) voll, Trank kann nicht genommen werden!")
+                logs = listOf("Du hast schon ${armor.article} ${armor.name}! Rüstung kann nicht genommen werden")
             )
         }
 
-        val newItems =
-            player.inventory.items.filter { it.name != healBigPotion.name } +
-                    healBigPotion.copy(amount = newPotions)
+        val newItems = player.inventory.items + armor
 
-        val updatedInventory = player.inventory.copy(items = newItems)
-
-        val updatedPlayer = player.copy(inventory = updatedInventory)
+        val updatedInventory =
+            player.inventory.copy(
+                items = newItems
+            )
 
         return DropResult(
-            player = updatedPlayer,
-            logs = listOf("🧪 ${player.name} erhält einen großen Heiltrank! $oldPotions -> $newPotions")
+            player = player.copy(inventory = updatedInventory),
+            logs = listOf("🧪 ${player.name} \uD83D\uDDE1\uFE0F hat ${armor.article} ${armor.name} gefunden! Verteidigung +${armor.defense} nach Auswahl!!")
         )
     }
-}
+
+    }

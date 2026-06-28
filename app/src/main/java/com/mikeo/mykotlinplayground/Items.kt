@@ -4,6 +4,7 @@ package com.mikeo.mykotlinplayground
 object GameItems {
     val woodWeapon = Item(
         name = ItemNamen.HOLZSCHWERT,
+        article = "ein",
         type = ItemType.WEAPON,
         description = "Schaden +15",
         amount = 1,
@@ -13,6 +14,7 @@ object GameItems {
     )
     val ironWeapon = Item(
         name = ItemNamen.EISENSCHWERT,
+        article = "ein",
         type = ItemType.WEAPON,
         description = "Schaden +35",
         amount = 1,
@@ -23,6 +25,7 @@ object GameItems {
 
     val silverWeapon = Item(
         name = ItemNamen.SILBERSCHWERT,
+        article = "ein",
         type = ItemType.WEAPON,
         description = "Schaden +50",
         amount = 1,
@@ -33,6 +36,7 @@ object GameItems {
 
     val goldenWeapon = Item(
         name = ItemNamen.GOLDENESSCHWERT,
+        article = "ein",
         type = ItemType.WEAPON,
         description = "Schaden +75",
         amount = 1,
@@ -44,6 +48,7 @@ object GameItems {
 
     val diamondWeapon = Item(
         name = ItemNamen.DIAMANTENSCHWERT,
+        article = "ein",
         type = ItemType.WEAPON,
         description = "Schaden +100",
         amount = 1,
@@ -53,6 +58,7 @@ object GameItems {
     )
     val simpleArmor = Item(
         name = ItemNamen.EINFACHE_RÜSTUNG,
+        article = "eine",
         type = ItemType.ARMOR,
         description = "Verteidigung +10",
         amount = 1,
@@ -63,6 +69,7 @@ object GameItems {
 
     val ironArmor = Item(
         name = ItemNamen.EISEN_RÜSTUNG,
+        article = "eine",
         type = ItemType.ARMOR,
         description = "Verteidigung +20",
         amount = 1,
@@ -72,6 +79,7 @@ object GameItems {
     )
     val healPotion = Item(
         name = ItemNamen.HEILTRANK,
+        article = "ein",
         type = ItemType.POTION,
         description = "Heilung +20",
         amount = 1,
@@ -81,6 +89,7 @@ object GameItems {
     )
     val healBigPotion = Item(
         name = ItemNamen.GROSSER_HEILTRANK,
+        article = "einen",
         description = "Heilung +25",
         amount = 1,
         type = ItemType.POTION,
