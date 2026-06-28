@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -41,6 +43,7 @@ fun InventoryScreen(
 
     val player by viewModel.player.collectAsState()
     val items = player.inventory.items
+    val scrollState = rememberScrollState()
 
     Column(
         modifier = Modifier
@@ -48,6 +51,7 @@ fun InventoryScreen(
             .padding(8.dp)
             .clip(RoundedCornerShape(48.dp))
             .background(Color(0xFF26C6DA))
+            .verticalScroll(scrollState)
             .padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally

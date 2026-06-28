@@ -150,8 +150,11 @@ class GameViewModel : ViewModel() {
             is GameEvent.EquipWeapon -> {
                 applyEvent(event)
 
-                val weaponDamage = event.weapon.damage
-                addLog("⚔️ Waffe: ${_player.value.equippedWeapon} mit ${_player.value.attack + weaponDamage} Attack")
+                val totalAttack = _player.value.attack + (_player.value.equippedWeapon?.damage ?: 0)
+
+                addLog(
+                    "⚔️ ${_player.value.equippedWeapon?.name} ausgerüstet! Angriff: $totalAttack"
+                )
             }
 
             is GameEvent.EquipArmor -> {
