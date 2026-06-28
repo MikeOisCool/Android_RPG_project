@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun StartScreen(
@@ -62,4 +63,18 @@ fun StartScreen(
             onClick = { onNameEntered(name)}
         )
     }
+}
+
+@Preview(
+    name = "Start Screen",
+    showBackground = true,
+    widthDp = 400,
+    heightDp = 800
+)
+@Composable
+fun StartScreenPreview() {
+    StartScreen(
+        startName = "Felix",
+        onNameEntered = {}
+    )
 }

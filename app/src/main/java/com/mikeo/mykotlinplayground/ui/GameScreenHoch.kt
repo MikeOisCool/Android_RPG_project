@@ -25,6 +25,8 @@ import androidx.compose.ui.unit.sp
 import com.mikeo.mykotlinplayground.GameEvent
 import com.mikeo.mykotlinplayground.GameViewModel
 import com.mikeo.mykotlinplayground.ItemNamen
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.ui.tooling.preview.Preview
 
 
 @Composable
@@ -170,4 +172,17 @@ fun GameScreenHoch(
             )
         }
     }
+}
+
+@Preview(
+    name = "Game Screen Hoch",
+    showBackground = true)
+@Composable
+fun GameScreenHochPreview() {
+    GameScreenHoch(
+        viewModel = GameViewModel(),
+        listState = rememberLazyListState(),
+        onGameOver = {},
+        onInventory = {}
+    )
 }

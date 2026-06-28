@@ -1,5 +1,6 @@
 package com.mikeo.mykotlinplayground
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
@@ -58,6 +59,7 @@ class GameViewModel : ViewModel() {
                 if (_player.value.isDead) {
                     addLog("\uD83D\uDC80 ${_player.value.name} ist gestorben")
                     addLog("${_player.value.name} hat das Level ${_player.value.level} erreicht und hat ${_player.value.xp} XP! Sein Gold: ${_player.value.gold}")
+
                 }
             }
 
@@ -238,14 +240,9 @@ class GameViewModel : ViewModel() {
                 "👹 ${updatedEnemy.name} schlägt zurück für ${enemyDamage.first} Schaden!"
             )
         }
-        applyEvent(
+        onEvent(
             GameEvent.TakeDamage(enemyDamage.first)
         )
-        if (_player.value.isDead) {
-            addLog("💀 ${_player.value.name} ist gestorben!")
-            return
-        }
-
     }
 
     private fun playerAttacksEnemy(currentEnemy: Enemy): Enemy {
@@ -299,12 +296,17 @@ class GameViewModel : ViewModel() {
 
         if (chance(potionsDropChance)) dropPotion(GameItems.healPotion)
         if (chance(armorDropChance)) dropArmor(GameItems.simpleArmor)
+        if (_player.value.level > 3) if (chance(armorDropChance)) dropArmor(GameItems.ironArmor)
 
         if (chance(healDropChance)) healDrop()
         if (_player.value.level > 2 && _player.value.level < 5) if (chance(weaponDropChance)) dropWeapon(
             GameItems.woodWeapon
         )
-        if (_player.value.level > 3) if (chance(weaponDropChance)) dropWeapon(GameItems.ironWeapon)
+        if (_player.value.level > 3 && _player.value.level < 6) if (chance(weaponDropChance)) dropWeapon(GameItems.ironWeapon)
+        if (_player.value.level > 5 && _player.value.level < 7) if (chance(weaponDropChance)) dropWeapon(GameItems.silverWeapon)
+
+        if (_player.value.level > 7 && _player.value.level < 8) if (chance(weaponDropChance)) dropWeapon(GameItems.goldenWeapon)
+        if (_player.value.level > 8 && _player.value.level < 10) if (chance(weaponDropChance)) dropWeapon(GameItems.diamondWeapon)
 
         val levelVorher = _player.value.level
 
@@ -481,6 +483,7 @@ class GameViewModel : ViewModel() {
 
     private fun addLog(message: String) {
         _log.value = _log.value + message
+        Log.d("LOG", "Loggröße: ${_log.value.size} | letzter Eintrag: $message")
     }
 
     private fun applyEvent(event: GameEvent) {

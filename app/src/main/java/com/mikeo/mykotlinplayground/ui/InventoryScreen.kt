@@ -19,12 +19,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mikeo.mykotlinplayground.GameEvent
 import com.mikeo.mykotlinplayground.GameViewModel
-import com.mikeo.mykotlinplayground.ItemNamen
 import com.mikeo.mykotlinplayground.ItemType
+import com.mikeo.mykotlinplayground.calculateItemHeal
+
+/*
+❤️ Heiltränke skalieren mit dem Level.
+⚔️ Waffen haben feste Werte (Holzschwert +15, Eisenschwert +30 usw.).
+🛡️ Rüstungen haben feste Verteidigungswerte.
+*/
 
 @Composable
 fun InventoryScreen(
@@ -74,7 +81,14 @@ fun InventoryScreen(
         } else {
 
             potions.forEach { item ->
-                Text(text = "${item.name} x${item.amount}")
+                Text(
+                    text = "${item.name} x${item.amount} | Heilung +${
+                        calculateItemHeal(
+                            item.heal,
+                            player.level
+                        )
+                    }"
+                )
             }
         }
 
@@ -92,7 +106,7 @@ fun InventoryScreen(
         } else {
 
             armor.forEach { item ->
-                Text(text = "${item.name} x${item.amount}")
+                Text(text = "${item.name} x${item.amount} | Verteidigung +${item.defense}")
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -124,7 +138,7 @@ fun InventoryScreen(
         } else {
 
             weapons.forEach { item ->
-                Text(text = "${item.name} x${item.amount}")
+                Text(text = "${item.name} x${item.amount} | Schaden +${item.damage}")
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -155,6 +169,18 @@ fun InventoryScreen(
             onClick = { onBackToGame() }
         )
     }
+}
+
+@Preview(
+    name = "Inventory Screen",
+    showBackground = true
+)
+@Composable
+fun InventoryScreenPreview() {
+    InventoryScreen(
+        viewModel = GameViewModel(),
+        onBackToGame = {}
+    )
 }
 
 

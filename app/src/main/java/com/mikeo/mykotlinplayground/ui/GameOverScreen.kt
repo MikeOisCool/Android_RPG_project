@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,8 +18,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mikeo.mykotlinplayground.Inventory
 import com.mikeo.mykotlinplayground.Player
 
 
@@ -97,4 +100,36 @@ fun GameOverScreen(
         )
         GameLog(log = log, listState = listState, textColor = Color.White)
     }
+}
+
+
+@Preview(
+    name = "Game Over Screen",
+    showBackground = true,
+    widthDp = 400,
+    heightDp = 800
+)
+@Composable
+fun GameOverScreenPreview() {
+    GameOverScreen(
+        player = Player(
+            name = "Felix",
+            hp = 0,
+            maxHp = 100,
+            attack = 10,
+            inventory = Inventory(emptyList()),
+            gold = 120,
+            isDead = true,
+            level = 3
+        ),
+        log = listOf(
+            "👹 Ork schlägt zurück für 18 Schaden!",
+            "💀 Felix hat 0 HP übrig",
+            "💀 Felix ist gestorben",
+            "Felix hat das Level 3 erreicht und hat 40 XP! Sein Gold: 120"
+        ),
+        listState = rememberLazyListState(),
+        onRestart = {},
+        onInventory = {}
+    )
 }

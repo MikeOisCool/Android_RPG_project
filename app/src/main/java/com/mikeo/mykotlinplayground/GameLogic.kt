@@ -51,10 +51,10 @@ fun handleEvent(
         is GameEvent.UsePotion -> {
             val potion =
                 player.inventory.items.find { it.name == ItemNamen.HEILTRANK }
-            if (potion == null ||potion.amount <= 0) {
+            if (potion == null || potion.amount <= 0) {
                 player
             } else {
-                val healAmount = calculateItemHeal(potion.heal,player.level)
+                val healAmount = calculateItemHeal(potion.heal, player.level)
                 val newHp = (player.hp + healAmount).coerceAtMost(player.maxHp)
 
                 val newItems = player.inventory.items.map { item ->
@@ -128,6 +128,7 @@ fun handleEvent(
                 player
             }
         }
+
         is GameEvent.Flee -> {
 
             val fleeCost = 20 + (player.level - 1) * 10
@@ -206,7 +207,6 @@ fun chance(
     chance: Int
 ): Boolean {
     val roll = (1..100).random()
-    Log.d("GameLogic", "Würfle $roll auf $chance%")
     return roll <= chance
 }
 
@@ -216,7 +216,6 @@ fun calculateItemHeal(
 ): Int {
     return baseHeal + (level - 1) * 7
 }
-
 
 
 fun createScaledEnemy(
