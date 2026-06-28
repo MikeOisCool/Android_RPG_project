@@ -31,20 +31,7 @@ class GameViewModel : ViewModel() {
         level = 1
     )
 
-    val woodWeapon = Item(
-        name = ItemNamen.HOLZSCHWERT,
-        type = ItemType.WEAPON,
-        description = "Schaden + 15",
-        amount = 1,
-        damage = 15
-    )
-    val ironWeapon = Item(
-        name = ItemNamen.EISENSCHWERT,
-        type = ItemType.WEAPON,
-        description = "Schaden + 35",
-        amount = 1,
-        damage = 35
-    )
+
 
 
     private val _player = MutableStateFlow(initialPlayer)
@@ -168,7 +155,9 @@ class GameViewModel : ViewModel() {
 
             is GameEvent.EquipWeapon -> {
                 applyEvent(event)
-                addLog("⚔️ Waffe: ${_player.value.equippedWeapon} mit ${_player.value.attack} Attack")
+
+                val weaponDamage = event.weapon.damage
+                addLog("⚔️ Waffe: ${_player.value.equippedWeapon} mit ${_player.value.attack+weaponDamage} Attack")
             }
 
 
@@ -264,18 +253,12 @@ class GameViewModel : ViewModel() {
         val playerCritChance = 20 /* 20 Prozent Wahrscheinlichkeit */
         val critMultiplier = 2
 
-        val weapon = player.value.inventory.items.find{
-            it.name == player.value.equippedWeapon
-        }
-
-        val weaponbonus = weapon?.damage ?:0
+        val weaponbonus = _player.value.equippedWeapon?.damage ?:0
         val playerDamage = calculateDamage(
             _player.value.attack + weaponbonus,
             playerCritChance,
             critMultiplier
         )
-
-
 
         if (playerDamage.second) {
             addLog("💥 KRITISCHER TREFFER! ${_player.value.name} macht ${playerDamage.first} Schaden!")
@@ -316,8 +299,8 @@ class GameViewModel : ViewModel() {
         if (chance(potionsDropChance)) dropPotion()
 
         if (chance(healDropChance)) healDrop()
-        if (_player.value.level > 2) if (chance(weaponDropChance)) dropWeapon(woodWeapon)
-        if (_player.value.level > 3) if (chance(weaponDropChance)) dropWeapon(ironWeapon)
+        if (_player.value.level > 2) if (chance(weaponDropChance)) dropWeapon(GameItems.woodWeapon)
+        if (_player.value.level > 3) if (chance(weaponDropChance)) dropWeapon(GameItems.ironWeapon)
 
         val levelVorher = _player.value.level
 

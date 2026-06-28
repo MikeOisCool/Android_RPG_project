@@ -6,7 +6,7 @@ data class Player(
     val hp: Int,
     val maxHp: Int = 100,
     val attack: Int = 10,
-    val equippedWeapon: String? = null,
+    val equippedWeapon: Item? = null,
     val gold: Int,
     val isDead: Boolean,
     val level: Int,

@@ -107,12 +107,10 @@ fun handleEvent(
         }
 
         is GameEvent.EquipWeapon -> {
-            val hasWeapon = player.inventory.items.any {
-                it.name == event.weaponName
-            }
+            val hasWeapon = player.inventory.items.contains(event.weapon)
             if (hasWeapon) {
                 player.copy(
-                    equippedWeapon = event.weaponName
+                    equippedWeapon = event.weapon
                 )
             } else {
                 player

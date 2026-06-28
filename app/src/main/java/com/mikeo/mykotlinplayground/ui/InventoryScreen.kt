@@ -94,14 +94,14 @@ fun InventoryScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 GameButtonHoch(
-                    text = if (player.equippedWeapon == item.name) "Ausgerüstet" else "Ausrüsten",
+                    text = if (player.equippedWeapon?.name == item.name) "Ausgerüstet" else "Ausrüsten",
                     fontSize = 18.sp,
                     modifier = Modifier
                         .fillMaxWidth(0.7f)
                         .height(50.dp),
                     onClick = {
-                        if (player.equippedWeapon != item.name) {
-                            viewModel.onEvent(GameEvent.EquipWeapon(item.name))
+                        if (player.equippedWeapon?.name != item.name) {
+                            viewModel.onEvent(GameEvent.EquipWeapon(item))
                         }
 
                     }
