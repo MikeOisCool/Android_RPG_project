@@ -4,8 +4,7 @@ import android.util.Log
 import com.mikeo.mykotlinplayground.ItemNamen
 
 fun handleEvent(
-    player: Player,
-    event: GameEvent
+    player: Player, event: GameEvent
 ): Player {
 
     return when (event) {
@@ -16,21 +15,15 @@ fun handleEvent(
             val goldCost = if (player.gold >= 5) 5 else 0
 
             player.copy(
-                hp = newHp,
-                gold = player.gold - goldCost,
-                isDead = newHp <= 0
+                hp = newHp, gold = player.gold - goldCost, isDead = newHp <= 0
             )
         }
 
         is GameEvent.AddGold -> {
 
-            if (player.gold >= 1000) {
-                player
-            } else {
-                player.copy(
-                    gold = player.gold + event.amount
-                )
-            }
+            player.copy(
+                gold = player.gold + event.amount
+            )
         }
 
         is GameEvent.Heal -> {
@@ -42,15 +35,13 @@ fun handleEvent(
 
                 player.copy(
 
-                    hp = newHp,
-                    gold = player.gold - event.amount
+                    hp = newHp, gold = player.gold - event.amount
                 )
             }
         }
 
         is GameEvent.UsePotion -> {
-            val potion =
-                player.inventory.items.find { it.name == ItemNamen.HEILTRANK }
+            val potion = player.inventory.items.find { it.name == ItemNamen.HEILTRANK }
             if (potion == null || potion.amount <= 0) {
                 player
             } else {
@@ -70,8 +61,7 @@ fun handleEvent(
                     items = newItems
                 )
                 player.copy(
-                    hp = newHp,
-                    inventory = updateInventory
+                    hp = newHp, inventory = updateInventory
                 )
 
 
@@ -79,8 +69,7 @@ fun handleEvent(
         }
 
         is GameEvent.UseBigPotion -> {
-            val potionBig =
-                player.inventory.items.find { it.name == ItemNamen.GROSSER_HEILTRANK }
+            val potionBig = player.inventory.items.find { it.name == ItemNamen.GROSSER_HEILTRANK }
             if (potionBig == null || potionBig.amount <= 0) {
                 player
             } else {
@@ -99,8 +88,7 @@ fun handleEvent(
                     items = newItems
                 )
                 player.copy(
-                    hp = newHp,
-                    inventory = updateInventory
+                    hp = newHp, inventory = updateInventory
                 )
 
 
@@ -177,12 +165,11 @@ fun handleEvent(
 }
 
 fun damageEnemy(
-    enemy: Enemy,
-    damage: Int
+    enemy: Enemy, damage: Int
 ): Enemy {
-
+    val finalDamage = (damage - enemy.defense).coerceAtLeast(0)
     return enemy.copy(
-        hp = (enemy.hp - damage).coerceAtLeast(0)
+        hp = (enemy.hp - finalDamage).coerceAtLeast(0)
     )
 }
 
@@ -195,8 +182,7 @@ fun calculateDamage(
     val criticalHit = chance(chance)
     return if (criticalHit) {
         Pair(
-            baseDamage * critMultiplier,
-            true
+            baseDamage * critMultiplier, true
         )
     } else {
         Pair(baseDamage, false)
@@ -211,22 +197,21 @@ fun chance(
 }
 
 fun calculateItemHeal(
-    baseHeal: Int,
-    level: Int
+    baseHeal: Int, level: Int
 ): Int {
     return baseHeal + (level - 1) * 7
 }
 
 
 fun createScaledEnemy(
-    baseEnemy: Enemy,
-    playerLevel: Int
+    baseEnemy: Enemy, playerLevel: Int
 ): Enemy {
     return baseEnemy.copy(
         level = playerLevel,
         hp = baseEnemy.hp + (playerLevel - 1) * 10,
         maxHp = baseEnemy.maxHp + (playerLevel - 1) * 10,
-        damage = baseEnemy.damage + (playerLevel - 1) * 2,
+        attack = baseEnemy.attack + (playerLevel - 1) * 2,
+        defense = baseEnemy.defense + (playerLevel - 1),
         goldReward = baseEnemy.goldReward + (playerLevel - 1) * 5,
         xpReward = baseEnemy.xpReward + (playerLevel - 1) * 10
 

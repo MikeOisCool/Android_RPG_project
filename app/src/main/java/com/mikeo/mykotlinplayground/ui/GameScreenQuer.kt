@@ -168,7 +168,9 @@ fun GameScreenQuer(
                     Text("Gegner: ${enemy.name}")
                     Text("Level: ${enemy.level}")
                     Text("HP: ${enemy.hp}")
-                    Text("Schaden: ${enemy.damage}")
+                    Text("ATK: ${enemy.attack}")
+                    Text("DEF: ${enemy.defense}")
+
 
                 }
 

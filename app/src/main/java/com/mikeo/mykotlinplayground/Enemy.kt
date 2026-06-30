@@ -5,7 +5,8 @@ data class Enemy(
     val hp: Int,
     val maxHp: Int,
     val level: Int,
-    val damage: Int,
+    val attack: Int,
+    val defense: Int,
     val goldReward: Int,
     val xpReward: Int
 )

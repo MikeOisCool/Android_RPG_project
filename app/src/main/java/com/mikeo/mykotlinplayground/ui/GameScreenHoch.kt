@@ -182,6 +182,14 @@ fun GameScreenHoch(
             )
             Text("Gegner: ${enemy.name}")
             Text("Level: ${enemy.level}")
+            Row {
+                Text("ATK:", modifier = Modifier.width(60.dp))
+                Text("${enemy.attack}")
+            }
+            Row {
+                Text("DEF:", modifier = Modifier.width(60.dp))
+                Text("${enemy.defense}")
+            }
             Text("HP: ${enemy.hp}")
 
             HpBar(

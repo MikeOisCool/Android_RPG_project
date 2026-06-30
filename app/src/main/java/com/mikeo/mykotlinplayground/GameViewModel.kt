@@ -3,7 +3,6 @@ package com.mikeo.mykotlinplayground
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mikeo.mykotlinplayground.DropManager.dropStackableItem
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -230,8 +229,8 @@ class GameViewModel : ViewModel() {
             return
 
         }
-        val defens = _player.value.equippedArmor?.defense ?: 0
-        val baseDamage = (updatedEnemy.damage - defens).coerceAtLeast(0)
+        val defense = _player.value.equippedArmor?.defense ?: 0
+        val baseDamage = (updatedEnemy.attack - defense).coerceAtLeast(0)
         val enemyDamage = calculateDamage(
             baseDamage,
             enemyCritChance,
@@ -297,62 +296,49 @@ class GameViewModel : ViewModel() {
         addLog("🏆 ${enemy.name} wurde besiegt!")
 
         if (chance(bigPotionDropChance)) applyDrop(
-            DropManager.dropStackableItem(
-                _player.value,
-                GameItems.healBigPotion
-            )
+            GameItems.healBigPotion
         )
 
         if (chance(potionsDropChance)) applyDrop(
-            DropManager.dropStackableItem(
-                _player.value,
-                GameItems.healPotion
-            )
+            GameItems.healPotion
         )
-        if (chance(armorDropChance)) applyDrop(
-            DropManager.dropArmor(
-                _player.value,
-                GameItems.simpleArmor
-            )
+        if (_player.value.level > 1 && _player.value.level < 5) if (chance(armorDropChance)) applyDrop(
+            GameItems.simpleArmor
         )
+
         if (_player.value.level > 3) if (chance(armorDropChance)) applyDrop(
-            DropManager.dropArmor(
-                _player.value,
-                GameItems.ironArmor
-            )
+            GameItems.ironArmor
         )
 
         if (chance(healDropChance)) healDrop()
-        if (_player.value.level > 2 && _player.value.level < 5) if (chance(weaponDropChance)) applyDrop(
-            DropManager.dropWeapon(
-                _player.value,
-                GameItems.woodWeapon
-            )
-        )
-        if (_player.value.level > 3 && _player.value.level < 6) if (chance(weaponDropChance)) applyDrop(
-            DropManager.dropWeapon(
-                _player.value,
-                GameItems.ironWeapon
-            )
-        )
-        if (_player.value.level > 5 && _player.value.level < 7) if (chance(weaponDropChance)) applyDrop(
-            DropManager.dropWeapon(
-                _player.value,
-                GameItems.silverWeapon
-            )
-        )
 
-        if (_player.value.level > 7 && _player.value.level < 8) if (chance(weaponDropChance)) applyDrop(
-            DropManager.dropWeapon(
-                _player.value,
-                GameItems.goldenWeapon
-            )
-        )
-        if (_player.value.level > 8 && _player.value.level < 10) if (chance(weaponDropChance)) applyDrop(DropManager.dropWeapon(
-            _player.value,
-            GameItems.diamondWeapon
-        )
-        )
+        val weaponDrop = when (_player.value.level) {
+            in 1..2 -> GameItems.woodWeapon
+            in 3..4 -> GameItems.ironWeapon
+            in 5..6 -> GameItems.silverWeapon
+            in 7..8 -> GameItems.goldenWeapon
+            in 9..10 -> GameItems.diamondWeapon
+            else -> null
+        }
+
+        val armorDrop = when (_player.value.level) {
+            in 0..3 -> GameItems.simpleArmor
+            in 4..5 -> GameItems.ironArmor
+            else -> null
+        }
+
+        weaponDrop?.let {
+            if (chance(weaponDropChance)) {
+                applyDrop(weaponDrop)
+            }
+        }
+        armorDrop?.let {
+            if (chance(armorDropChance)) {
+                applyDrop(armorDrop)
+            }
+        }
+
+
 
         val levelVorher = _player.value.level
 
@@ -416,12 +402,19 @@ class GameViewModel : ViewModel() {
     }
 
 
-    private fun applyDrop(result: DropResult) {
+    private fun applyDrop(item: Item) {
+
+        val result = when (item.type) {
+            ItemType.WEAPON, ItemType.ARMOR -> DropManager.dropUniqueItem(_player.value, item)
+            ItemType.POTION -> DropManager.dropStackableItem(_player.value, item)
+        }
         _player.value = result.player
+
 
         result.logs.forEach {
             addLog(it)
         }
+
     }
 
     private fun addLog(message: String) {
