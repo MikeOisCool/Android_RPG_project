@@ -9,4 +9,8 @@ data class Item(
     val heal: Int,
     val damage: Int,
     val defense: Int
-)
+){
+    override fun toString(): String {
+        return "$article $name"
+    }
+}

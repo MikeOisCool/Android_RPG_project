@@ -287,59 +287,15 @@ class GameViewModel : ViewModel() {
     }
 
     private fun handleEnemyDefeated(enemy: Enemy) {
-
-        val weaponDropChance = 80
-        val armorDropChance = 50
-        val healDropChance = 30
-        val potionsDropChance = 30
-        val bigPotionDropChance = 20
         addLog("🏆 ${enemy.name} wurde besiegt!")
 
-        if (chance(bigPotionDropChance)) applyDrop(
-            GameItems.healBigPotion
-        )
+        handlePotionDrops()
+        handleEquipmentDrops()
+        rewardPlayer(enemy)
+        spawnNextEnemy()
+    }
 
-        if (chance(potionsDropChance)) applyDrop(
-            GameItems.healPotion
-        )
-        if (_player.value.level > 1 && _player.value.level < 5) if (chance(armorDropChance)) applyDrop(
-            GameItems.simpleArmor
-        )
-
-        if (_player.value.level > 3) if (chance(armorDropChance)) applyDrop(
-            GameItems.ironArmor
-        )
-
-        if (chance(healDropChance)) healDrop()
-
-        val weaponDrop = when (_player.value.level) {
-            in 1..2 -> GameItems.woodWeapon
-            in 3..4 -> GameItems.ironWeapon
-            in 5..6 -> GameItems.silverWeapon
-            in 7..8 -> GameItems.goldenWeapon
-            in 9..10 -> GameItems.diamondWeapon
-            else -> null
-        }
-
-        val armorDrop = when (_player.value.level) {
-            in 0..3 -> GameItems.simpleArmor
-            in 4..5 -> GameItems.ironArmor
-            else -> null
-        }
-
-        weaponDrop?.let {
-            if (chance(weaponDropChance)) {
-                applyDrop(weaponDrop)
-            }
-        }
-        armorDrop?.let {
-            if (chance(armorDropChance)) {
-                applyDrop(armorDrop)
-            }
-        }
-
-
-
+    private fun rewardPlayer(enemy: Enemy) {
         val levelVorher = _player.value.level
 
         applyEvent(GameEvent.AddGold(enemy.goldReward))
@@ -372,7 +328,56 @@ class GameViewModel : ViewModel() {
             )
         }
 
-        spawnNextEnemy()
+    }
+
+    private fun handleEquipmentDrops() {
+
+        val weaponDropChance = 80
+        val armorDropChance = 50
+
+        val weaponDrop = when (_player.value.level) {
+            in 1..2 -> GameItems.woodWeapon
+            in 3..4 -> GameItems.ironWeapon
+            in 5..6 -> GameItems.silverWeapon
+            in 7..8 -> GameItems.goldenWeapon
+            in 9..10 -> GameItems.diamondWeapon
+            else -> null
+        }
+
+        val armorDrop = when (_player.value.level) {
+            in 0..3 -> GameItems.simpleArmor
+            in 4..5 -> GameItems.ironArmor
+            else -> null
+        }
+
+        weaponDrop?.let { item ->
+            if (chance(weaponDropChance)) {
+                applyDrop(item)
+            }
+        }
+        armorDrop?.let { item ->
+            if (chance(armorDropChance)) {
+                applyDrop(item)
+            }
+        }
+
+
+    }
+
+    private fun handlePotionDrops() {
+
+        val healDropChance = 30
+        val potionsDropChance = 30
+        val bigPotionDropChance = 20
+        if (chance(bigPotionDropChance)) applyDrop(
+            GameItems.healBigPotion
+        )
+
+        if (chance(potionsDropChance)) applyDrop(
+            GameItems.healPotion
+        )
+
+        if (chance(healDropChance)) healDrop()
     }
 
     private fun spawnNextEnemy() {

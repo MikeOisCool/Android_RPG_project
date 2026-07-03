@@ -12,7 +12,7 @@ object DropManager {
         if (oldAmount >= 10) {
             return DropResult(
                 player = player,
-                logs = listOf("🧪 ${item.name} Inventar (10) voll, Trank kann nicht genommen werden!")
+                logs = listOf("🧪 ${item.name} Inventar (10) ist voll, Trank kann nicht genommen werden!")
             )
         }
 
@@ -25,61 +25,11 @@ object DropManager {
 
         return DropResult(
             player = updatedPlayer,
-            logs = listOf("🧪 ${player.name} erhält ${item.article} ${item.name}! $oldAmount -> $newAmount")
+            logs = listOf("🧪 ${player.name} erhält ${item}! $oldAmount -> $newAmount")
         )
 
     }
 
-    fun dropWeapon(
-        player: Player, weapon: Item
-    ): DropResult {
-        val weaponName = player.inventory.items.find {
-            it.name == weapon.name
-        }
-        if (weaponName != null) {
-            return DropResult(
-                player = player,
-                logs = listOf("Du hast schon ${weapon.article} ${weapon.name}! Waffe kann nicht genommen werden")
-            )
-        }
-
-        val newItems = player.inventory.items + weapon
-
-        val updatedInventory = player.inventory.copy(
-            items = newItems
-        )
-
-        return DropResult(
-            player = player.copy(inventory = updatedInventory),
-            logs = listOf("🧪 ${player.name} \uD83D\uDDE1\uFE0F hat ${weapon.article} ${weapon.name} gefunden! Angriff +${weapon.damage} nach Auswahl!!")
-
-        )
-    }
-
-    fun dropArmor(
-        player: Player, armor: Item
-    ): DropResult {
-        val armorName = player.inventory.items.find {
-            it.name == armor.name
-        }
-        if (armorName != null) {
-            return DropResult(
-                player = player,
-                logs = listOf("Du hast schon ${armor.article} ${armor.name}! Rüstung kann nicht genommen werden")
-            )
-        }
-
-        val newItems = player.inventory.items + armor
-
-        val updatedInventory = player.inventory.copy(
-            items = newItems
-        )
-
-        return DropResult(
-            player = player.copy(inventory = updatedInventory),
-            logs = listOf("🧪 ${player.name} \uD83D\uDDE1\uFE0F hat ${armor.article} ${armor.name} gefunden! Verteidigung +${armor.defense} nach Auswahl!!")
-        )
-    }
 
     fun dropUniqueItem(player: Player, item: Item): DropResult {
         val existingItem = player.inventory.items.find { it.name == item.name }
@@ -99,8 +49,8 @@ object DropManager {
         val newItems = player.inventory.items + item
 
         val logMessage = when (item.type) {
-            ItemType.WEAPON -> "\uD83D\uDDE1\uFE0F${player.name}  hat ${item.article} ${item.name} gefunden! Angriff +${item.damage} nach Auswahl!!"
-            ItemType.ARMOR -> "\uD83D\uDEE1\uFE0F ${player.name} hat ${item.article} ${item.name} gefunden! Verteidigung +${item.defense} nach Auswahl!!"
+            ItemType.WEAPON -> "\uD83D\uDDE1\uFE0F${player.name}  hat ${item.toString()} gefunden! Angriff +${item.damage} nach Auswahl!!"
+            ItemType.ARMOR -> "\uD83D\uDEE1\uFE0F ${player.name} hat $item gefunden! Verteidigung +${item.defense} nach Auswahl!!"
             ItemType.POTION -> error("POTION darf nicht an dropUniqueItem übergeben werden")
         }
 

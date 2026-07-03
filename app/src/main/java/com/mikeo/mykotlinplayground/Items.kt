@@ -4,7 +4,6 @@ package com.mikeo.mykotlinplayground
 object GameItems {
     val woodWeapon = Item(
         name = ItemNamen.HOLZSCHWERT,
-        article = "ein",
         type = ItemType.WEAPON,
         description = "Schaden +15",
         amount = 1,
@@ -14,7 +13,6 @@ object GameItems {
     )
     val ironWeapon = Item(
         name = ItemNamen.EISENSCHWERT,
-        article = "ein",
         type = ItemType.WEAPON,
         description = "Schaden +35",
         amount = 1,
@@ -25,7 +23,6 @@ object GameItems {
 
     val silverWeapon = Item(
         name = ItemNamen.SILBERSCHWERT,
-        article = "ein",
         type = ItemType.WEAPON,
         description = "Schaden +50",
         amount = 1,
@@ -36,7 +33,6 @@ object GameItems {
 
     val goldenWeapon = Item(
         name = ItemNamen.GOLDENESSCHWERT,
-        article = "ein",
         type = ItemType.WEAPON,
         description = "Schaden +75",
         amount = 1,
@@ -48,7 +44,6 @@ object GameItems {
 
     val diamondWeapon = Item(
         name = ItemNamen.DIAMANTENSCHWERT,
-        article = "ein",
         type = ItemType.WEAPON,
         description = "Schaden +100",
         amount = 1,
@@ -79,7 +74,7 @@ object GameItems {
     )
     val healPotion = Item(
         name = ItemNamen.HEILTRANK,
-        article = "ein",
+        article = "einen",
         type = ItemType.POTION,
         description = "Heilung +20",
         amount = 1,
