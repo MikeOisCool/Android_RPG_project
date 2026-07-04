@@ -75,15 +75,11 @@ fun InventoryScreen(
             it.type == ItemType.ARMOR && it.amount > 0
         }
 
-        Text("Tränke", fontSize = 20.sp)
-
-        if (potions.isEmpty()) {
-            Text(
-                text = "Es sind keine Tränke im Inventar",
-                fontSize = 12.sp
-            )
-        } else {
-
+        InventorySection(
+            title = "Tränke",
+            emptyText = "Es sind keine Tränke im Inventar",
+            isEmpty = potions.isEmpty()
+        ){
             potions.forEach { item ->
                 Text(
                     text = "${item.name} x${item.amount} | Heilung +${
@@ -98,69 +94,43 @@ fun InventoryScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Text("Rüstung", fontSize = 20.sp)
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        if (armor.isEmpty()) {
-            Text(
-                text = "Es sind keine Rüstungen im Inventar",
-                fontSize = 12.sp
-            )
-        } else {
+        InventorySection(
+            title = "Rüstung",
+            emptyText = "Es sind keine Rüstungen im Inventar",
+            isEmpty = armor.isEmpty()
+        ) {
 
             armor.forEach { item ->
-                Text(text = "${item.name} x${item.amount} | Verteidigung +${item.defense}")
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                GameButtonHoch(
-                    text = if (player.equippedArmor?.name == item.name) "Rüstung ausgerüstet" else "Ausrüsten",
-                    fontSize = 18.sp,
-                    modifier = Modifier
-                        .fillMaxWidth(0.7f)
-                        .height(50.dp),
-                    onClick = {
-                        if (player.equippedArmor?.name != item.name) {
-                            viewModel.onEvent(GameEvent.EquipArmor(item))
-                        }
+                EquipItem(
+                    nameText = "${item.name} x${item.amount} | Verteidigung +${item.defense}",
+                    isEquipped = player.equippedArmor?.name == item.name,
+                    isEquippedText = "Rüstung ausgerüstet",
+                    onEquip = {
+                        viewModel.onEvent(GameEvent.EquipArmor(item))
                     }
                 )
-                Spacer(modifier = Modifier.height(8.dp))
             }
 
         }
-        Text("Waffen", fontSize = 20.sp)
 
-        Spacer(modifier = Modifier.height(8.dp))
 
-        if (weapons.isEmpty()) {
-            Text(
-                text = "Es sind keine Waffen im Inventar",
-                fontSize = 12.sp
-            )
-        } else {
-
+        InventorySection(
+            title = "Waffen",
+            emptyText = "Es sind keine Waffen im Inventar",
+            isEmpty = weapons.isEmpty()
+        ) {
             weapons.forEach { item ->
-                Text(text = "${item.name} x${item.amount} | Schaden +${item.damage}")
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                GameButtonHoch(
-                    text = if (player.equippedWeapon?.name == item.name) "Waffe ausgerüstet" else "Ausrüsten",
-                    fontSize = 18.sp,
-                    modifier = Modifier
-                        .fillMaxWidth(0.7f)
-                        .height(50.dp),
-                    onClick = {
-                        if (player.equippedWeapon?.name != item.name) {
-                            viewModel.onEvent(GameEvent.EquipWeapon(item))
-                        }
+                EquipItem(
+                    nameText = "${item.name} x${item.amount} | Angriff +${item.damage}",
+                    isEquipped = player.equippedWeapon?.name == item.name,
+                    isEquippedText = "Waffe ausgerüstet",
+                    onEquip = {
+                        viewModel.onEvent(GameEvent.EquipWeapon(item))
                     }
                 )
-                Spacer(modifier = Modifier.height(8.dp))
             }
         }
+
 
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -174,6 +144,48 @@ fun InventoryScreen(
         )
     }
 }
+
+@Composable
+fun InventorySection(
+    title: String,
+    emptyText: String,
+    isEmpty: Boolean,
+    content: @Composable () -> Unit
+) {
+    Text(text = title, fontSize = 20.sp)
+    Spacer(modifier = Modifier.height(8.dp))
+    if (isEmpty) {
+        Text(text = emptyText, fontSize = 12.sp)
+    } else {
+        content()
+    }
+}
+
+@Composable
+fun EquipItem(
+    nameText: String,
+    isEquipped: Boolean,
+    isEquippedText: String,
+    onEquip: () -> Unit
+) {
+    Text(text = nameText)
+    Spacer(modifier = Modifier.height(16.dp))
+    GameButtonHoch(
+        text = if (isEquipped) isEquippedText else "Ausrüsten",
+        fontSize = 18.sp,
+        modifier = Modifier
+            .fillMaxWidth(0.7f)
+            .height(50.dp),
+        onClick = {
+            if (!isEquipped) {
+                onEquip()
+            }
+        }
+    )
+    Spacer(modifier = Modifier.height(8.dp))
+
+}
+
 
 @Preview(
     name = "Inventory Screen",
