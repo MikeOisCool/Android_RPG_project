@@ -12,18 +12,11 @@ import kotlinx.coroutines.launch
 class GameViewModel : ViewModel() {
 
     private val initialPlayer = Player(
-        name = "Felix",
-        hp = 100,
-        maxHp = 100,
-        attack = 10,
-        inventory = Inventory(
+        name = "Felix", hp = 100, maxHp = 100, attack = 10, inventory = Inventory(
             items = listOf(
                 GameItems.healPotion
             )
-        ),
-        gold = 50,
-        isDead = false,
-        level = 1
+        ), gold = 50, isDead = false, level = 1
     )
 
 
@@ -31,12 +24,19 @@ class GameViewModel : ViewModel() {
     private val _log = MutableStateFlow<List<String>>(emptyList())
 
     private var healingInProgress = false
-
-
     val log: StateFlow<List<String>> = _log
-
     val player: StateFlow<Player> = _player
+    private val dodgeChance = 10
+    private val enemyCritChance = 15 // 15 Prozent Wahrscheinlichkeit
+    private val critMultiplier = 2
+    private val playerCritChance = 20 /* 20 Prozent Wahrscheinlichkeit */
 
+    private val weaponDropChance = 80
+    private val armorDropChance = 50
+    private val healDropChance = 30
+    private val potionDropChance = 30
+    private val bigPotionDropChance = 20
+    private val baseHeal = 25
 
     private val _enemy = MutableStateFlow(
         EnemyFactory.createRandomEnemy(_player.value.level)
@@ -196,8 +196,6 @@ class GameViewModel : ViewModel() {
             }
         }
     }
-
-
     private fun handleAttackEnemy() {
 
         val currentEnemy = _enemy.value
@@ -210,16 +208,9 @@ class GameViewModel : ViewModel() {
             handleEnemyDefeated(currentEnemy)
             return
         }
-
         enemyAttacksPlayer(updatedEnemy)
-
     }
-
-
     private fun enemyAttacksPlayer(updatedEnemy: Enemy) {
-        val dodgeChance = 10
-        val enemyCritChance = 15 // 15 Prozent Wahrscheinlichkeit
-        val critMultiplier = 2
 
         if (chance(dodgeChance)) {
 
@@ -227,14 +218,11 @@ class GameViewModel : ViewModel() {
                 "🌀 ${_player.value.name} weicht dem Angriff von ${updatedEnemy.name} aus!"
             )
             return
-
         }
         val defense = _player.value.equippedArmor?.defense ?: 0
         val baseDamage = (updatedEnemy.attack - defense).coerceAtLeast(0)
         val enemyDamage = calculateDamage(
-            baseDamage,
-            enemyCritChance,
-            critMultiplier
+            baseDamage, enemyCritChance, critMultiplier
         )
         if (enemyDamage.second) {
             addLog("💥 KRITISCHER TREFFER! 👹 ${updatedEnemy.name} macht ${enemyDamage.first} Schaden!")
@@ -247,17 +235,11 @@ class GameViewModel : ViewModel() {
             GameEvent.TakeDamage(enemyDamage.first)
         )
     }
-
     private fun playerAttacksEnemy(currentEnemy: Enemy): Enemy {
-
-        val playerCritChance = 20 /* 20 Prozent Wahrscheinlichkeit */
-        val critMultiplier = 2
 
         val weaponbonus = _player.value.equippedWeapon?.damage ?: 0
         val playerDamage = calculateDamage(
-            _player.value.attack + weaponbonus,
-            playerCritChance,
-            critMultiplier
+            _player.value.attack + weaponbonus, playerCritChance, critMultiplier
         )
 
         if (playerDamage.second) {
@@ -267,10 +249,8 @@ class GameViewModel : ViewModel() {
         }
 
         val updatedEnemy = damageEnemy(
-            currentEnemy,
-            playerDamage.first
+            currentEnemy, playerDamage.first
         )
-
         _enemy.value = updatedEnemy
 
         return updatedEnemy
@@ -285,7 +265,6 @@ class GameViewModel : ViewModel() {
         }
         return false
     }
-
     private fun handleEnemyDefeated(enemy: Enemy) {
         addLog("🏆 ${enemy.name} wurde besiegt!")
 
@@ -294,7 +273,6 @@ class GameViewModel : ViewModel() {
         rewardPlayer(enemy)
         spawnNextEnemy()
     }
-
     private fun rewardPlayer(enemy: Enemy) {
         val levelVorher = _player.value.level
 
@@ -308,32 +286,25 @@ class GameViewModel : ViewModel() {
         if (_player.value.level > levelVorher) {
             addLog(
                 "⭐ LEVEL UP! ${
-                    _player.value
-                        .name
+                    _player.value.name
                 } ist jetzt Level ${_player.value.level}!"
             )
             addLog("💪 Max HP: ${_player.value.maxHp}")
             addLog(
                 "❤️ HP vollständig aufgefüllt: ${
-                    _player
-                        .value.hp
+                    _player.value.hp
                 }/${_player.value.maxHp}"
             )
         } else {
             addLog(
                 "🔥 XP: ${_player.value.xp}/${
-                    _player.value
-                        .xpToNextLevel
+                    _player.value.xpToNextLevel
                 }"
             )
         }
-
     }
 
     private fun handleEquipmentDrops() {
-
-        val weaponDropChance = 80
-        val armorDropChance = 50
 
         val weaponDrop = when (_player.value.level) {
             in 1..2 -> GameItems.woodWeapon
@@ -360,20 +331,15 @@ class GameViewModel : ViewModel() {
                 applyDrop(item)
             }
         }
-
-
     }
 
     private fun handlePotionDrops() {
 
-        val healDropChance = 30
-        val potionsDropChance = 30
-        val bigPotionDropChance = 20
         if (chance(bigPotionDropChance)) applyDrop(
             GameItems.healBigPotion
         )
 
-        if (chance(potionsDropChance)) applyDrop(
+        if (chance(potionDropChance)) applyDrop(
             GameItems.healPotion
         )
 
@@ -390,23 +356,17 @@ class GameViewModel : ViewModel() {
 
     private fun healDrop() {
 
-        val baseHeal = 25
         val healDropValue = calculateItemHeal(baseHeal, _player.value.level)
-        val healedHp = (_player.value.hp + healDropValue)
-            .coerceAtMost(_player.value.maxHp)
+        val healedHp = (_player.value.hp + healDropValue).coerceAtMost(_player.value.maxHp)
         _player.value = _player.value.copy(
             hp = healedHp
         )
         addLog(
             "❤️ ${
-                _player.value
-                    .name
+                _player.value.name
             } erhält $healDropValue HP nach dem Kampf!"
         )
-
     }
-
-
     private fun applyDrop(item: Item) {
 
         val result = when (item.type) {
@@ -415,28 +375,22 @@ class GameViewModel : ViewModel() {
         }
         _player.value = result.player
 
-
         result.logs.forEach {
             addLog(it)
         }
-
     }
-
     private fun addLog(message: String) {
         _log.value = _log.value + message
         Log.d("LOG", "Loggröße: ${_log.value.size} | letzter Eintrag: $message")
     }
-
     fun fillPreviewLog() {
         repeat(10) {
             addLog("Logeintrag ${it + 1}")
         }
     }
-
     private fun applyEvent(event: GameEvent) {
         _player.value = handleEvent(_player.value, event)
     }
-
     fun resetGame() {
         _player.value = initialPlayer.copy(name = _player.value.name)
         _enemy.value = EnemyFactory.createRandomEnemy(_player.value.level)
