@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mikeo.mykotlinplayground.GameEvent
 import com.mikeo.mykotlinplayground.GameViewModel
+import com.mikeo.mykotlinplayground.Item
 import com.mikeo.mykotlinplayground.ItemType
 import com.mikeo.mykotlinplayground.calculateItemHeal
 
@@ -81,13 +82,9 @@ fun InventoryScreen(
             isEmpty = potions.isEmpty()
         ){
             potions.forEach { item ->
-                Text(
-                    text = "${item.name} x${item.amount} | Heilung +${
-                        calculateItemHeal(
-                            item.heal,
-                            player.level
-                        )
-                    }"
+                PotionItem(
+                    item = item,
+                    playerLevel = player.level
                 )
             }
         }
@@ -110,9 +107,7 @@ fun InventoryScreen(
                     }
                 )
             }
-
         }
-
 
         InventorySection(
             title = "Waffen",
@@ -131,7 +126,6 @@ fun InventoryScreen(
             }
         }
 
-
         Spacer(modifier = Modifier.height(8.dp))
 
         GameButtonHoch(
@@ -143,6 +137,20 @@ fun InventoryScreen(
             onClick = { onBackToGame() }
         )
     }
+}
+@Composable
+fun PotionItem(
+    item: Item,
+    playerLevel: Int,
+) {
+        Text(
+            text = "${item.name} x${item.amount} | Heilung +${
+                calculateItemHeal(
+                    item.heal,
+                    playerLevel
+                )
+            }"
+        )
 }
 
 @Composable
@@ -183,9 +191,7 @@ fun EquipItem(
         }
     )
     Spacer(modifier = Modifier.height(8.dp))
-
 }
-
 
 @Preview(
     name = "Inventory Screen",
