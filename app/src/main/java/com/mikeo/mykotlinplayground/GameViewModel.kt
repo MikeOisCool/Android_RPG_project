@@ -245,8 +245,15 @@ class GameViewModel : ViewModel() {
     private fun playerAttacksEnemy(currentEnemy: Enemy): Enemy {
 
         val weaponBonus = _player.value.equippedWeapon?.damage ?: 0
+        val playerAttack = calculateAttack(
+            baseAttack = _player.value.attack,
+            weaponBonus = weaponBonus
+        )
+
         val playerDamageResult = calculateDamage(
-            _player.value.attack + weaponBonus, playerCritChance, playerCritMultiplier
+            baseDamage = playerAttack,
+            critChance = playerCritChance,
+            critMultiplier = playerCritMultiplier
         )
         val logMessage = damageLog(
             _player.value.name,
