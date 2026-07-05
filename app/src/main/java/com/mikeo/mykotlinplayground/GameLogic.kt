@@ -145,9 +145,13 @@ private fun usePotionByName(
 }
 
 fun damageEnemy(
-    enemy: Enemy, damage: Int
+    enemy: Enemy,
+    attackDamage: Int
 ): Enemy {
-    val finalDamage = (damage - enemy.defense).coerceAtLeast(0)
+    val finalDamage = calculateBaseDamage(
+        attackerAttack = attackDamage,
+        defenderDefense = enemy.defense
+    )
     return enemy.copy(
         hp = (enemy.hp - finalDamage).coerceAtLeast(0)
     )
