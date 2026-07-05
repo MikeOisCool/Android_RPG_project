@@ -192,14 +192,15 @@ class GameViewModel : ViewModel() {
     private fun handleAttackEnemy() {
 
         val currentEnemy = _enemy.value
+        val enemyDodged = chance(enemyDodgeChance)
 
-        val enemyDodged = dodges(
-            defenderName = currentEnemy.name,
-            attackerName = _player.value.name,
-            dodgeChance = enemyDodgeChance
-        )
-
-        if (enemyDodged) return
+        if (enemyDodged) {
+            dodgeLog(
+                defenderName = currentEnemy.name,
+                attackerName = _player.value.name
+            )
+            return
+        }
 
         val updatedEnemy = playerAttacksEnemy(currentEnemy)
 
@@ -211,13 +212,15 @@ class GameViewModel : ViewModel() {
     }
 
     private fun enemyAttacksPlayer(updatedEnemy: Enemy) {
+        val playerDodged = chance(playerDodgeChance)
 
-        val playerDodged = dodges(
-            defenderName = _player.value.name,
-            attackerName = updatedEnemy.name,
-            dodgeChance = playerDodgeChance
-        )
-        if (playerDodged) return
+        if (playerDodged) {
+            dodgeLog(
+                defenderName = _player.value.name,
+                attackerName = updatedEnemy.name
+            )
+            return
+        }
 
         val defense = _player.value.equippedArmor?.defense ?: 0
         val baseDamage = (updatedEnemy.attack - defense).coerceAtLeast(0)
@@ -272,18 +275,13 @@ class GameViewModel : ViewModel() {
         }
     }
 
-    private fun dodges(
+    private fun dodgeLog(
         defenderName: String,
-        attackerName: String,
-        dodgeChance: Int
-    ): Boolean {
-
-        if (chance(dodgeChance)) {
-            addLog("💨 $defenderName weicht dem Angriff von $attackerName aus!")
-            return true
-        }
-        return false
+        attackerName: String
+    ) {
+        addLog("💨 $defenderName weicht dem Angriff von $attackerName aus!")
     }
+
 
     private fun handleEnemyDefeated(enemy: Enemy) {
         addLog("🏆 ${enemy.name} wurde besiegt!")
