@@ -1,6 +1,7 @@
 package com.mikeo.mykotlinplayground.ui
 
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -45,6 +46,9 @@ fun InventoryScreen(
     val player by viewModel.player.collectAsState()
     val items = player.inventory.items
     val scrollState = rememberScrollState()
+    val potionItems = visibleItemsByType(items, ItemType.POTION)
+    val weaponItems = visibleItemsByType(items, ItemType.WEAPON)
+    val armorItems = visibleItemsByType(items, ItemType.ARMOR)
 
     Column(
         modifier = Modifier
@@ -65,23 +69,12 @@ fun InventoryScreen(
         )
         Spacer(modifier = Modifier.height(16.dp))
 
-        val potions = items.filter {
-            it.type == ItemType.POTION && it.amount > 0
-        }
-
-        val weapons = items.filter {
-            it.type == ItemType.WEAPON && it.amount > 0
-        }
-        val armor = items.filter {
-            it.type == ItemType.ARMOR && it.amount > 0
-        }
-
         InventorySection(
             title = "Tränke",
             emptyText = "Es sind keine Tränke im Inventar",
-            isEmpty = potions.isEmpty()
-        ){
-            potions.forEach { item ->
+            isEmpty = potionItems.isEmpty()
+        ) {
+            potionItems.forEach { item ->
                 PotionItem(
                     item = item,
                     playerLevel = player.level
@@ -94,10 +87,10 @@ fun InventoryScreen(
         InventorySection(
             title = "Rüstung",
             emptyText = "Es sind keine Rüstungen im Inventar",
-            isEmpty = armor.isEmpty()
+            isEmpty = armorItems.isEmpty()
         ) {
 
-            armor.forEach { item ->
+            armorItems.forEach { item ->
                 EquipItem(
                     nameText = "${item.name} x${item.amount} | Verteidigung +${item.defense}",
                     isEquipped = player.equippedArmor?.name == item.name,
@@ -112,9 +105,9 @@ fun InventoryScreen(
         InventorySection(
             title = "Waffen",
             emptyText = "Es sind keine Waffen im Inventar",
-            isEmpty = weapons.isEmpty()
+            isEmpty = weaponItems.isEmpty()
         ) {
-            weapons.forEach { item ->
+            weaponItems.forEach { item ->
                 EquipItem(
                     nameText = "${item.name} x${item.amount} | Angriff +${item.damage}",
                     isEquipped = player.equippedWeapon?.name == item.name,
@@ -134,23 +127,33 @@ fun InventoryScreen(
             modifier = Modifier
                 .fillMaxWidth(0.7f)
                 .height(55.dp),
-            onClick = { onBackToGame() }
+            onClick = onBackToGame
         )
     }
 }
+
+private fun visibleItemsByType(
+    items: List<Item>,
+    type: ItemType
+): List<Item> {
+    return items.filter {
+        it.type == type && it.amount > 0
+    }
+}
+
 @Composable
 fun PotionItem(
     item: Item,
     playerLevel: Int,
 ) {
-        Text(
-            text = "${item.name} x${item.amount} | Heilung +${
-                calculateItemHeal(
-                    item.heal,
-                    playerLevel
-                )
-            }"
-        )
+    val healAmount = calculateItemHeal(
+        baseHeal = item.heal,
+        level = playerLevel
+    )
+
+    Text(
+        text = "${item.name} x${item.amount} | Heilung +$healAmount"
+    )
 }
 
 @Composable
@@ -193,6 +196,7 @@ fun EquipItem(
     Spacer(modifier = Modifier.height(8.dp))
 }
 
+@SuppressLint("ViewModelConstructorInComposable")
 @Preview(
     name = "Inventory Screen",
     showBackground = true
@@ -204,5 +208,3 @@ fun InventoryScreenPreview() {
         onBackToGame = {}
     )
 }
-
-
