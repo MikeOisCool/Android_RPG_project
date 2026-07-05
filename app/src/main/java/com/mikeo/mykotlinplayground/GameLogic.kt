@@ -140,8 +140,7 @@ private fun usePotionByName(
         items = newItems
     )
     return player.copy(
-        hp = newHp,
-        inventory = updateInventory
+        hp = newHp, inventory = updateInventory
     )
 }
 
@@ -158,16 +157,13 @@ fun calculateDamage(
     baseDamage: Int,
     chance: Int,
     critMultiplier: Int,
-
-    ): Pair<Int, Boolean> {
+): DamageResult {
     val criticalHit = chance(chance)
-    return if (criticalHit) {
-        Pair(
-            baseDamage * critMultiplier, true
-        )
-    } else {
-        Pair(baseDamage, false)
-    }
+    val finalDamage = if (criticalHit) baseDamage * critMultiplier else baseDamage
+    return DamageResult(
+        amount = finalDamage,
+        isCritical = criticalHit
+    )
 }
 
 fun chance(

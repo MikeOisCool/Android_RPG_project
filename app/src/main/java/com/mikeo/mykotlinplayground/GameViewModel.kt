@@ -216,15 +216,15 @@ class GameViewModel : ViewModel() {
         val enemyDamage = calculateDamage(
             baseDamage, enemyCritChance, enemyCritMultiplier
         )
-        if (enemyDamage.second) {
-            addLog("💥 KRITISCHER TREFFER! 👹 ${updatedEnemy.name} macht ${enemyDamage.first} Schaden!")
+        if (enemyDamage.isCritical) {
+            addLog("💥 KRITISCHER TREFFER! 👹 ${updatedEnemy.name} macht ${enemyDamage.amount} Schaden!")
         } else {
             addLog(
-                "👹 ${updatedEnemy.name} schlägt zurück für ${enemyDamage.first} Schaden!"
+                "👹 ${updatedEnemy.name} schlägt zurück für ${enemyDamage.amount} Schaden!"
             )
         }
         onEvent(
-            GameEvent.TakeDamage(enemyDamage.first)
+            GameEvent.TakeDamage(enemyDamage.amount)
         )
     }
 
@@ -234,13 +234,13 @@ class GameViewModel : ViewModel() {
         val playerDamage = calculateDamage(
             _player.value.attack + weaponBonus, playerCritChance, playerCritMultiplier
         )
-        if (playerDamage.second) {
-            addLog("💥 KRITISCHER TREFFER! ${_player.value.name} macht ${playerDamage.first} Schaden!")
+        if (playerDamage.isCritical) {
+            addLog("💥 KRITISCHER TREFFER! ${_player.value.name} macht ${playerDamage.amount} Schaden!")
         } else {
-            addLog("⚔️ ${_player.value.name} trifft ${currentEnemy.name} für ${playerDamage.first} Schaden!")
+            addLog("⚔️ ${_player.value.name} trifft ${currentEnemy.name} für ${playerDamage.amount} Schaden!")
         }
         val updatedEnemy = damageEnemy(
-            currentEnemy, playerDamage.first
+            currentEnemy, playerDamage.amount
         )
         _enemy.value = updatedEnemy
 
