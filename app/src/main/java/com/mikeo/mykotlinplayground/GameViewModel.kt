@@ -193,9 +193,13 @@ class GameViewModel : ViewModel() {
 
         val currentEnemy = _enemy.value
 
-        val enemyDodgeLog =
-            "💨 ${currentEnemy.name} weicht dem Angriff von ${_player.value.name} aus!"
-        if (dodges(dodgeChance = enemyDodgeChance, logMessage = enemyDodgeLog)) return
+        val enemyDodged = dodges(
+            defenderName = currentEnemy.name,
+            attackerName = _player.value.name,
+            dodgeChance = enemyDodgeChance
+        )
+
+        if (enemyDodged) return
 
         val updatedEnemy = playerAttacksEnemy(currentEnemy)
 
@@ -208,43 +212,46 @@ class GameViewModel : ViewModel() {
 
     private fun enemyAttacksPlayer(updatedEnemy: Enemy) {
 
-        val playerDodgeLog =
-            "💨 ${_player.value.name} weicht dem Angriff von ${updatedEnemy.name} aus!"
-        if (dodges(dodgeChance = playerDodgeChance, logMessage = playerDodgeLog)) return
+        val playerDodged = dodges(
+            defenderName = _player.value.name,
+            attackerName = updatedEnemy.name,
+            dodgeChance = playerDodgeChance
+        )
+        if (playerDodged) return
 
         val defense = _player.value.equippedArmor?.defense ?: 0
         val baseDamage = (updatedEnemy.attack - defense).coerceAtLeast(0)
-        val enemyDamage = calculateDamage(
+        val enemyDamageResult = calculateDamage(
             baseDamage, enemyCritChance, enemyCritMultiplier
         )
         val logMessage = damageLog(
             updatedEnemy.name,
             _player.value.name,
-            enemyDamage.amount,
-            enemyDamage.isCritical
+            enemyDamageResult.amount,
+            enemyDamageResult.isCritical
         )
         addLog(logMessage)
         onEvent(
-            GameEvent.TakeDamage(enemyDamage.amount)
+            GameEvent.TakeDamage(enemyDamageResult.amount)
         )
     }
 
     private fun playerAttacksEnemy(currentEnemy: Enemy): Enemy {
 
         val weaponBonus = _player.value.equippedWeapon?.damage ?: 0
-        val playerDamage = calculateDamage(
+        val playerDamageResult = calculateDamage(
             _player.value.attack + weaponBonus, playerCritChance, playerCritMultiplier
         )
         val logMessage = damageLog(
             _player.value.name,
             currentEnemy.name,
-            playerDamage.amount,
-            playerDamage.isCritical
+            playerDamageResult.amount,
+            playerDamageResult.isCritical
         )
         addLog(logMessage)
 
         val updatedEnemy = damageEnemy(
-            currentEnemy, playerDamage.amount
+            currentEnemy, playerDamageResult.amount
         )
         _enemy.value = updatedEnemy
 
@@ -266,12 +273,13 @@ class GameViewModel : ViewModel() {
     }
 
     private fun dodges(
-        dodgeChance: Int,
-        logMessage: String
+        defenderName: String,
+        attackerName: String,
+        dodgeChance: Int
     ): Boolean {
 
         if (chance(dodgeChance)) {
-            addLog(logMessage)
+            addLog("💨 $defenderName weicht dem Angriff von $attackerName aus!")
             return true
         }
         return false
