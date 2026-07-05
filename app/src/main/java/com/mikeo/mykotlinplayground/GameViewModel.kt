@@ -208,7 +208,8 @@ class GameViewModel : ViewModel() {
 
     private fun enemyAttacksPlayer(updatedEnemy: Enemy) {
 
-        val playerDodgeLog = "💨 ${_player.value.name} weicht dem Angriff von ${updatedEnemy.name} aus!"
+        val playerDodgeLog =
+            "💨 ${_player.value.name} weicht dem Angriff von ${updatedEnemy.name} aus!"
         if (dodges(dodgeChance = playerDodgeChance, logMessage = playerDodgeLog)) return
 
         val defense = _player.value.equippedArmor?.defense ?: 0
@@ -216,13 +217,13 @@ class GameViewModel : ViewModel() {
         val enemyDamage = calculateDamage(
             baseDamage, enemyCritChance, enemyCritMultiplier
         )
-        if (enemyDamage.isCritical) {
-            addLog("💥 KRITISCHER TREFFER! 👹 ${updatedEnemy.name} macht ${enemyDamage.amount} Schaden!")
-        } else {
-            addLog(
-                "👹 ${updatedEnemy.name} schlägt zurück für ${enemyDamage.amount} Schaden!"
-            )
-        }
+        val logMessage = damageLog(
+            updatedEnemy.name,
+            _player.value.name,
+            enemyDamage.amount,
+            enemyDamage.isCritical
+        )
+        addLog(logMessage)
         onEvent(
             GameEvent.TakeDamage(enemyDamage.amount)
         )
@@ -234,17 +235,34 @@ class GameViewModel : ViewModel() {
         val playerDamage = calculateDamage(
             _player.value.attack + weaponBonus, playerCritChance, playerCritMultiplier
         )
-        if (playerDamage.isCritical) {
-            addLog("💥 KRITISCHER TREFFER! ${_player.value.name} macht ${playerDamage.amount} Schaden!")
-        } else {
-            addLog("⚔️ ${_player.value.name} trifft ${currentEnemy.name} für ${playerDamage.amount} Schaden!")
-        }
+        val logMessage = damageLog(
+            _player.value.name,
+            currentEnemy.name,
+            playerDamage.amount,
+            playerDamage.isCritical
+        )
+        addLog(logMessage)
+
         val updatedEnemy = damageEnemy(
             currentEnemy, playerDamage.amount
         )
         _enemy.value = updatedEnemy
 
         return updatedEnemy
+    }
+
+    private fun damageLog(
+        attackerName: String,
+        targetName: String,
+        damage: Int,
+        isCritical: Boolean
+    ): String {
+        val normalDamageLog = "⚔️ $attackerName trifft $targetName für $damage Schaden!"
+        return if (isCritical) {
+            "💥 KRITISCHER TREFFER! $normalDamageLog"
+        } else {
+            normalDamageLog
+        }
     }
 
     private fun dodges(
