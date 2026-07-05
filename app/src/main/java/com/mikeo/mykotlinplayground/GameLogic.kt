@@ -147,13 +147,16 @@ private fun usePotionByName(
 fun damageEnemy(
     enemy: Enemy,
     attackDamage: Int
-): Enemy {
+): EnemyDamageResult {
     val finalDamage = calculateBaseDamage(
         attackerAttack = attackDamage,
         defenderDefense = enemy.defense
     )
-    return enemy.copy(
-        hp = (enemy.hp - finalDamage).coerceAtLeast(0)
+    return EnemyDamageResult(
+        enemy = enemy.copy(
+            hp = (enemy.hp - finalDamage).coerceAtLeast(0)
+        ),
+        damage = finalDamage
     )
 }
 
@@ -177,9 +180,9 @@ fun calculateDamage(
     critMultiplier: Int
 ): DamageResult {
     val criticalHit = chance(critChance)
-    val finalDamage = if (criticalHit) baseDamage * critMultiplier else baseDamage
+    val damage = if (criticalHit) baseDamage * critMultiplier else baseDamage
     return DamageResult(
-        amount = finalDamage,
+        amount = damage,
         isCritical = criticalHit
     )
 }

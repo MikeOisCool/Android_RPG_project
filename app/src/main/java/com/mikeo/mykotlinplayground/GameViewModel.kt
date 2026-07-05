@@ -228,13 +228,15 @@ class GameViewModel : ViewModel() {
             defenderDefense = defense
         )
         val enemyDamageResult = calculateDamage(
-            baseDamage, enemyCritChance, enemyCritMultiplier
+            baseDamage = baseDamage,
+            critChance = enemyCritChance,
+            critMultiplier = enemyCritMultiplier
         )
         val logMessage = damageLog(
-            updatedEnemy.name,
-            _player.value.name,
-            enemyDamageResult.amount,
-            enemyDamageResult.isCritical
+            attackerName = updatedEnemy.name,
+            targetName = _player.value.name,
+            damage = enemyDamageResult.amount,
+            isCritical = enemyDamageResult.isCritical
         )
         addLog(logMessage)
         onEvent(
@@ -255,20 +257,22 @@ class GameViewModel : ViewModel() {
             critChance = playerCritChance,
             critMultiplier = playerCritMultiplier
         )
+
+        val damagedEnemyResult = damageEnemy(
+            enemy = currentEnemy,
+            attackDamage = playerDamageResult.amount
+        )
+        _enemy.value = damagedEnemyResult.enemy
+
         val logMessage = damageLog(
-            _player.value.name,
-            currentEnemy.name,
-            playerDamageResult.amount,
-            playerDamageResult.isCritical
+            attackerName = _player.value.name,
+            targetName = currentEnemy.name,
+            damage = damagedEnemyResult.damage,
+            isCritical = playerDamageResult.isCritical
         )
         addLog(logMessage)
 
-        val updatedEnemy = damageEnemy(
-            currentEnemy, playerDamageResult.amount
-        )
-        _enemy.value = updatedEnemy
-
-        return updatedEnemy
+        return damagedEnemyResult.enemy
     }
 
     private fun damageLog(
@@ -277,7 +281,8 @@ class GameViewModel : ViewModel() {
         damage: Int,
         isCritical: Boolean
     ): String {
-        val normalDamageLog = "⚔️ $attackerName trifft $targetName für $damage Schaden!"
+        val normalDamageLog =
+            "⚔️ $attackerName trifft $targetName für $damage Schaden!"
         return if (isCritical) {
             "💥 KRITISCHER TREFFER! $normalDamageLog"
         } else {
