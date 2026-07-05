@@ -155,10 +155,10 @@ fun damageEnemy(
 
 fun calculateDamage(
     baseDamage: Int,
-    chance: Int,
-    critMultiplier: Int,
+    critChance: Int,
+    critMultiplier: Int
 ): DamageResult {
-    val criticalHit = chance(chance)
+    val criticalHit = chance(critChance)
     val finalDamage = if (criticalHit) baseDamage * critMultiplier else baseDamage
     return DamageResult(
         amount = finalDamage,
