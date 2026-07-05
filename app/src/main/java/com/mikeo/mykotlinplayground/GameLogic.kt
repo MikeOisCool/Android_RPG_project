@@ -41,58 +41,11 @@ fun handleEvent(
         }
 
         is GameEvent.UsePotion -> {
-            val potion = player.inventory.items.find { it.name == ItemNamen.HEILTRANK }
-            if (potion == null || potion.amount <= 0) {
-                player
-            } else {
-                val healAmount = calculateItemHeal(potion.heal, player.level)
-                val newHp = (player.hp + healAmount).coerceAtMost(player.maxHp)
-
-                val newItems = player.inventory.items.map { item ->
-                    if (item.name == ItemNamen.HEILTRANK) {
-                        item.copy(amount = item.amount - 1)
-                    } else {
-                        item
-                    }
-                }.filter { item ->
-                    item.amount > 0
-                }
-                val updateInventory = player.inventory.copy(
-                    items = newItems
-                )
-                player.copy(
-                    hp = newHp, inventory = updateInventory
-                )
-
-
-            }
+            usePotionByName(player, ItemNamen.HEILTRANK)
         }
 
         is GameEvent.UseBigPotion -> {
-            val potionBig = player.inventory.items.find { it.name == ItemNamen.GROSSER_HEILTRANK }
-            if (potionBig == null || potionBig.amount <= 0) {
-                player
-            } else {
-                val healBigAmount = calculateItemHeal(potionBig.heal, player.level)
-                val newHp = (player.hp + healBigAmount).coerceAtMost(player.maxHp)
-                val newItems = player.inventory.items.map { item ->
-                    if (item.name == ItemNamen.GROSSER_HEILTRANK) {
-                        item.copy(amount = item.amount - 1)
-                    } else {
-                        item
-                    }
-                }.filter { item ->
-                    item.amount > 0
-                }
-                val updateInventory = player.inventory.copy(
-                    items = newItems
-                )
-                player.copy(
-                    hp = newHp, inventory = updateInventory
-                )
-
-
-            }
+            usePotionByName(player, ItemNamen.GROSSER_HEILTRANK)
         }
 
         is GameEvent.EquipWeapon -> {
@@ -162,6 +115,34 @@ fun handleEvent(
             )
         }
     }
+}
+
+private fun usePotionByName(
+    player: Player, itemName: String
+): Player {
+    val potion = player.inventory.items.find { it.name == itemName }
+    if (potion == null || potion.amount <= 0) {
+        return player
+    }
+    val healAmount = calculateItemHeal(potion.heal, player.level)
+    val newHp = (player.hp + healAmount).coerceAtMost(player.maxHp)
+
+    val newItems = player.inventory.items.map { item ->
+        if (item.name == itemName) {
+            item.copy(amount = item.amount - 1)
+        } else {
+            item
+        }
+    }.filter { item ->
+        item.amount > 0
+    }
+    val updateInventory = player.inventory.copy(
+        items = newItems
+    )
+    return player.copy(
+        hp = newHp,
+        inventory = updateInventory
+    )
 }
 
 fun damageEnemy(
