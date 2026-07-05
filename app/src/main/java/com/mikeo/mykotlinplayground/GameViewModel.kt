@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-
 class GameViewModel : ViewModel() {
 
     private val initialPlayer = Player(
@@ -18,8 +17,6 @@ class GameViewModel : ViewModel() {
             )
         ), gold = 50, isDead = false, level = 1
     )
-
-
     private val _player = MutableStateFlow(initialPlayer)
     private val _log = MutableStateFlow<List<String>>(emptyList())
 
@@ -37,11 +34,9 @@ class GameViewModel : ViewModel() {
     private val potionDropChance = 30
     private val bigPotionDropChance = 20
     private val baseHeal = 25
-
     private val _enemy = MutableStateFlow(
         EnemyFactory.createRandomEnemy(_player.value.level)
     )
-
     val enemy: StateFlow<Enemy> = _enemy
 
 
@@ -59,7 +54,6 @@ class GameViewModel : ViewModel() {
                 if (_player.value.isDead) {
                     addLog("\uD83D\uDC80 ${_player.value.name} ist gestorben")
                     addLog("${_player.value.name} hat das Level ${_player.value.level} erreicht und hat ${_player.value.xp} XP! Sein Gold: ${_player.value.gold}")
-
                 }
             }
 
@@ -69,43 +63,15 @@ class GameViewModel : ViewModel() {
             }
 
             is GameEvent.UsePotion -> {
-                val potionAmount =
-                    player.value.inventory.items.find { it.name == ItemNamen.HEILTRANK }?.amount
-                        ?: 0
-
-                if (potionAmount <= 0) {
-                    addLog("🧪 Keine Tränke mehr!")
-                    return
-                }
-                val oldHp = _player.value.hp
-                if (_player.value.hp >= _player.value.maxHp) {
-                    addLog("❤️ Heiltrank hat keinen Effekt! HP ist bereits voll")
-                    return
-                }
-                applyEvent(event)
-                val healAmount = _player.value.hp - oldHp
-
-                addLog("❤️ Heiltrank verwendet! ${_player.value.name} erhält $healAmount HP")
+                usePotionWithLogs(
+                    event, ItemNamen.HEILTRANK, "kleinen", "Der kleine", "Ein"
+                )
             }
 
             is GameEvent.UseBigPotion -> {
-                val potionBigAmount =
-                    player.value.inventory.items.find { it.name == ItemNamen.GROSSER_HEILTRANK }?.amount
-                        ?: 0
-
-                if (potionBigAmount <= 0) {
-                    addLog("🧪 Keine großen Tränke mehr!")
-                    return
-                }
-                val oldHp = _player.value.hp
-                if (_player.value.hp >= _player.value.maxHp) {
-                    addLog("❤️ Großer Heiltrank hat keinen Effekt! HP ist bereits voll")
-                    return
-                }
-                applyEvent(event)
-                val healAmount = _player.value.hp - oldHp
-
-                addLog("❤️ Großer Heiltrank verwendet! ${_player.value.name} erhält $healAmount HP")
+                usePotionWithLogs(
+                    event, ItemNamen.GROSSER_HEILTRANK, "großen", "Großer", "Einen großen"
+                )
             }
 
             is GameEvent.Heal -> {
@@ -190,11 +156,33 @@ class GameViewModel : ViewModel() {
                     addLog("🔥 ${_player.value.name} hat ${_player.value.xp}/${_player.value.xpToNextLevel} XP")
                 }
             }
-
             is GameEvent.AttackEnemy -> {
                 handleAttackEnemy()
             }
         }
+    }
+    private fun usePotionWithLogs(
+        event: GameEvent,
+        itemName: String,
+        emptyLogText: String,
+        fullHpLogText: String,
+        usedLogText: String
+    ) {
+        val potionAmount = player.value.inventory.items.find { it.name == itemName }?.amount ?: 0
+
+        if (potionAmount <= 0) {
+            addLog("🧪 Keine $emptyLogText Tränke mehr!")
+            return
+        }
+        val oldHp = _player.value.hp
+        if (_player.value.hp >= _player.value.maxHp) {
+            addLog("❤️ $fullHpLogText Heiltrank hat keinen Effekt! HP ist bereits voll")
+            return
+        }
+        applyEvent(event)
+        val healAmount = _player.value.hp - oldHp
+
+        addLog("❤️ $usedLogText Heiltrank verwendet! ${_player.value.name} erhält $healAmount HP")
     }
     private fun handleAttackEnemy() {
 
@@ -235,19 +223,18 @@ class GameViewModel : ViewModel() {
             GameEvent.TakeDamage(enemyDamage.first)
         )
     }
+
     private fun playerAttacksEnemy(currentEnemy: Enemy): Enemy {
 
         val weaponbonus = _player.value.equippedWeapon?.damage ?: 0
         val playerDamage = calculateDamage(
             _player.value.attack + weaponbonus, playerCritChance, critMultiplier
         )
-
         if (playerDamage.second) {
             addLog("💥 KRITISCHER TREFFER! ${_player.value.name} macht ${playerDamage.first} Schaden!")
         } else {
             addLog("⚔️ ${_player.value.name} trifft ${currentEnemy.name} für ${playerDamage.first} Schaden!")
         }
-
         val updatedEnemy = damageEnemy(
             currentEnemy, playerDamage.first
         )
@@ -255,7 +242,6 @@ class GameViewModel : ViewModel() {
 
         return updatedEnemy
     }
-
     private fun enemyDodges(enemy: Enemy): Boolean {
         val enemyDodgeChance = 10
 
@@ -282,7 +268,6 @@ class GameViewModel : ViewModel() {
         addLog("💰 +${enemy.goldReward} Gold")
         addLog("🔥 +${enemy.xpReward} XP")
 
-
         if (_player.value.level > levelVorher) {
             addLog(
                 "⭐ LEVEL UP! ${
@@ -303,7 +288,6 @@ class GameViewModel : ViewModel() {
             )
         }
     }
-
     private fun handleEquipmentDrops() {
 
         val weaponDrop = when (_player.value.level) {
@@ -367,6 +351,7 @@ class GameViewModel : ViewModel() {
             } erhält $healDropValue HP nach dem Kampf!"
         )
     }
+
     private fun applyDrop(item: Item) {
 
         val result = when (item.type) {
@@ -379,24 +364,25 @@ class GameViewModel : ViewModel() {
             addLog(it)
         }
     }
+
     private fun addLog(message: String) {
         _log.value = _log.value + message
         Log.d("LOG", "Loggröße: ${_log.value.size} | letzter Eintrag: $message")
     }
+
     fun fillPreviewLog() {
         repeat(10) {
             addLog("Logeintrag ${it + 1}")
         }
     }
+
     private fun applyEvent(event: GameEvent) {
         _player.value = handleEvent(_player.value, event)
     }
+
     fun resetGame() {
         _player.value = initialPlayer.copy(name = _player.value.name)
         _enemy.value = EnemyFactory.createRandomEnemy(_player.value.level)
         _log.value = emptyList()
     }
 }
-
-
-
