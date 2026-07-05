@@ -158,11 +158,13 @@ class GameViewModel : ViewModel() {
                     addLog("🔥 ${_player.value.name} hat ${_player.value.xp}/${_player.value.xpToNextLevel} XP")
                 }
             }
+
             is GameEvent.AttackEnemy -> {
                 handleAttackEnemy()
             }
         }
     }
+
     private fun usePotionWithLogs(
         event: GameEvent,
         itemName: String,
@@ -186,11 +188,14 @@ class GameViewModel : ViewModel() {
 
         addLog("❤️ $usedLogText Heiltrank verwendet! ${_player.value.name} erhält $healAmount HP")
     }
+
     private fun handleAttackEnemy() {
 
         val currentEnemy = _enemy.value
 
-        if (enemyDodges(currentEnemy)) return
+        val enemyDodgeLog =
+            "💨 ${currentEnemy.name} weicht dem Angriff von ${_player.value.name} aus!"
+        if (dodges(dodgeChance = enemyDodgeChance, logMessage = enemyDodgeLog)) return
 
         val updatedEnemy = playerAttacksEnemy(currentEnemy)
 
@@ -200,15 +205,12 @@ class GameViewModel : ViewModel() {
         }
         enemyAttacksPlayer(updatedEnemy)
     }
+
     private fun enemyAttacksPlayer(updatedEnemy: Enemy) {
 
-        if (chance(playerDodgeChance)) {
+        val playerDodgeLog = "💨 ${_player.value.name} weicht dem Angriff von ${updatedEnemy.name} aus!"
+        if (dodges(dodgeChance = playerDodgeChance, logMessage = playerDodgeLog)) return
 
-            addLog(
-                "🌀 ${_player.value.name} weicht dem Angriff von ${updatedEnemy.name} aus!"
-            )
-            return
-        }
         val defense = _player.value.equippedArmor?.defense ?: 0
         val baseDamage = (updatedEnemy.attack - defense).coerceAtLeast(0)
         val enemyDamage = calculateDamage(
@@ -244,14 +246,19 @@ class GameViewModel : ViewModel() {
 
         return updatedEnemy
     }
-    private fun enemyDodges(enemy: Enemy): Boolean {
 
-        if (chance(enemyDodgeChance)) {
-            addLog("💨 ${enemy.name} weicht dem Angriff von ${_player.value.name} aus!")
+    private fun dodges(
+        dodgeChance: Int,
+        logMessage: String
+    ): Boolean {
+
+        if (chance(dodgeChance)) {
+            addLog(logMessage)
             return true
         }
         return false
     }
+
     private fun handleEnemyDefeated(enemy: Enemy) {
         addLog("🏆 ${enemy.name} wurde besiegt!")
 
@@ -260,6 +267,7 @@ class GameViewModel : ViewModel() {
         rewardPlayer(enemy)
         spawnNextEnemy()
     }
+
     private fun rewardPlayer(enemy: Enemy) {
         val levelVorher = _player.value.level
 
@@ -289,6 +297,7 @@ class GameViewModel : ViewModel() {
             )
         }
     }
+
     private fun handleEquipmentDrops() {
 
         val weaponDrop = when (_player.value.level) {
