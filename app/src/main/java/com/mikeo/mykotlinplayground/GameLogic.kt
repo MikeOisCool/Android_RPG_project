@@ -153,6 +153,13 @@ fun damageEnemy(
     )
 }
 
+fun calculateBaseDamage(
+    attackerAttack: Int,
+    defenderDefense: Int
+): Int {
+    return (attackerAttack - defenderDefense).coerceAtLeast(0)
+}
+
 fun calculateDamage(
     baseDamage: Int,
     critChance: Int,

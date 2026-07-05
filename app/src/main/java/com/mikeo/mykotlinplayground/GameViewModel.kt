@@ -223,7 +223,10 @@ class GameViewModel : ViewModel() {
         }
 
         val defense = _player.value.equippedArmor?.defense ?: 0
-        val baseDamage = (updatedEnemy.attack - defense).coerceAtLeast(0)
+        val baseDamage = calculateBaseDamage(
+            attackerAttack = updatedEnemy.attack,
+            defenderDefense = defense
+        )
         val enemyDamageResult = calculateDamage(
             baseDamage, enemyCritChance, enemyCritMultiplier
         )
