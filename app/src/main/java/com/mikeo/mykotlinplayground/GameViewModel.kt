@@ -23,9 +23,11 @@ class GameViewModel : ViewModel() {
     private var healingInProgress = false
     val log: StateFlow<List<String>> = _log
     val player: StateFlow<Player> = _player
-    private val dodgeChance = 10
+    private val playerDodgeChance = 10
+    private val enemyDodgeChance = 15
     private val enemyCritChance = 15 // 15 Prozent Wahrscheinlichkeit
-    private val critMultiplier = 2
+    private val playerCritMultiplier = 4
+    private val enemyCritMultiplier = 2
     private val playerCritChance = 20 /* 20 Prozent Wahrscheinlichkeit */
 
     private val weaponDropChance = 80
@@ -200,7 +202,7 @@ class GameViewModel : ViewModel() {
     }
     private fun enemyAttacksPlayer(updatedEnemy: Enemy) {
 
-        if (chance(dodgeChance)) {
+        if (chance(playerDodgeChance)) {
 
             addLog(
                 "🌀 ${_player.value.name} weicht dem Angriff von ${updatedEnemy.name} aus!"
@@ -210,7 +212,7 @@ class GameViewModel : ViewModel() {
         val defense = _player.value.equippedArmor?.defense ?: 0
         val baseDamage = (updatedEnemy.attack - defense).coerceAtLeast(0)
         val enemyDamage = calculateDamage(
-            baseDamage, enemyCritChance, critMultiplier
+            baseDamage, enemyCritChance, enemyCritMultiplier
         )
         if (enemyDamage.second) {
             addLog("💥 KRITISCHER TREFFER! 👹 ${updatedEnemy.name} macht ${enemyDamage.first} Schaden!")
@@ -226,9 +228,9 @@ class GameViewModel : ViewModel() {
 
     private fun playerAttacksEnemy(currentEnemy: Enemy): Enemy {
 
-        val weaponbonus = _player.value.equippedWeapon?.damage ?: 0
+        val weaponBonus = _player.value.equippedWeapon?.damage ?: 0
         val playerDamage = calculateDamage(
-            _player.value.attack + weaponbonus, playerCritChance, critMultiplier
+            _player.value.attack + weaponBonus, playerCritChance, playerCritMultiplier
         )
         if (playerDamage.second) {
             addLog("💥 KRITISCHER TREFFER! ${_player.value.name} macht ${playerDamage.first} Schaden!")
@@ -243,7 +245,6 @@ class GameViewModel : ViewModel() {
         return updatedEnemy
     }
     private fun enemyDodges(enemy: Enemy): Boolean {
-        val enemyDodgeChance = 10
 
         if (chance(enemyDodgeChance)) {
             addLog("💨 ${enemy.name} weicht dem Angriff von ${_player.value.name} aus!")
