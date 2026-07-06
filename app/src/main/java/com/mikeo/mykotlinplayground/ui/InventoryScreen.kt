@@ -92,15 +92,19 @@ fun InventoryScreen(
 
             armorItems.forEach { item ->
                 EquipItem(
-                    nameText = "${item.name} x${item.amount} | Verteidigung +${item.defense}",
+                    statText = "Verteidigung",
+                    statValue = item.defense,
                     isEquipped = player.equippedArmor?.name == item.name,
                     isEquippedText = "Rüstung ausgerüstet",
+                    item = item,
                     onEquip = {
                         viewModel.onEvent(GameEvent.EquipArmor(item))
                     }
                 )
             }
         }
+
+        Spacer(modifier = Modifier.height(8.dp))
 
         InventorySection(
             title = "Waffen",
@@ -109,9 +113,11 @@ fun InventoryScreen(
         ) {
             weaponItems.forEach { item ->
                 EquipItem(
-                    nameText = "${item.name} x${item.amount} | Angriff +${item.damage}",
+                    statText = "Angriff",
+                    statValue = item.damage,
                     isEquipped = player.equippedWeapon?.name == item.name,
                     isEquippedText = "Waffe ausgerüstet",
+                    item = item,
                     onEquip = {
                         viewModel.onEvent(GameEvent.EquipWeapon(item))
                     }
@@ -174,12 +180,16 @@ fun InventorySection(
 
 @Composable
 fun EquipItem(
-    nameText: String,
+    statText: String,
+    statValue: Int,
     isEquipped: Boolean,
     isEquippedText: String,
+    item: Item,
     onEquip: () -> Unit
 ) {
-    Text(text = nameText)
+    Text(
+        "${item.name} x${item.amount} | $statText +$statValue"
+    )
     Spacer(modifier = Modifier.height(16.dp))
     GameButtonHoch(
         text = if (isEquipped) isEquippedText else "Ausrüsten",
