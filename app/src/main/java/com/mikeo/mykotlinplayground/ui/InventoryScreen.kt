@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -98,7 +99,10 @@ fun InventoryScreen(
                     isEquippedText = "Rüstung ausgerüstet",
                     item = item,
                     onEquip = {
-                        viewModel.onEvent(GameEvent.EquipArmor(item))
+                        viewModel.onEvent(GameEvent.EquipArmor(armor = item))
+                    },
+                    onRemove = {
+                        viewModel.onEvent(GameEvent.RemoveInventoryItem(item = item))
                     }
                 )
             }
@@ -119,7 +123,10 @@ fun InventoryScreen(
                     isEquippedText = "Waffe ausgerüstet",
                     item = item,
                     onEquip = {
-                        viewModel.onEvent(GameEvent.EquipWeapon(item))
+                        viewModel.onEvent(GameEvent.EquipWeapon(weapon = item))
+                    },
+                    onRemove = {
+                        viewModel.onEvent(GameEvent.RemoveInventoryItem(item = item))
                     }
                 )
             }
@@ -185,24 +192,39 @@ fun EquipItem(
     isEquipped: Boolean,
     isEquippedText: String,
     item: Item,
-    onEquip: () -> Unit
+    onEquip: () -> Unit,
+    onRemove: () -> Unit
 ) {
     Text(
         "${item.name} x${item.amount} | $statText +$statValue"
     )
     Spacer(modifier = Modifier.height(16.dp))
-    GameButtonHoch(
-        text = if (isEquipped) isEquippedText else "Ausrüsten",
-        fontSize = 18.sp,
-        modifier = Modifier
-            .fillMaxWidth(0.7f)
-            .height(50.dp),
-        onClick = {
-            if (!isEquipped) {
-                onEquip()
+    Row {
+        GameButtonHoch(
+            text = if (isEquipped) isEquippedText else "Ausrüsten",
+            fontSize = 18.sp,
+            modifier = Modifier
+                .fillMaxWidth(0.5f)
+                .height(90.dp),
+            onClick = {
+                if (!isEquipped) {
+                    onEquip()
+                }
             }
-        }
-    )
+        )
+        GameButtonHoch(
+            text = "Lösch- en",
+            fontSize = 18.sp,
+            modifier = Modifier
+                .fillMaxWidth(0.5f)
+                .height(90.dp),
+            onClick = {
+                if (!isEquipped) {
+                    onRemove()
+                }
+            }
+        )
+    }
     Spacer(modifier = Modifier.height(8.dp))
 }
 

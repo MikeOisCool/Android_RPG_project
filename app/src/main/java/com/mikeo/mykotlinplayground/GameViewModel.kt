@@ -162,6 +162,10 @@ class GameViewModel : ViewModel() {
             is GameEvent.AttackEnemy -> {
                 handleAttackEnemy()
             }
+
+            is GameEvent.RemoveInventoryItem -> {
+                applyEvent(event)
+            }
         }
     }
 

@@ -70,6 +70,23 @@ fun handleEvent(
             }
         }
 
+        is GameEvent.RemoveInventoryItem -> {
+            val hasItem = player.inventory.items.contains(event.item)
+            if (hasItem) {
+                val newItems = player.inventory.items.filter { item ->
+                    item.name != event.item.name
+                }
+                player.copy(
+                    inventory = player.inventory.copy(
+                        items = newItems
+                    )
+                )
+            } else {
+                player
+            }
+        }
+
+
         is GameEvent.Flee -> {
 
             val fleeCost = 20 + (player.level - 1) * 10
@@ -145,45 +162,37 @@ private fun usePotionByName(
 }
 
 fun damageEnemy(
-    enemy: Enemy,
-    attackDamage: Int
+    enemy: Enemy, attackDamage: Int
 ): EnemyDamageResult {
     val finalDamage = calculateBaseDamage(
-        attackerAttack = attackDamage,
-        defenderDefense = enemy.defense
+        attackerAttack = attackDamage, defenderDefense = enemy.defense
     )
     return EnemyDamageResult(
         enemy = enemy.copy(
             hp = (enemy.hp - finalDamage).coerceAtLeast(0)
-        ),
-        damage = finalDamage
+        ), damage = finalDamage
     )
 }
 
 fun calculateBaseDamage(
-    attackerAttack: Int,
-    defenderDefense: Int
+    attackerAttack: Int, defenderDefense: Int
 ): Int {
     return (attackerAttack - defenderDefense).coerceAtLeast(0)
 }
 
 fun calculateAttack(
-    baseAttack: Int,
-    weaponBonus: Int
+    baseAttack: Int, weaponBonus: Int
 ): Int {
     return (baseAttack + weaponBonus).coerceAtLeast(0)
 }
 
 fun calculateDamage(
-    baseDamage: Int,
-    critChance: Int,
-    critMultiplier: Int
+    baseDamage: Int, critChance: Int, critMultiplier: Int
 ): DamageResult {
     val criticalHit = chance(critChance)
     val damage = if (criticalHit) baseDamage * critMultiplier else baseDamage
     return DamageResult(
-        amount = damage,
-        isCritical = criticalHit
+        amount = damage, isCritical = criticalHit
     )
 }
 
