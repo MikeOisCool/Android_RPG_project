@@ -77,6 +77,12 @@ fun handleEvent(
                     item.name != event.item.name
                 }
                 player.copy(
+                    equippedWeapon = player.equippedWeapon?.takeIf { weapon ->
+                        weapon.name != event.item.name
+                    },
+                    equippedArmor = player.equippedArmor?.takeIf { armor ->
+                        armor.name != event.item.name
+                    },
                     inventory = player.inventory.copy(
                         items = newItems
                     )
