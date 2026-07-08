@@ -92,6 +92,14 @@ fun handleEvent(
             }
         }
 
+        is GameEvent.UnequipWeapon -> {
+            player.copy(equippedWeapon = null)
+        }
+
+        is GameEvent.UnequipArmor -> {
+            player.copy(equippedArmor = null)
+        }
+
 
         is GameEvent.Flee -> {
 

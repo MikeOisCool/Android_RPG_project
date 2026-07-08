@@ -23,5 +23,9 @@ sealed class GameEvent {
     data class EquipArmor(val armor: Item) : GameEvent()
 
     data class RemoveInventoryItem(val item: Item) : GameEvent()
+
+    object UnequipWeapon : GameEvent()
+
+    object UnequipArmor : GameEvent()
 }
 

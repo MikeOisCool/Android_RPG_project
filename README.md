@@ -44,6 +44,7 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 - 2026-07-06: RemoveInventoryItem/Event/Logic/ViewModel/UI eingebaut; nicht ausgeruestete Waffen/Ruestungen koennen aus dem Inventar entfernt werden.
 - 2026-07-08: Inventory-Logiktests und DropManager-Tests wurden ergaenzt; grosser Heiltrank Level-1-Test wurde vom Nutzer geschrieben und verstanden.
 - 2026-07-08: Arbeitsregeln fuer Codex sowie Vision und Lernziel in der README festgehalten: Nutzer schreibt Code selbst, Codex erklaert/prueft und haelt README aktuell.
+- 2026-07-08: Waffe und Ruestung koennen im Inventar abgelegt werden, ohne aus dem Inventar entfernt zu werden; GameLogic-Tests dafuer wurden vom Nutzer ergaenzt.
 
 ## Aktuelle Features
 
@@ -62,6 +63,7 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 - Heiltrank-Drops - nachweisbar seit 2026-06-14, DropManager refactored am 2026-06-28
 - Inventar-Screen - seit 2026-06-14, UI refactored am 2026-07-04 und 2026-07-06
 - Items aus Inventar entfernen - hinzugefuegt am 2026-07-06
+- Waffe und Ruestung ablegen - hinzugefuegt am 2026-07-08
 - Hoch- und Querformat - Game-Screen-Previews/Layout verbessert am 2026-06-28
 - Inventory- und DropManager-Tests - hinzugefuegt am 2026-07-08
 

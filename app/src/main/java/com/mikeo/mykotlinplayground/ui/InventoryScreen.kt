@@ -96,13 +96,18 @@ fun InventoryScreen(
                     statText = "Verteidigung",
                     statValue = item.defense,
                     isEquipped = player.equippedArmor?.name == item.name,
-                    isEquippedText = "Rüstung ausgerüstet",
+                    isEquippedText = "Rüstung ablegen",
                     item = item,
                     onEquip = {
                         viewModel.onEvent(GameEvent.EquipArmor(armor = item))
                     },
                     onRemove = {
                         viewModel.onEvent(GameEvent.RemoveInventoryItem(item = item))
+                    },
+                    unequip = {
+                        if(player.equippedArmor?.name == item.name) {
+                        viewModel.onEvent(GameEvent.UnequipArmor)
+                        }
                     }
                 )
             }
@@ -120,13 +125,18 @@ fun InventoryScreen(
                     statText = "Angriff",
                     statValue = item.damage,
                     isEquipped = player.equippedWeapon?.name == item.name,
-                    isEquippedText = "Waffe ausgerüstet",
+                    isEquippedText = "Waffe ablegen",
                     item = item,
                     onEquip = {
                         viewModel.onEvent(GameEvent.EquipWeapon(weapon = item))
                     },
                     onRemove = {
                         viewModel.onEvent(GameEvent.RemoveInventoryItem(item = item))
+                    },
+                    unequip = {
+                        if(player.equippedWeapon?.name == item.name) {
+                        viewModel.onEvent(GameEvent.UnequipWeapon)
+                        }
                     }
                 )
             }
@@ -144,6 +154,7 @@ fun InventoryScreen(
         )
     }
 }
+
 
 private fun visibleItemsByType(
     items: List<Item>,
@@ -193,7 +204,8 @@ fun EquipItem(
     isEquippedText: String,
     item: Item,
     onEquip: () -> Unit,
-    onRemove: () -> Unit
+    onRemove: () -> Unit,
+    unequip: () -> Unit
 ) {
     Text(
         "${item.name} x${item.amount} | $statText +$statValue"
@@ -209,6 +221,9 @@ fun EquipItem(
             onClick = {
                 if (!isEquipped) {
                     onEquip()
+                }
+                if (isEquipped) {
+                    unequip()
                 }
             }
         )

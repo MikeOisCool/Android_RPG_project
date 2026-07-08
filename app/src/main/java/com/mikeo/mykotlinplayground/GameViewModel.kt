@@ -166,6 +166,14 @@ class GameViewModel : ViewModel() {
             is GameEvent.RemoveInventoryItem -> {
                 applyEvent(event)
             }
+
+            is GameEvent.UnequipArmor -> {
+                applyEvent(event)
+            }
+
+            is GameEvent.UnequipWeapon -> {
+                applyEvent(event)
+            }
         }
     }
 

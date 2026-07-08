@@ -1,6 +1,7 @@
 package com.mikeo.mykotlinplayground
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Test
 
@@ -70,6 +71,40 @@ class GameLogicTest {
 
         assertNull(updatedPlayer.equippedWeapon)
         assertEquals(emptyList<Item>(), updatedPlayer.inventory.items)
+    }
+
+    @Test
+    fun weaponUnequipsIt() {
+        val player = testPlayer(
+            inventory = Inventory(items = listOf(GameItems.woodWeapon)),
+            equippedWeapon = GameItems.woodWeapon
+        )
+
+        val updatedPlayer = handleEvent(
+            player,
+            GameEvent.UnequipWeapon
+        )
+
+        assertNotNull(player.equippedWeapon)
+        assertNull(updatedPlayer.equippedWeapon)
+        assertEquals(listOf(GameItems.woodWeapon), updatedPlayer.inventory.items)
+    }
+
+    @Test
+    fun armorUnequipsIt() {
+        val player = testPlayer(
+            inventory = Inventory(items = listOf(GameItems.simpleArmor)),
+            equippedArmor = GameItems.simpleArmor
+        )
+
+        val updatedPlayer = handleEvent(
+            player,
+            GameEvent.UnequipArmor
+        )
+
+        assertNotNull(player.equippedArmor)
+        assertNull(updatedPlayer.equippedArmor)
+        assertEquals(listOf(GameItems.simpleArmor), updatedPlayer.inventory.items)
     }
 
     @Test
