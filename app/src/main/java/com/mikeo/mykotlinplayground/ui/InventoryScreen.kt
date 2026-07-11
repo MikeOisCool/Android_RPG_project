@@ -212,11 +212,12 @@ fun EquipItem(
     )
     Spacer(modifier = Modifier.height(16.dp))
     Row {
+        val equipButtonWidth = if (isEquipped) 0.6f else 0.45f
         GameButtonHoch(
             text = if (isEquipped) isEquippedText else "Ausrüsten",
             fontSize = 18.sp,
             modifier = Modifier
-                .fillMaxWidth(0.5f)
+                .fillMaxWidth(equipButtonWidth)
                 .height(90.dp),
             onClick = {
                 if (!isEquipped) {
@@ -227,18 +228,20 @@ fun EquipItem(
                 }
             }
         )
-        GameButtonHoch(
-            text = "Lösch- en",
-            fontSize = 18.sp,
-            modifier = Modifier
-                .fillMaxWidth(0.5f)
-                .height(90.dp),
-            onClick = {
-                if (!isEquipped) {
-                    onRemove()
+        if (!isEquipped) {
+            GameButtonHoch(
+                text = "Ent- fernen",
+                fontSize = 18.sp,
+                modifier = Modifier
+                    .fillMaxWidth(0.5f)
+                    .height(90.dp),
+                onClick = {
+                    if (!isEquipped) {
+                        onRemove()
+                    }
                 }
-            }
-        )
+            )
+        }
     }
     Spacer(modifier = Modifier.height(8.dp))
 }
