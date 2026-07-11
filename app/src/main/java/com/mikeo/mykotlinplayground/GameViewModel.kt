@@ -160,19 +160,27 @@ class GameViewModel : ViewModel() {
             }
 
             is GameEvent.AttackEnemy -> {
+                val enemyName = enemy.value.name
+                addLog("⚔️ Angriff auf $enemyName gestartet")
                 handleAttackEnemy()
             }
 
             is GameEvent.RemoveInventoryItem -> {
+                val item = event.item.name
                 applyEvent(event)
+                addLog("❌ $item entfernt")
             }
 
             is GameEvent.UnequipArmor -> {
+                val armorName = _player.value.equippedArmor?.name ?: "keine"
                 applyEvent(event)
+                addLog("🛡️ Rüstung: $armorName abgelegt")
             }
 
             is GameEvent.UnequipWeapon -> {
+                val weaponName = _player.value.equippedWeapon?.name ?: "keine"
                 applyEvent(event)
+                addLog("⚔️ Waffe: $weaponName abgelegt")
             }
         }
     }
