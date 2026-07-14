@@ -46,6 +46,9 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 - 2026-07-08: Arbeitsregeln fuer Codex sowie Vision und Lernziel in der README festgehalten: Nutzer schreibt Code selbst, Codex erklaert/prueft und haelt README aktuell.
 - 2026-07-08: Waffe und Ruestung koennen im Inventar abgelegt werden, ohne aus dem Inventar entfernt zu werden; GameLogic-Tests dafuer wurden vom Nutzer ergaenzt.
 - 2026-07-11: GameLog-Meldungen fuer Angriff, Entfernen von Inventar-Items sowie Ablegen von Waffe und Ruestung ergaenzt.
+- 2026-07-11: Haendler-Konzept mit levelabhaengigem Angebot, dynamischen Heiltrank-Preisen und Verkaufspreisen dokumentiert.
+- 2026-07-11: Item-Balancing fuer Heiltraenke, Waffen und Ruestungen zentral in der README dokumentiert.
+- 2026-07-14: Haendler/Shop-Screen umgesetzt: levelabhaengige Angebote, Kaufen und Verkaufen, Gold-Pruefung, Stack-Limit fuer Heiltraenke sowie Verkaufsschutz fuer ausgeruestete Waffen/Ruestungen.
 
 ## Aktuelle Features
 
@@ -67,6 +70,64 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 - Waffe und Ruestung ablegen - hinzugefuegt am 2026-07-08
 - Hoch- und Querformat - Game-Screen-Previews/Layout verbessert am 2026-06-28
 - Inventory- und DropManager-Tests - hinzugefuegt am 2026-07-08
+- Haendler/Shop-Screen - hinzugefuegt am 2026-07-14
+- Items kaufen und verkaufen - hinzugefuegt am 2026-07-14
+
+## Item-Balancing
+
+- Heiltraenke skalieren mit dem Spieler-Level.
+- Waffen haben feste Schadenswerte.
+- Ruestungen haben feste Verteidigungswerte.
+- Heiltrank-Preise koennen levelabhaengig berechnet werden, weil Heiltraenke mit hoeherem Level staerker wirken.
+
+## Haendler-Konzept
+
+Der Haendler ist als eigener Shop-Screen umgesetzt. Er verkauft Items levelabhaengig und nutzt Gold als Waehrung. Der Einstieg zum Haendler kann spaeter nach einem Level-Up angeboten werden, z.B. mit der Frage: "Moechtest du zum Haendler gehen?"
+
+### Angebot
+
+Das Haendler-Angebot ist erstmal fest und vom Spieler-Level abhaengig. Dadurch bleibt das Balancing verstaendlich und die Logik leichter lernbar.
+
+- Level 1-2: kleine Heiltraenke, Holzschwert, einfache Ruestung
+- Level 3-4: grosser Heiltrank, Eisenschwert, Eisen-Ruestung
+- Level 5-6: bessere oder seltenere Ausruestung/Waffen
+- Spaeter: optional zufaellige Tagesangebote oder Rabatte
+
+### Preise
+
+Jedes Item hat einen Grundpreis (`itemPrice`).
+
+Der Kaufpreis wird mit `buyPrice(item, playerLevel)` berechnet.
+
+- Waffen und Ruestungen behalten erstmal ihren festen Grundpreis.
+- Heiltraenke werden mit hoeherem Spieler-Level teurer, weil sie durch die Level-Skalierung auch staerker wirken.
+
+Der Verkaufspreis wird aus dem aktuellen Kaufpreis abgeleitet:
+
+```kotlin
+sellPrice = 50% von buyPrice(item, playerLevel)
+```
+
+Dadurch muss nicht gespeichert werden, zu welchem Preis ein Item frueher gekauft wurde.
+
+### Kaufen
+
+Beim Kaufen gelten folgende Regeln:
+
+- Der Spieler braucht genug Gold.
+- Das Item muss fuer das aktuelle Level freigeschaltet sein.
+- Stackbare Items wie Heiltraenke duerfen das Maximum nicht ueberschreiten.
+- Wenn ein Stack voll ist, erscheint eine Meldung im GameLog.
+- Unique Items wie Waffen und Ruestungen sollen nicht doppelt gekauft werden.
+
+### Verkaufen
+
+Beim Verkaufen gelten folgende Regeln:
+
+- Der Spieler bekommt Gold entsprechend dem Verkaufspreis.
+- Heiltraenke werden stueckweise verkauft.
+- Waffen und Ruestungen werden als ganzes Item verkauft.
+- Ausgeruestete Waffen und Ruestungen werden im Shop nicht als verkaufbar angeboten.
 
 ## Geplante Features
 

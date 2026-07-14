@@ -92,6 +92,70 @@ fun handleEvent(
             }
         }
 
+        is GameEvent.BuyItem -> {
+            val price = buyPrice(event.item, player.level)
+            val itemInventory = player.inventory.items.find { item ->
+                item.name == event.item.name
+            }
+            if (player.gold < price) {
+                player
+            } else if (event.item.type == ItemType.POTION && (itemInventory?.amount ?: 0) >= 10){
+                player
+            } else {
+
+            val newItems = when (event.item.type) {
+                ItemType.POTION -> {
+                   if (event.item.type == ItemType.POTION && itemInventory != null) {
+
+                        player.inventory.items.map { item ->
+                            if (item.name == event.item.name) {
+                                item.copy(amount = item.amount + 1)
+                            } else {
+                                item
+                            }
+                        }
+                    } else {
+                        player.inventory.items + event.item
+                   }
+                }
+
+                ItemType.WEAPON -> {
+                        player.inventory.items + event.item
+                }
+                ItemType.ARMOR -> {
+                        player.inventory.items + event.item
+                }
+            }
+                player.copy(
+                    inventory = player.inventory.copy(items = newItems),
+                    gold = player.gold - price
+                )
+            }
+        }
+
+
+        is GameEvent.SellItem -> {
+            val itemToSell = player.inventory.items.find { it.name == event.item.name }
+            if (itemToSell == null || itemToSell.amount <= 0) {
+                player
+            } else {
+                val newItems = player.inventory.items.map { item ->
+                    if (item.name == event.item.name) {
+                        item.copy(amount = item.amount - 1)
+                    } else {
+                        item
+                    }
+                }.filter { item -> item.amount > 0 }
+                player.copy(
+                    inventory = player.inventory.copy(
+                        items = newItems
+                    ),
+                    gold = player.gold + sellPrice(event.item, player.level)
+                )
+            }
+
+        }
+
         is GameEvent.UnequipWeapon -> {
             player.copy(equippedWeapon = null)
         }

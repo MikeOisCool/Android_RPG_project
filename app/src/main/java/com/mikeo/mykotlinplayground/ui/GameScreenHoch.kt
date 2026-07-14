@@ -34,7 +34,8 @@ fun GameScreenHoch(
     viewModel: GameViewModel,
     listState: LazyListState,
     onGameOver: () -> Unit,
-    onInventory: () -> Unit
+    onInventory: () -> Unit,
+    onShop: () -> Unit
 ) {
 
     val player by viewModel.player.collectAsState()
@@ -143,12 +144,19 @@ fun GameScreenHoch(
                 )
             }
 
-
+Row {
             GameButtonHoch(
                 text = "XP sammeln",
                 onClick = { viewModel.onEvent(GameEvent.GainXp()) }
             )
 
+            GameButtonHoch(
+                text = "Shop öffnen",
+                onClick = {
+                    onShop()
+                }
+            )
+        }
 
             Row(
                 modifier = Modifier.padding(bottom = 10.dp),
@@ -214,6 +222,7 @@ fun GameScreenHochPreview() {
         viewModel = GameViewModel(),
         listState = rememberLazyListState(),
         onGameOver = {},
-        onInventory = {}
+        onInventory = {},
+        onShop = {}
     )
 }

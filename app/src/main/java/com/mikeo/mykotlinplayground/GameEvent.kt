@@ -27,5 +27,8 @@ sealed class GameEvent {
     object UnequipWeapon : GameEvent()
 
     object UnequipArmor : GameEvent()
+
+    data class BuyItem(val item: Item) : GameEvent()
+    data class SellItem(val item: Item) : GameEvent()
 }
 

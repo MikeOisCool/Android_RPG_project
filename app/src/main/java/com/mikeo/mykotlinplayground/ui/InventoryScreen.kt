@@ -32,12 +32,6 @@ import com.mikeo.mykotlinplayground.Item
 import com.mikeo.mykotlinplayground.ItemType
 import com.mikeo.mykotlinplayground.calculateItemHeal
 
-/*
-❤️ Heiltränke skalieren mit dem Level.
-⚔️ Waffen haben feste Werte (Holzschwert +15, Eisenschwert +30 usw.).
-🛡️ Rüstungen haben feste Verteidigungswerte.
-*/
-
 @Composable
 fun InventoryScreen(
     viewModel: GameViewModel,

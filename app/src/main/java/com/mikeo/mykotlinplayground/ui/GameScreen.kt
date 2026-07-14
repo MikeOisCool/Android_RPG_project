@@ -23,6 +23,7 @@ fun GameScreen(
     listState: LazyListState,
     onGameOver: () -> Unit,
     onInventory: () -> Unit,
+    onShop: () -> Unit,
     onExitGame: () -> Unit
 ) {
 
@@ -81,7 +82,8 @@ fun GameScreen(
             viewModel = viewModel,
             listState = listState,
             onGameOver = onGameOver,
-            onInventory = onInventory
+            onInventory = onInventory,
+            onShop = onShop
 
         )
     }

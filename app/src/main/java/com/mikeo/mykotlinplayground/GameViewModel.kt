@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+
 class GameViewModel : ViewModel() {
 
     private val initialPlayer = Player(
@@ -181,6 +182,26 @@ class GameViewModel : ViewModel() {
                 val weaponName = _player.value.equippedWeapon?.name ?: "keine"
                 applyEvent(event)
                 addLog("⚔️ Waffe: $weaponName abgelegt")
+            }
+
+            is GameEvent.BuyItem -> {
+                val price = buyPrice(event.item, _player.value.level)
+                val itemInventory = _player.value.inventory.items.find { item ->
+                    item.name == event.item.name
+                }
+
+                if (event.item.type == ItemType.POTION && (itemInventory?.amount ?: 0) >= 10) {
+                    addLog("🎒 ${event.item.name} ist schon voll")
+                } else if (_player.value.gold < price) {
+                    addLog("💰 Nicht genug Gold für ${event.item.name}!")
+                } else {
+                    applyEvent(event)
+                    addLog("🛒 ${event.item.name} gekauft")
+                }
+            }
+
+            is GameEvent.SellItem -> {
+                applyEvent(event)
             }
         }
     }

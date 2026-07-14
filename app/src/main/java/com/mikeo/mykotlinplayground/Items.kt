@@ -5,6 +5,7 @@ object GameItems {
     val woodWeapon = Item(
         name = ItemNamen.HOLZSCHWERT,
         type = ItemType.WEAPON,
+        itemPrice = 10,
         description = "Schaden +15",
         amount = 1,
         heal = 0,
@@ -14,6 +15,7 @@ object GameItems {
     val ironWeapon = Item(
         name = ItemNamen.EISENSCHWERT,
         type = ItemType.WEAPON,
+        itemPrice = 20,
         description = "Schaden +35",
         amount = 1,
         heal = 0,
@@ -24,6 +26,7 @@ object GameItems {
     val silverWeapon = Item(
         name = ItemNamen.SILBERSCHWERT,
         type = ItemType.WEAPON,
+        itemPrice = 30,
         description = "Schaden +50",
         amount = 1,
         heal = 0,
@@ -34,6 +37,7 @@ object GameItems {
     val goldenWeapon = Item(
         name = ItemNamen.GOLDENESSCHWERT,
         type = ItemType.WEAPON,
+        itemPrice = 40,
         description = "Schaden +75",
         amount = 1,
         heal = 0,
@@ -45,6 +49,7 @@ object GameItems {
     val diamondWeapon = Item(
         name = ItemNamen.DIAMANTENSCHWERT,
         type = ItemType.WEAPON,
+        itemPrice = 50,
         description = "Schaden +100",
         amount = 1,
         heal = 0,
@@ -55,6 +60,7 @@ object GameItems {
         name = ItemNamen.EINFACHE_RÜSTUNG,
         article = "eine",
         type = ItemType.ARMOR,
+        itemPrice = 10,
         description = "Verteidigung +10",
         amount = 1,
         heal = 0,
@@ -66,6 +72,7 @@ object GameItems {
         name = ItemNamen.EISEN_RÜSTUNG,
         article = "eine",
         type = ItemType.ARMOR,
+        itemPrice = 20,
         description = "Verteidigung +20",
         amount = 1,
         heal = 0,
@@ -76,6 +83,7 @@ object GameItems {
         name = ItemNamen.HEILTRANK,
         article = "einen",
         type = ItemType.POTION,
+        itemPrice = 10,
         description = "Heilung +20",
         amount = 1,
         heal = 20,
@@ -85,9 +93,10 @@ object GameItems {
     val healBigPotion = Item(
         name = ItemNamen.GROSSER_HEILTRANK,
         article = "einen",
-        description = "Heilung +25",
-        amount = 1,
         type = ItemType.POTION,
+        itemPrice = 25,
+        description = "Heilung +50",
+        amount = 1,
         heal =  50,
         damage = 0,
         defense = 0

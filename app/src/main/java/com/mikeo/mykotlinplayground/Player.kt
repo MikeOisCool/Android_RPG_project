@@ -10,7 +10,7 @@ data class Player(
     val equippedArmor: Item? = null,
     val gold: Int,
     val isDead: Boolean,
-    val level: Int,
+    val level: Int = 1,
     val xp: Int = 0,
     val xpToNextLevel: Int = 100
 )

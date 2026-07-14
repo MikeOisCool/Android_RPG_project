@@ -48,6 +48,9 @@ fun AppNavigation() {
                             inclusive = true
                         }
                     }
+                },
+                onShop = {
+                    navController.navigate("shop_screen")
                 }
 
             )
@@ -55,6 +58,14 @@ fun AppNavigation() {
 
         composable("inventory_screen") {
             InventoryScreen(
+                viewModel = viewModel,
+                onBackToGame = {
+                    navController.popBackStack()
+                }
+            )
+        }
+        composable("shop_screen") {
+            ShopScreen(
                 viewModel = viewModel,
                 onBackToGame = {
                     navController.popBackStack()
