@@ -8,6 +8,60 @@ import org.junit.Test
 class GameLogicTest {
 
     @Test
+    fun useAmountOfPotionFromOnetoTwo() {
+        val player = testPlayer(
+            inventory = Inventory(items = listOf(GameItems.healPotion))
+        )
+
+        val updatedPlayer = handleEvent(player, GameEvent.BuyItem(GameItems.healPotion))
+
+        val potion = updatedPlayer.inventory.items.single()
+
+        assertEquals(2, potion.amount)
+        assertEquals(ItemNamen.HEILTRANK, potion.name)
+    }
+
+    @Test
+    fun buyPotionIncreasesAmount() {
+        val player = testPlayer(
+            inventory = Inventory(items = listOf(GameItems.healPotion)),
+            gold = 200
+        )
+        var updatedPlayer = player
+        for (x in 1..12 ) {
+            updatedPlayer = handleEvent(updatedPlayer, GameEvent.BuyItem(GameItems.healPotion))
+        }
+        val potion = updatedPlayer.inventory.items.single()
+        assertEquals(10, potion.amount)
+
+    }
+
+    @Test
+    fun sellPotionIncreasesGold() {
+        val player = testPlayer(
+            inventory = Inventory(items = listOf(GameItems.healPotion)),
+            gold = 200
+        )
+        val updatedPlayer = handleEvent(player, GameEvent.SellItem(GameItems.healPotion))
+
+        assertEquals(205, updatedPlayer.gold)
+    }
+
+    @Test
+    fun buyWithoutGoldDoesNothing() {
+        val player = testPlayer(
+            inventory = Inventory(items = listOf(GameItems.healPotion)),
+            gold = 0
+        )
+        var updatedPlayer = player
+        repeat (12) {
+            updatedPlayer = handleEvent(updatedPlayer, GameEvent.BuyItem(GameItems.healPotion))
+        }
+        val potion = updatedPlayer.inventory.items.single()
+        assertEquals(1, potion.amount)
+    }
+
+    @Test
     fun usePotionHealsPlayerAndRemovesLastPotion() {
         val player = testPlayer(
             hp = 50,
@@ -58,6 +112,21 @@ class GameLogicTest {
     }
 
     @Test
+    fun buyWeaponDoesNotAddDuplicateWeapon() {
+        val player = testPlayer(
+            inventory = Inventory(items = emptyList()),
+            gold = 100)
+        var updatedPlayer = handleEvent(player, GameEvent.BuyItem(GameItems.woodWeapon))
+        updatedPlayer = handleEvent(updatedPlayer, GameEvent.BuyItem(GameItems.woodWeapon))
+        updatedPlayer = handleEvent(updatedPlayer, GameEvent.BuyItem(GameItems.woodWeapon))
+
+        val weapon = updatedPlayer.inventory.items.single()
+
+        assertEquals(ItemNamen.HOLZSCHWERT, weapon.name)
+        assertEquals(1, weapon.amount)
+    }
+
+    @Test
     fun removeEquippedWeaponAlsoUnequipsIt() {
         val player = testPlayer(
             inventory = Inventory(items = listOf(GameItems.woodWeapon)),
@@ -70,6 +139,16 @@ class GameLogicTest {
         )
 
         assertNull(updatedPlayer.equippedWeapon)
+        assertEquals(emptyList<Item>(), updatedPlayer.inventory.items)
+    }
+
+    @Test
+    fun sellWeaponIncreasesGoldAndRemovesIt() {
+        val player = testPlayer(
+            inventory = Inventory(items = listOf(GameItems.woodWeapon)),
+        )
+        val updatedPlayer = handleEvent(player, GameEvent.SellItem(GameItems.woodWeapon))
+        assertEquals(55, updatedPlayer.gold)
         assertEquals(emptyList<Item>(), updatedPlayer.inventory.items)
     }
 
@@ -129,17 +208,18 @@ class GameLogicTest {
         level: Int = 1,
         inventory: Inventory = Inventory(items = emptyList()),
         equippedWeapon: Item? = null,
-        equippedArmor: Item? = null
+        equippedArmor: Item? = null,
+        gold: Int = 50
     ): Player {
         return Player(
-            name = "Test",
+            name = "TestPlayer",
             inventory = inventory,
             hp = hp,
             maxHp = maxHp,
             attack = 10,
             equippedWeapon = equippedWeapon,
             equippedArmor = equippedArmor,
-            gold = 50,
+            gold = gold,
             isDead = false,
             level = level
         )

@@ -49,6 +49,7 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 - 2026-07-11: Haendler-Konzept mit levelabhaengigem Angebot, dynamischen Heiltrank-Preisen und Verkaufspreisen dokumentiert.
 - 2026-07-11: Item-Balancing fuer Heiltraenke, Waffen und Ruestungen zentral in der README dokumentiert.
 - 2026-07-14: Haendler/Shop-Screen umgesetzt: levelabhaengige Angebote, Kaufen und Verkaufen, Gold-Pruefung, Stack-Limit fuer Heiltraenke sowie Verkaufsschutz fuer ausgeruestete Waffen/Ruestungen.
+- 2026-07-15: GameLogic-Tests fuer Shop-Kauflogik ergaenzt; Heiltrank-Stacking, fehlendes Gold, Verkaufspreise und doppelte Waffenkaeufe werden geprueft.
 
 ## Aktuelle Features
 
@@ -72,6 +73,7 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 - Inventory- und DropManager-Tests - hinzugefuegt am 2026-07-08
 - Haendler/Shop-Screen - hinzugefuegt am 2026-07-14
 - Items kaufen und verkaufen - hinzugefuegt am 2026-07-14
+- Shop-Kauflogik-Tests - hinzugefuegt am 2026-07-15
 
 ## Item-Balancing
 

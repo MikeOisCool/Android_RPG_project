@@ -99,7 +99,9 @@ fun handleEvent(
             }
             if (player.gold < price) {
                 player
-            } else if (event.item.type == ItemType.POTION && (itemInventory?.amount ?: 0) >= 10){
+            } else if (event.item.type == ItemType.POTION && (itemInventory?.amount ?: 0) >= 10) {
+                player
+            } else if (event.item.type != ItemType.POTION && itemInventory != null) {
                 player
             } else {
 
