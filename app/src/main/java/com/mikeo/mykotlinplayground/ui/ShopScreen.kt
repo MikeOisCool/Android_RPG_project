@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -22,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -62,23 +65,26 @@ fun ShopScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
+        Spacer(modifier = Modifier.height(24.dp))
         Text(
             text = "Itemsshop", fontSize = 24.sp, textDecoration = TextDecoration.Underline
         )
         Spacer(modifier = Modifier.height(16.dp))
 
-        InventorySection(
+        ShopInventorySection(
             title = "Angebote",
             emptyText = "Im Moment gibt es keine Angebote",
             isEmpty = shopItems.isEmpty()
         ) {
             shopItems.forEach { item ->
 
-                val itemInventory = items.find { inventoryItem -> inventoryItem.name == item.name}
-                val hasNotEnoughGold = player.gold < buyPrice(item = item, playerLevel = player.level)
-                val potionIsFull = item.type == ItemType.POTION && (itemInventory?.amount ?: 0) >= 10
-                val uniqueItemIsAlreadyInInventory = itemInventory != null && item.type != ItemType.POTION
+                val itemInventory = items.find { inventoryItem -> inventoryItem.name == item.name }
+                val hasNotEnoughGold =
+                    player.gold < buyPrice(item = item, playerLevel = player.level)
+                val potionIsFull =
+                    item.type == ItemType.POTION && (itemInventory?.amount ?: 0) >= 10
+                val uniqueItemIsAlreadyInInventory =
+                    itemInventory != null && item.type != ItemType.POTION
                 val canBuy = !hasNotEnoughGold && !potionIsFull && !uniqueItemIsAlreadyInInventory
 
 
@@ -90,35 +96,49 @@ fun ShopScreen(
                     }"
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                Row {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
                     if (canBuy) {
 
 
-                    GameButtonHoch(
-                        text = "Kauf",
-                        fontSize = 24.sp,
-                        modifier = Modifier
-                            .fillMaxWidth(0.4f)
-                            .height(55.dp),
-                        onClick = {
-                            viewModel.onEvent(GameEvent.BuyItem(item = item))
-                        })
+                        ShopButton(
+                            text = "Kauf $item",
+                            onClick = {
+                                viewModel.onEvent(GameEvent.BuyItem(item = item))
+                            })
                     } else {
+
                         if (hasNotEnoughGold) {
-                            Text("Nicht genügend Gold")
+                            Text(
+                                text = "Nicht genügend Gold",
+                                fontSize = 24.sp,
+                                textAlign = TextAlign.Center
+                            )
                         } else if (potionIsFull) {
-                            Text("Tränke sind voll")
+                            Text(
+                                text = "Tränke sind voll",
+                                fontSize = 24.sp,
+                                textAlign = TextAlign.Center
+                            )
                         } else if (uniqueItemIsAlreadyInInventory) {
-                            Text("$item.name ist bereits im Inventar")
+                            Text(
+                                text = "${item.name} ist bereits im Inventar",
+                                fontSize = 24.sp,
+                                textAlign = TextAlign.Center
+                            )
                         }
                     }
                 }
             }
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
-
-        InventorySection(
+        ShopInventorySection(
             title = "Tränke",
             emptyText = "Es sind keine Tränke im Inventar",
             isEmpty = potionItems.isEmpty()
@@ -129,21 +149,19 @@ fun ShopScreen(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
 
-                GameButtonHoch(
-                    text = "Verkauf",
-                    fontSize = 24.sp,
-                    modifier = Modifier
-                        .fillMaxWidth(0.6f)
-                        .height(55.dp),
+                ShopButton(
+                    text = "Verkauf $item",
                     onClick = {
                         viewModel.onEvent(GameEvent.SellItem(item = item))
-                    })
+                    }
+                )
+                Spacer(modifier = Modifier.height(8.dp))
             }
         }
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        InventorySection(
+        ShopInventorySection(
             title = "Rüstung",
             emptyText = "Es sind keine Rüstungen im Inventar",
             isEmpty = armorItems.isEmpty()
@@ -168,7 +186,7 @@ fun ShopScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        InventorySection(
+        ShopInventorySection(
             title = "Waffen",
             emptyText = "Es sind keine Waffen im Inventar",
             isEmpty = weaponItems.isEmpty()
@@ -190,23 +208,67 @@ fun ShopScreen(
                 Spacer(modifier = Modifier.height(8.dp))
 
             }
-
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            GameButtonHoch(
-                text = "Shop verlassen",
-                fontSize = 24.sp,
-                modifier = Modifier
-                    .fillMaxWidth(0.7f)
-                    .height(55.dp),
-                onClick = onBackToGame
-            )
         }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        GameButtonHoch(
+            text = "Shop verlassen",
+            modifier = Modifier
+                .fillMaxWidth(0.7f)
+                .height(55.dp),
+            fontSize = 26.sp,
+            onClick = onBackToGame
+        )
+
     }
 
 
 }
+
+@Composable
+fun ShopInventorySection(
+    title: String,
+    emptyText: String,
+    isEmpty: Boolean,
+    content: @Composable () -> Unit
+) {
+    Text(text = title, fontSize = 20.sp)
+    Spacer(modifier = Modifier.height(8.dp))
+    if (isEmpty) {
+        Text(
+            text = emptyText,
+            fontSize = 16.sp,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
+    } else {
+        content()
+    }
+}
+
+@Composable
+fun ShopButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+        .fillMaxWidth(0.6f)
+        .height(65.dp)
+) {
+    Button(
+        onClick = onClick,
+        modifier = modifier,
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+    ) {
+        Text(
+            text = text,
+            fontSize = 16.sp,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
+    }
+}
+
 @Composable
 fun SellPotionItem(
     item: Item,
@@ -218,9 +280,17 @@ fun SellPotionItem(
     )
 
     Text(
-        text = "${item.name} x${item.amount} | Heilung +$healAmount | Verkaufspreis: ${sellPrice(item = item, playerLevel = playerLevel)}"
+        text = "${item.name} x${item.amount} | Heilung +$healAmount | Verkaufspreis: ${
+            sellPrice(
+                item = item,
+                playerLevel = playerLevel
+            )
+        }",
+        textAlign = TextAlign.Center,
+        modifier = Modifier.fillMaxWidth()
     )
 }
+
 fun sellableArmorItems(items: List<Item>, player: Player): List<Item> {
     val sellableArmorItems = items.filter { item ->
         player.equippedArmor?.name != item.name
@@ -242,17 +312,15 @@ fun ShopSellItem(
     val player by viewModel.player.collectAsState()
     val sellPrice = sellPrice(item, playerLevel = player.level)
     Text(
-        "${item.name} x${item.amount} | $statText +$statValue | Verkaufspreis: $sellPrice Gold"
+        text = "${item.name} x${item.amount} | $statText +$statValue | Verkaufspreis: $sellPrice Gold",
+        textAlign = TextAlign.Center,
+        modifier = Modifier.fillMaxWidth()
     )
     Spacer(modifier = Modifier.height(16.dp))
     Row {
 
-        GameButtonHoch(
-            text = "Verkaufen",
-            fontSize = 18.sp,
-            modifier = Modifier
-                .fillMaxWidth(0.6f)
-                .height(55.dp),
+        ShopButton(
+            text = "Verkauf $item",
             onClick = onSell
         )
         Spacer(modifier = Modifier.height(8.dp))

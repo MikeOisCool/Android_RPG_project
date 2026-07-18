@@ -14,7 +14,7 @@ class GameViewModel : ViewModel() {
     private val initialPlayer = Player(
         name = "Felix", hp = 100, maxHp = 100, attack = 10, inventory = Inventory(
             items = listOf(
-                GameItems.healPotion
+                GameItems.healPotion.copy(amount = 2)
             )
         ), gold = 50, isDead = false, level = 1
     )

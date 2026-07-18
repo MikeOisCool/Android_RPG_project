@@ -50,6 +50,7 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 - 2026-07-11: Item-Balancing fuer Heiltraenke, Waffen und Ruestungen zentral in der README dokumentiert.
 - 2026-07-14: Haendler/Shop-Screen umgesetzt: levelabhaengige Angebote, Kaufen und Verkaufen, Gold-Pruefung, Stack-Limit fuer Heiltraenke sowie Verkaufsschutz fuer ausgeruestete Waffen/Ruestungen.
 - 2026-07-15: GameLogic-Tests fuer Shop-Kauflogik ergaenzt; Heiltrank-Stacking, fehlendes Gold, Verkaufspreise und doppelte Waffenkaeufe werden geprueft.
+- 2026-07-18: Shop-UI-Texte und Button-Darstellung ueberarbeitet; eigene Shop-Section und Shop-Buttons eingefuehrt, leere Texte zentriert und Shop-Verlassen-Button korrekt ausserhalb der Waffenliste platziert.
 
 ## Aktuelle Features
 
@@ -74,6 +75,7 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 - Haendler/Shop-Screen - hinzugefuegt am 2026-07-14
 - Items kaufen und verkaufen - hinzugefuegt am 2026-07-14
 - Shop-Kauflogik-Tests - hinzugefuegt am 2026-07-15
+- Shop-UI-Texte und Shop-Buttons - ueberarbeitet am 2026-07-18
 
 ## Item-Balancing
 
