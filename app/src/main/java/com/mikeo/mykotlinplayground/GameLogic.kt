@@ -233,6 +233,10 @@ fun isPotionStackFull(item: Item, inventory: Inventory): Boolean {
             (itemInventory?.amount ?: 0) >= 10
 }
 
+fun hasItemInInventory(item: Item, inventory: Inventory): Boolean {
+    return inventory.items.any { it.name == item.name }
+}
+
 private fun usePotionByName(
     player: Player, itemName: String
 ): Player {

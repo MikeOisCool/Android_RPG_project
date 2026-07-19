@@ -204,10 +204,7 @@ class GameViewModel : ViewModel() {
                 val isWeaponOrArmor = isWeaponOrArmor(event.item)
                 val isEquipped = isEquippedItem(event.item, _player.value)
 
-                val itemInventory = _player.value.inventory.items.find { item ->
-                    item.name == event.item.name
-                }
-                if ((itemInventory?.amount ?: 0) < 1) {
+                if (!hasItemInInventory(event.item, _player.value.inventory)) {
                     addLog("🎒 ${event.item.name} ist nicht im Inventar")
                 } else if (isWeaponOrArmor && isEquipped) {
                     addLog(equippedItemSellBlockedLog(event.item))

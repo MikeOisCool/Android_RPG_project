@@ -128,6 +128,30 @@ class GameLogicTest {
     }
 
     @Test
+    fun hasItemInInventoryReturnsTrueWhenItemExists() {
+        val inventory = Inventory(items = listOf(GameItems.woodWeapon))
+
+        val result = hasItemInInventory(
+            item = GameItems.woodWeapon,
+            inventory = inventory
+        )
+
+        assertTrue(result)
+    }
+
+    @Test
+    fun hasItemInInventoryReturnsFalseWhenItemIsMissing() {
+        val inventory = Inventory(items = emptyList())
+
+        val result = hasItemInInventory(
+            item = GameItems.woodWeapon,
+            inventory = inventory
+        )
+
+        assertFalse(result)
+    }
+
+    @Test
     fun buyWeaponDoesNotAddDuplicateWeapon() {
         val player = testPlayer(
             inventory = Inventory(items = emptyList()),
