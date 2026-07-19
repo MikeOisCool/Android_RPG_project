@@ -189,19 +189,40 @@ class GameViewModel : ViewModel() {
                 val itemInventory = _player.value.inventory.items.find { item ->
                     item.name == event.item.name
                 }
+                val uniqueItemIsAlreadyInInventory =
+                    itemInventory != null && event.item.type != ItemType.POTION
 
                 if (event.item.type == ItemType.POTION && (itemInventory?.amount ?: 0) >= 10) {
                     addLog("🎒 ${event.item.name} ist schon voll")
+                } else if (uniqueItemIsAlreadyInInventory) {
+                    addLog("🎒 ${event.item.name} ist schon im Inventar")
                 } else if (_player.value.gold < price) {
                     addLog("💰 Nicht genug Gold für ${event.item.name}!")
                 } else {
                     applyEvent(event)
-                    addLog("🛒 ${event.item.name} gekauft")
+                    addLog("🛒 Du kaufst ${event.item} für $price Gold")
                 }
             }
 
             is GameEvent.SellItem -> {
-                applyEvent(event)
+                val sellPriceItem = sellPrice(event.item, _player.value.level)
+                val isWeaponOrArmor =
+                    event.item.type == ItemType.WEAPON || event.item.type == ItemType.ARMOR
+                val isEquipped =
+                    _player.value.equippedWeapon?.name == event.item.name || _player.value.equippedArmor?.name == event.item.name
+
+                val itemInventory = _player.value.inventory.items.find { item ->
+                    item.name == event.item.name
+                }
+                if ((itemInventory?.amount ?: 0) < 1) {
+                    addLog("🎒 ${event.item.name} ist nicht im Inventar")
+                } else if (isWeaponOrArmor && isEquipped) {
+                    addLog("⚔️ Lege ${event.item} zuerst ab, bevor du sie verkaufst!")
+                } else {
+
+                    applyEvent(event)
+                    addLog("🛒 Du verkaufst ${event.item} für $sellPriceItem Gold")
+                }
             }
         }
     }
