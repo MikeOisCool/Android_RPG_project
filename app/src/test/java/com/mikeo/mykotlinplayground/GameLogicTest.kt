@@ -39,6 +39,20 @@ class GameLogicTest {
     }
 
     @Test
+    fun potionStackFullReturnsTrueAtTen() {
+        val inventory = Inventory(
+            items = listOf(GameItems.healPotion.copy(amount = 10))
+        )
+
+        val result = isPotionStackFull(
+            item = GameItems.healPotion,
+            inventory = inventory
+        )
+
+        assertTrue(result)
+    }
+
+    @Test
     fun sellPotionIncreasesGold() {
         val player = testPlayer(
             inventory = Inventory(items = listOf(GameItems.healPotion)),

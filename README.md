@@ -57,6 +57,7 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 - 2026-07-19: Shop-Logtexte in eigene Hilfsfunktionen ausgelagert und mit GameLogText-Tests abgesichert.
 - 2026-07-19: Item-Zustandspruefungen fuer Shop-Events ausgelagert; ViewModel nutzt Helfer fuer ausgeruestete Items, Unique-Items und Waffen/Ruestungen.
 - 2026-07-19: Unit-Tests fuer Item-Zustandshelfer ergaenzt.
+- 2026-07-19: Shop-Kaufpruefungen fuer volle Heiltrank-Stacks und Unique-Items vereinheitlicht; GameLogic, ViewModel und ShopScreen nutzen gemeinsame Helfer.
 
 ## Aktuelle Features
 
@@ -88,6 +89,7 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 - Shop-Logtexte - refactored und getestet am 2026-07-19
 - Shop-Item-Zustandspruefungen - refactored am 2026-07-19
 - Item-Zustandshelfer-Tests - hinzugefuegt am 2026-07-19
+- Shop-Kaufpruefungen - vereinheitlicht am 2026-07-19
 
 ## Item-Balancing
 

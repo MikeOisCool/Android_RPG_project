@@ -37,6 +37,8 @@ import com.mikeo.mykotlinplayground.Player
 import com.mikeo.mykotlinplayground.availableShopItems
 import com.mikeo.mykotlinplayground.buyPrice
 import com.mikeo.mykotlinplayground.calculateItemHeal
+import com.mikeo.mykotlinplayground.isPotionStackFull
+import com.mikeo.mykotlinplayground.isUniqueItemAlreadyInInventory
 import com.mikeo.mykotlinplayground.sellPrice
 
 
@@ -263,11 +265,9 @@ fun StatusText(
 
 fun shopOfferStatusText(item: Item, player: Player): String? {
     val itemBuyPrice = buyPrice(item = item, playerLevel = player.level)
-    val itemInventory =
-        player.inventory.items.find { inventoryItem -> inventoryItem.name == item.name }
     val hasNotEnoughGold = player.gold < itemBuyPrice
-    val potionIsFull = item.type == ItemType.POTION && (itemInventory?.amount ?: 0) >= 10
-    val uniqueItemIsAlreadyInInventory = itemInventory != null && item.type != ItemType.POTION
+    val potionIsFull = isPotionStackFull(item, player.inventory)
+    val uniqueItemIsAlreadyInInventory = isUniqueItemAlreadyInInventory(item, player.inventory)
 
     return when {
         hasNotEnoughGold -> "Nicht genügend Gold"

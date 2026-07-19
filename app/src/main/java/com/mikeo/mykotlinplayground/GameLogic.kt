@@ -99,15 +99,15 @@ fun handleEvent(
             }
             if (player.gold < price) {
                 player
-            } else if (event.item.type == ItemType.POTION && (itemInventory?.amount ?: 0) >= 10) {
+            } else if (isPotionStackFull(event.item, player.inventory)) {
                 player
-            } else if (event.item.type != ItemType.POTION && itemInventory != null) {
+            } else if (isUniqueItemAlreadyInInventory(item = event.item, inventory = player.inventory)) {
                 player
             } else {
 
             val newItems = when (event.item.type) {
                 ItemType.POTION -> {
-                   if (event.item.type == ItemType.POTION && itemInventory != null) {
+                   if (itemInventory != null) {
 
                         player.inventory.items.map { item ->
                             if (item.name == event.item.name) {
@@ -224,6 +224,13 @@ fun isUniqueItemAlreadyInInventory(item: Item, inventory: Inventory): Boolean {
 }
 fun isWeaponOrArmor(item: Item): Boolean {
     return item.type == ItemType.WEAPON || item.type == ItemType.ARMOR
+}
+
+fun isPotionStackFull(item: Item, inventory: Inventory): Boolean {
+    val itemInventory = inventory.items.find { it.name == item.name }
+
+    return item.type == ItemType.POTION &&
+            (itemInventory?.amount ?: 0) >= 10
 }
 
 private fun usePotionByName(

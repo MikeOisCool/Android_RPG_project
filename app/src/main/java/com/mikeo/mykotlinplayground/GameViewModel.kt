@@ -186,15 +186,10 @@ class GameViewModel : ViewModel() {
 
             is GameEvent.BuyItem -> {
                 val price = buyPrice(event.item, _player.value.level)
-                val itemInventory = _player.value.inventory.items.find { item ->
-                    item.name == event.item.name
-                }
-                val uniqueItemIsAlreadyInInventory = isUniqueItemAlreadyInInventory(item = event.item, inventory = _player.value.inventory)
 
-
-                if (event.item.type == ItemType.POTION && (itemInventory?.amount ?: 0) >= 10) {
+                if (isPotionStackFull(event.item, _player.value.inventory)) {
                     addLog("🎒 ${event.item.name} ist schon voll")
-                } else if (uniqueItemIsAlreadyInInventory) {
+                } else if (isUniqueItemAlreadyInInventory(item = event.item, inventory = _player.value.inventory)) {
                     addLog("🎒 ${event.item.name} ist schon im Inventar")
                 } else if (_player.value.gold < price) {
                     addLog("💰 Nicht genug Gold für ${event.item.name}!")
