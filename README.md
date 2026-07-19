@@ -59,6 +59,7 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 - 2026-07-19: Unit-Tests fuer Item-Zustandshelfer ergaenzt.
 - 2026-07-19: Shop-Kaufpruefungen fuer volle Heiltrank-Stacks und Unique-Items vereinheitlicht; GameLogic, ViewModel und ShopScreen nutzen gemeinsame Helfer.
 - 2026-07-19: Verkaufspruefung fuer vorhandene Inventar-Items ausgelagert und getestet.
+- 2026-07-19: Item-Pruefhelfer aus GameLogic in eigene Datei ItemChecks verschoben.
 
 ## Aktuelle Features
 
@@ -92,6 +93,7 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 - Item-Zustandshelfer-Tests - hinzugefuegt am 2026-07-19
 - Shop-Kaufpruefungen - vereinheitlicht am 2026-07-19
 - Inventar-Verkaufspruefung - refactored und getestet am 2026-07-19
+- ItemChecks-Datei - angelegt am 2026-07-19
 
 ## Item-Balancing
 
