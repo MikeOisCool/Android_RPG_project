@@ -47,12 +47,10 @@ fun ShopScreen(
     val player by viewModel.player.collectAsState()
     val items = player.inventory.items
     val scrollState = rememberScrollState()
-    val potionItems = visibleItemsByType(items, ItemType.POTION)
+    val sellablePotionItems = sellableItemsByType(items, player, ItemType.POTION)
     val weaponItems = visibleItemsByType(items, ItemType.WEAPON)
     val armorItems = visibleItemsByType(items, ItemType.ARMOR)
     val shopItems = availableShopItems(player.level)
-
-
 
     Column(
         modifier = Modifier
@@ -70,93 +68,43 @@ fun ShopScreen(
             text = "Itemsshop", fontSize = 24.sp, textDecoration = TextDecoration.Underline
         )
         Spacer(modifier = Modifier.height(16.dp))
-
+        Text(
+            text = "Dein Level: ${player.level}, Gold: ${player.gold}",
+            fontSize = 16.sp,
+            textDecoration = TextDecoration.Underline
+        )
         ShopInventorySection(
             title = "Angebote",
             emptyText = "Im Moment gibt es keine Angebote",
             isEmpty = shopItems.isEmpty()
         ) {
             shopItems.forEach { item ->
-
-                val itemInventory = items.find { inventoryItem -> inventoryItem.name == item.name }
-                val hasNotEnoughGold =
-                    player.gold < buyPrice(item = item, playerLevel = player.level)
-                val potionIsFull =
-                    item.type == ItemType.POTION && (itemInventory?.amount ?: 0) >= 10
-                val uniqueItemIsAlreadyInInventory =
-                    itemInventory != null && item.type != ItemType.POTION
-                val canBuy = !hasNotEnoughGold && !potionIsFull && !uniqueItemIsAlreadyInInventory
-
-
-                Text(
-                    "${item.name} x${item.amount} | Kaufpreis: ${
-                        buyPrice(
-                            item = item, playerLevel = player.level
-                        )
-                    }"
+                ShopOfferItem(
+                    item = item,
+                    player = player,
+                    onBuy = {
+                        viewModel.onEvent(GameEvent.BuyItem(item = item))
+                    }
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-
-                    if (canBuy) {
-
-
-                        ShopButton(
-                            text = "Kauf $item",
-                            onClick = {
-                                viewModel.onEvent(GameEvent.BuyItem(item = item))
-                            })
-                    } else {
-
-                        if (hasNotEnoughGold) {
-                            Text(
-                                text = "Nicht genügend Gold",
-                                fontSize = 24.sp,
-                                textAlign = TextAlign.Center
-                            )
-                        } else if (potionIsFull) {
-                            Text(
-                                text = "Tränke sind voll",
-                                fontSize = 24.sp,
-                                textAlign = TextAlign.Center
-                            )
-                        } else if (uniqueItemIsAlreadyInInventory) {
-                            Text(
-                                text = "${item.name} ist bereits im Inventar",
-                                fontSize = 24.sp,
-                                textAlign = TextAlign.Center
-                            )
-                        }
-                    }
-                }
             }
         }
 
         ShopInventorySection(
             title = "Tränke",
             emptyText = "Es sind keine Tränke im Inventar",
-            isEmpty = potionItems.isEmpty()
+            isEmpty = sellablePotionItems.isEmpty()
         ) {
-            potionItems.forEach { item ->
-                SellPotionItem(
-                    item = item, playerLevel = player.level
-                )
-                Spacer(modifier = Modifier.height(8.dp))
 
-                ShopButton(
-                    text = "Verkauf $item",
-                    onClick = {
-                        viewModel.onEvent(GameEvent.SellItem(item = item))
-                    }
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-            }
+
+            ShopSellItems(
+                player = player,
+                type = ItemType.POTION,
+                onSell = { item ->
+                    viewModel.onEvent(GameEvent.SellItem(item = item))
+                }
+            )
+
         }
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -166,22 +114,15 @@ fun ShopScreen(
             emptyText = "Es sind keine Rüstungen im Inventar",
             isEmpty = armorItems.isEmpty()
         ) {
-            val sellableArmorItems = sellableArmorItems(armorItems, player)
-            if (sellableArmorItems.isEmpty()) {
-                Text("Rüstung muss abgelegt werden")
-            } else {
-                sellableArmorItems.forEach { item ->
-                    ShopSellItem(
-                        item = item,
-                        statText = "Verteidigung",
-                        statValue = item.defense,
-                        viewModel = viewModel,
-                        onSell = {
-                            viewModel.onEvent(GameEvent.SellItem(item = item))
-                        })
-                    Spacer(modifier = Modifier.height(8.dp))
+
+
+            ShopSellItems(
+                player = player,
+                type = ItemType.ARMOR,
+                onSell = { item ->
+                    viewModel.onEvent(GameEvent.SellItem(item = item))
                 }
-            }
+            )
         }
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -191,27 +132,16 @@ fun ShopScreen(
             emptyText = "Es sind keine Waffen im Inventar",
             isEmpty = weaponItems.isEmpty()
         ) {
-            val sellableWeaponItems = sellableWeaponItems(weaponItems, player)
-            if (sellableWeaponItems.isEmpty()) {
-                Text("Waffe muss abgelegt werden")
-            } else {
-                sellableWeaponItems.forEach { item ->
-                    ShopSellItem(
-                        item = item,
-                        statText = "Angriff",
-                        statValue = item.damage,
-                        viewModel = viewModel,
-                        onSell = {
-                            viewModel.onEvent(GameEvent.SellItem(item = item))
-                        })
-                }
-                Spacer(modifier = Modifier.height(8.dp))
-
-            }
+            ShopSellItems(
+                player = player,
+                type = ItemType.WEAPON,
+                onSell = { item ->
+                    viewModel.onEvent(GameEvent.SellItem(item = item))
+                })
+            Spacer(modifier = Modifier.height(8.dp))
         }
 
         Spacer(modifier = Modifier.height(8.dp))
-
         GameButtonHoch(
             text = "Shop verlassen",
             modifier = Modifier
@@ -220,10 +150,148 @@ fun ShopScreen(
             fontSize = 26.sp,
             onClick = onBackToGame
         )
+    }
+}
 
+@Composable
+fun ShopSellItems(player: Player, type: ItemType, onSell: (Item) -> Unit) {
+    val items = player.inventory.items
+    val sellablePotionItems = sellableItemsByType(items, player, ItemType.POTION)
+    val weaponItems = visibleItemsByType(items, ItemType.WEAPON)
+    val sellableWeaponItems = sellableItemsByType(weaponItems, player, ItemType.WEAPON)
+    val armorItems = visibleItemsByType(items, ItemType.ARMOR)
+    val sellableArmorItems = sellableItemsByType(armorItems, player, ItemType.ARMOR)
+
+
+    when {
+        type == ItemType.POTION && sellablePotionItems.isEmpty() -> StatusText("Es sind keine Tränke im Inventar")
+        type == ItemType.WEAPON && sellableWeaponItems.isEmpty() -> StatusText("Waffe muss abgelegt werden")
+        type == ItemType.ARMOR && sellableArmorItems.isEmpty() -> StatusText("Rüstung muss abgelegt werden")
     }
 
+    when {
+        type == ItemType.POTION && sellablePotionItems.isNotEmpty() -> {
+            sellablePotionItems.forEach { item ->
+                ShopSellPotionItem(
+                    item = item,
+                    playerLevel = player.level,
+                    onSell = {
+                        onSell(item)
+                    }
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+        }
 
+        type == ItemType.WEAPON && sellableWeaponItems.isNotEmpty() -> {
+            sellableWeaponItems.forEach { item ->
+                ShopSellItem(
+                    item = item,
+                    playerLevel = player.level,
+                    statText = "Angriff",
+                    statValue = item.damage,
+                    onSell = {
+                        onSell(item)
+                    }
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+        }
+
+        type == ItemType.ARMOR && sellableArmorItems.isNotEmpty() -> {
+            sellableArmorItems.forEach { item ->
+                ShopSellItem(
+                    item = item,
+                    playerLevel = player.level,
+                    statText = "Verteidigung",
+                    statValue = item.defense,
+                    onSell = {
+                        onSell(item)
+                    }
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+        }
+    }
+}
+
+@Composable
+fun ShopSellPotionItem(
+    item: Item,
+    playerLevel: Int,
+    onSell: () -> Unit
+) {
+    PotionSellText(
+        item = item, playerLevel = playerLevel
+    )
+    Spacer(modifier = Modifier.height(8.dp))
+
+    ShopButton(
+        text = "Verkauf $item für ${sellPrice(item, playerLevel)} Gold",
+        onClick = {
+            onSell()
+        }
+    )
+    Spacer(modifier = Modifier.height(8.dp))
+}
+
+
+@Composable
+fun ShopOfferItem(
+    item: Item,
+    player: Player,
+    onBuy: () -> Unit
+) {
+    val itemBuyPrice = buyPrice(item = item, playerLevel = player.level)
+    val itemInventory =
+        player.inventory.items.find { inventoryItem -> inventoryItem.name == item.name }
+    val hasNotEnoughGold = player.gold < itemBuyPrice
+    val potionIsFull =
+        item.type == ItemType.POTION && (itemInventory?.amount ?: 0) >= 10
+    val uniqueItemIsAlreadyInInventory =
+        itemInventory != null && item.type != ItemType.POTION
+    val canBuy = !hasNotEnoughGold && !potionIsFull && !uniqueItemIsAlreadyInInventory
+    val statusText = when {
+        hasNotEnoughGold -> "Nicht genügend Gold"
+        potionIsFull -> "Tränke sind voll"
+        uniqueItemIsAlreadyInInventory -> "${item.name} ist bereits im Inventar"
+        else -> null
+    }
+
+    Text(
+        text = "${item.name} x${item.amount} | Kaufpreis: $itemBuyPrice"
+    )
+    Spacer(modifier = Modifier.height(8.dp))
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+        if (canBuy) {
+            ShopButton(
+                text = "Kauf $item für $itemBuyPrice Gold",
+                onClick = {
+                    onBuy()
+                })
+        } else if (statusText != null) {
+            StatusText(text = statusText)
+        }
+    }
+}
+
+@Composable
+fun StatusText(
+    text: String
+) {
+    Text(
+        text = text,
+        fontSize = 24.sp,
+        textAlign = TextAlign.Center,
+        modifier = Modifier.fillMaxWidth()
+    )
 }
 
 @Composable
@@ -252,7 +320,7 @@ fun ShopButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
-        .fillMaxWidth(0.6f)
+        .fillMaxWidth(0.7f)
         .height(65.dp)
 ) {
     Button(
@@ -270,7 +338,7 @@ fun ShopButton(
 }
 
 @Composable
-fun SellPotionItem(
+fun PotionSellText(
     item: Item,
     playerLevel: Int,
 ) {
@@ -291,28 +359,30 @@ fun SellPotionItem(
     )
 }
 
-fun sellableArmorItems(items: List<Item>, player: Player): List<Item> {
-    val sellableArmorItems = items.filter { item ->
-        player.equippedArmor?.name != item.name
+fun sellableItemsByType(items: List<Item>, player: Player, type: ItemType): List<Item> {
+    return items.filter { it ->
+        it.type == type &&
+                it.amount > 0 &&
+                when (type) {
+                    ItemType.WEAPON -> player.equippedWeapon?.name != it.name
+                    ItemType.ARMOR -> player.equippedArmor?.name != it.name
+                    ItemType.POTION -> true
+                }
     }
-    return sellableArmorItems
-}
-
-fun sellableWeaponItems(items: List<Item>, player: Player): List<Item> {
-    val sellableWeaponItems = items.filter { item ->
-        player.equippedWeapon?.name != item.name
-    }
-    return sellableWeaponItems
 }
 
 @Composable
 fun ShopSellItem(
-    item: Item, statText: String, statValue: Int, viewModel: GameViewModel, onSell: () -> Unit
+    item: Item,
+    playerLevel: Int,
+    statText: String,
+    statValue: Int,
+    onSell: () -> Unit
 ) {
-    val player by viewModel.player.collectAsState()
-    val sellPrice = sellPrice(item, playerLevel = player.level)
+
+    val itemSellPrice = sellPrice(item, playerLevel = playerLevel)
     Text(
-        text = "${item.name} x${item.amount} | $statText +$statValue | Verkaufspreis: $sellPrice Gold",
+        text = "${item.name} x${item.amount} | $statText +$statValue | Verkaufspreis: $itemSellPrice Gold",
         textAlign = TextAlign.Center,
         modifier = Modifier.fillMaxWidth()
     )

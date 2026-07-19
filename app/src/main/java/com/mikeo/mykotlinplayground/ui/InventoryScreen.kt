@@ -90,17 +90,14 @@ fun InventoryScreen(
                     statText = "Verteidigung",
                     statValue = item.defense,
                     isEquipped = player.equippedArmor?.name == item.name,
-                    isEquippedText = "Rüstung ablegen",
+                    isEquippedText = "${item.name} ablegen",
                     item = item,
                     onEquip = {
                         viewModel.onEvent(GameEvent.EquipArmor(armor = item))
                     },
-                    onRemove = {
-                        viewModel.onEvent(GameEvent.RemoveInventoryItem(item = item))
-                    },
                     unequip = {
-                        if(player.equippedArmor?.name == item.name) {
-                        viewModel.onEvent(GameEvent.UnequipArmor)
+                        if (player.equippedArmor?.name == item.name) {
+                            viewModel.onEvent(GameEvent.UnequipArmor)
                         }
                     }
                 )
@@ -119,17 +116,14 @@ fun InventoryScreen(
                     statText = "Angriff",
                     statValue = item.damage,
                     isEquipped = player.equippedWeapon?.name == item.name,
-                    isEquippedText = "Waffe ablegen",
+                    isEquippedText = "${item.name} ablegen",
                     item = item,
                     onEquip = {
                         viewModel.onEvent(GameEvent.EquipWeapon(weapon = item))
                     },
-                    onRemove = {
-                        viewModel.onEvent(GameEvent.RemoveInventoryItem(item = item))
-                    },
                     unequip = {
-                        if(player.equippedWeapon?.name == item.name) {
-                        viewModel.onEvent(GameEvent.UnequipWeapon)
+                        if (player.equippedWeapon?.name == item.name) {
+                            viewModel.onEvent(GameEvent.UnequipWeapon)
                         }
                     }
                 )
@@ -198,45 +192,28 @@ fun EquipItem(
     isEquippedText: String,
     item: Item,
     onEquip: () -> Unit,
-    onRemove: () -> Unit,
     unequip: () -> Unit
 ) {
     Text(
         "${item.name} x${item.amount} | $statText +$statValue"
     )
     Spacer(modifier = Modifier.height(16.dp))
-    Row {
-        val equipButtonWidth = if (isEquipped) 0.6f else 0.45f
-        GameButtonHoch(
-            text = if (isEquipped) isEquippedText else "Ausrüsten",
-            fontSize = 18.sp,
-            modifier = Modifier
-                .fillMaxWidth(equipButtonWidth)
-                .height(90.dp),
-            onClick = {
-                if (!isEquipped) {
-                    onEquip()
-                }
-                if (isEquipped) {
-                    unequip()
-                }
+
+    ShopButton(
+        text = if (isEquipped) isEquippedText else "${item.name} ausrüsten",
+        modifier = Modifier
+            .fillMaxWidth(0.7f)
+            .height(90.dp),
+        onClick = {
+            if (!isEquipped) {
+                onEquip()
             }
-        )
-        if (!isEquipped) {
-            GameButtonHoch(
-                text = "Ent- fernen",
-                fontSize = 18.sp,
-                modifier = Modifier
-                    .fillMaxWidth(0.5f)
-                    .height(90.dp),
-                onClick = {
-                    if (!isEquipped) {
-                        onRemove()
-                    }
-                }
-            )
+            if (isEquipped) {
+                unequip()
+            }
         }
-    }
+    )
+
     Spacer(modifier = Modifier.height(8.dp))
 }
 
