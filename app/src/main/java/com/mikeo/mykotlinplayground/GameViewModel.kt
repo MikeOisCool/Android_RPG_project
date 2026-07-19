@@ -189,8 +189,8 @@ class GameViewModel : ViewModel() {
                 val itemInventory = _player.value.inventory.items.find { item ->
                     item.name == event.item.name
                 }
-                val uniqueItemIsAlreadyInInventory =
-                    itemInventory != null && event.item.type != ItemType.POTION
+                val uniqueItemIsAlreadyInInventory = isUniqueItemAlreadyInInventory(item = event.item, inventory = _player.value.inventory)
+
 
                 if (event.item.type == ItemType.POTION && (itemInventory?.amount ?: 0) >= 10) {
                     addLog("🎒 ${event.item.name} ist schon voll")
@@ -206,10 +206,8 @@ class GameViewModel : ViewModel() {
 
             is GameEvent.SellItem -> {
                 val sellPriceItem = sellPrice(event.item, _player.value.level)
-                val isWeaponOrArmor =
-                    event.item.type == ItemType.WEAPON || event.item.type == ItemType.ARMOR
-                val isEquipped =
-                    _player.value.equippedWeapon?.name == event.item.name || _player.value.equippedArmor?.name == event.item.name
+                val isWeaponOrArmor = isWeaponOrArmor(event.item)
+                val isEquipped = isEquippedItem(event.item, _player.value)
 
                 val itemInventory = _player.value.inventory.items.find { item ->
                     item.name == event.item.name
