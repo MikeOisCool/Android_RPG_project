@@ -56,6 +56,7 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 - 2026-07-19: Shop-Logs im GameViewModel ergaenzt; doppelte Unique-Kaeufe und Verkauf ausgeruesteter Ausruestung werden abgefangen und mit ViewModel-Tests geprueft.
 - 2026-07-19: Shop-Logtexte in eigene Hilfsfunktionen ausgelagert und mit GameLogText-Tests abgesichert.
 - 2026-07-19: Item-Zustandspruefungen fuer Shop-Events ausgelagert; ViewModel nutzt Helfer fuer ausgeruestete Items, Unique-Items und Waffen/Ruestungen.
+- 2026-07-19: Unit-Tests fuer Item-Zustandshelfer ergaenzt.
 
 ## Aktuelle Features
 
@@ -86,6 +87,7 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 - Shop-Logs und ViewModel-Tests - hinzugefuegt am 2026-07-19
 - Shop-Logtexte - refactored und getestet am 2026-07-19
 - Shop-Item-Zustandspruefungen - refactored am 2026-07-19
+- Item-Zustandshelfer-Tests - hinzugefuegt am 2026-07-19
 
 ## Item-Balancing
 

@@ -4,6 +4,8 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Test
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 
 class GameLogicTest {
 
@@ -200,6 +202,40 @@ class GameLogicTest {
 
         assertNull(updatedPlayer.equippedArmor)
         assertEquals(emptyList<Item>(), updatedPlayer.inventory.items)
+    }
+
+    @Test
+    fun weaponIsWeaponOrArmor() {
+        val result = isWeaponOrArmor(GameItems.woodWeapon)
+
+        assertTrue(result)
+    }
+
+    @Test
+    fun potionIsNotUniqueItemAlreadyInInventory() {
+        val inventory = Inventory(items = listOf(GameItems.healPotion))
+
+        val result = isUniqueItemAlreadyInInventory(
+            item = GameItems.healPotion,
+            inventory = inventory
+        )
+
+        assertFalse(result)
+    }
+
+    @Test
+    fun equippedWeaponIsEquippedItem() {
+        val player = testPlayer(
+            inventory = Inventory(items = listOf(GameItems.woodWeapon)),
+            equippedWeapon = GameItems.woodWeapon
+        )
+
+        val result = isEquippedItem(
+            item = GameItems.woodWeapon,
+            player = player
+        )
+
+        assertTrue(result)
     }
 
     private fun testPlayer(
