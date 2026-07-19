@@ -52,6 +52,7 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 - 2026-07-15: GameLogic-Tests fuer Shop-Kauflogik ergaenzt; Heiltrank-Stacking, fehlendes Gold, Verkaufspreise und doppelte Waffenkaeufe werden geprueft.
 - 2026-07-18: Shop-UI-Texte und Button-Darstellung ueberarbeitet; eigene Shop-Section und Shop-Buttons eingefuehrt, leere Texte zentriert und Shop-Verlassen-Button korrekt ausserhalb der Waffenliste platziert.
 - 2026-07-19: Shop-Verkaufsbereiche weiter refactored; Verkauf von Traenken, Waffen und Ruestung laeuft ueber gemeinsame Shop-Komponenten. Waffen/Ruestung werden nicht mehr im Inventar weggeworfen, sondern ueber den Shop verkauft.
+- 2026-07-19: Shop-Angebotsanzeige weiter refactored; Kaufstatus-Texte und Kaufbutton-Text wurden aus der UI-Entscheidung herausgezogen.
 
 ## Aktuelle Features
 
@@ -78,6 +79,7 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 - Shop-Kauflogik-Tests - hinzugefuegt am 2026-07-15
 - Shop-UI-Texte und Shop-Buttons - ueberarbeitet am 2026-07-18
 - Shop-Verkaufsbereiche - refactored am 2026-07-19
+- Shop-Angebotsstatus - refactored am 2026-07-19
 
 ## Item-Balancing
 
