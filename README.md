@@ -54,6 +54,7 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 - 2026-07-19: Shop-Verkaufsbereiche weiter refactored; Verkauf von Traenken, Waffen und Ruestung laeuft ueber gemeinsame Shop-Komponenten. Waffen/Ruestung werden nicht mehr im Inventar weggeworfen, sondern ueber den Shop verkauft.
 - 2026-07-19: Shop-Angebotsanzeige weiter refactored; Kaufstatus-Texte und Kaufbutton-Text wurden aus der UI-Entscheidung herausgezogen.
 - 2026-07-19: Shop-Logs im GameViewModel ergaenzt; doppelte Unique-Kaeufe und Verkauf ausgeruesteter Ausruestung werden abgefangen und mit ViewModel-Tests geprueft.
+- 2026-07-19: Shop-Logtexte in eigene Hilfsfunktionen ausgelagert und mit GameLogText-Tests abgesichert.
 
 ## Aktuelle Features
 
@@ -82,6 +83,7 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 - Shop-Verkaufsbereiche - refactored am 2026-07-19
 - Shop-Angebotsstatus - refactored am 2026-07-19
 - Shop-Logs und ViewModel-Tests - hinzugefuegt am 2026-07-19
+- Shop-Logtexte - refactored und getestet am 2026-07-19
 
 ## Item-Balancing
 

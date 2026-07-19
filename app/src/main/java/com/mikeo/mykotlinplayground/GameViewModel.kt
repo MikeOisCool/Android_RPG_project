@@ -200,7 +200,7 @@ class GameViewModel : ViewModel() {
                     addLog("💰 Nicht genug Gold für ${event.item.name}!")
                 } else {
                     applyEvent(event)
-                    addLog("🛒 Du kaufst ${event.item} für $price Gold")
+                    addLog(buyItemLog(event.item, price))
                 }
             }
 
@@ -217,11 +217,11 @@ class GameViewModel : ViewModel() {
                 if ((itemInventory?.amount ?: 0) < 1) {
                     addLog("🎒 ${event.item.name} ist nicht im Inventar")
                 } else if (isWeaponOrArmor && isEquipped) {
-                    addLog("⚔️ Lege ${event.item} zuerst ab, bevor du sie verkaufst!")
+                    addLog(equippedItemSellBlockedLog(event.item))
                 } else {
 
                     applyEvent(event)
-                    addLog("🛒 Du verkaufst ${event.item} für $sellPriceItem Gold")
+                    addLog(sellItemLog(event.item, sellPriceItem))
                 }
             }
         }
