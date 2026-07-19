@@ -192,7 +192,7 @@ fun ShopSellPotionItem(
     Spacer(modifier = Modifier.height(8.dp))
 
     ShopButton(
-        text = "Verkauf $item für ${sellPrice(item, playerLevel)} Gold", onClick = {
+        text = "Verkauf $item ${itemIcon(item)} für ${sellPrice(item, playerLevel)} Gold", onClick = {
             onSell()
         })
     Spacer(modifier = Modifier.height(8.dp))
@@ -237,7 +237,7 @@ fun offerButtonText(
     player: Player
 ): String {
     val itemBuyPrice = buyPrice(item = item, playerLevel = player.level)
-    return "Kauf $item für $itemBuyPrice Gold"
+    return "Kauf $item ${itemIcon(item)} für $itemBuyPrice Gold"
 }
 
 @Composable
@@ -247,7 +247,7 @@ fun OfferText(
 ) {
     val itemBuyPrice = buyPrice(item = item, playerLevel = player.level)
     Text(
-        text = "${item.name} x${item.amount} | Kaufpreis: $itemBuyPrice"
+        text = "${item.name} ${itemIcon(item)} x${item.amount} | Kauf: $itemBuyPrice G"
     )
 }
 
@@ -327,11 +327,11 @@ fun PotionSellText(
     )
 
     Text(
-        text = "${item.name} x${item.amount} | Heilung +$healAmount | Verkaufspreis: ${
+        text = "${item.name} ${itemIcon(item)} x${item.amount} | Heilung +$healAmount | Preis: ${
             sellPrice(
                 item = item, playerLevel = playerLevel
             )
-        }", textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth()
+        } G", textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth()
     )
 }
 
@@ -352,7 +352,7 @@ fun ShopSellItem(
 
     val itemSellPrice = sellPrice(item, playerLevel = playerLevel)
     Text(
-        text = "${item.name} x${item.amount} | $statText +$statValue | Verkaufspreis: $itemSellPrice Gold",
+        text = "${item.name} ${itemIcon(item)} x${item.amount} | $statText +$statValue | Preis: $itemSellPrice G",
         textAlign = TextAlign.Center,
         modifier = Modifier.fillMaxWidth()
     )

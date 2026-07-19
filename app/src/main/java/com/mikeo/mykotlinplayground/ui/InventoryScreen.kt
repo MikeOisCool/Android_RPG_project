@@ -90,7 +90,7 @@ fun InventoryScreen(
                     statText = "Verteidigung",
                     statValue = item.defense,
                     isEquipped = player.equippedArmor?.name == item.name,
-                    isEquippedText = "${item.name} ablegen",
+                    isEquippedText = "${item.name} ${itemIcon(item)} ablegen",
                     item = item,
                     onEquip = {
                         viewModel.onEvent(GameEvent.EquipArmor(armor = item))
@@ -116,7 +116,7 @@ fun InventoryScreen(
                     statText = "Angriff",
                     statValue = item.damage,
                     isEquipped = player.equippedWeapon?.name == item.name,
-                    isEquippedText = "${item.name} ablegen",
+                    isEquippedText = "${item.name} ${itemIcon(item)} ablegen",
                     item = item,
                     onEquip = {
                         viewModel.onEvent(GameEvent.EquipWeapon(weapon = item))
@@ -164,7 +164,7 @@ fun PotionItem(
     )
 
     Text(
-        text = "${item.name} x${item.amount} | Heilung +$healAmount"
+        text = "${item.name} ${itemIcon(item)} x${item.amount} | Heilung +$healAmount"
     )
 }
 
@@ -195,12 +195,12 @@ fun EquipItem(
     unequip: () -> Unit
 ) {
     Text(
-        "${item.name} x${item.amount} | $statText +$statValue"
+        "${item.name} ${itemIcon(item)} x${item.amount} | $statText +$statValue"
     )
     Spacer(modifier = Modifier.height(16.dp))
 
     ShopButton(
-        text = if (isEquipped) isEquippedText else "${item.name} ausrüsten",
+        text = if (isEquipped) isEquippedText else "${item.name} ${itemIcon(item)} ausrüsten",
         modifier = Modifier
             .fillMaxWidth(0.7f)
             .height(90.dp),
