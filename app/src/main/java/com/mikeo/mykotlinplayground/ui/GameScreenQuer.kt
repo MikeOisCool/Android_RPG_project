@@ -86,7 +86,11 @@ fun GameScreenQuer(
                     }
                     HpBar(
                         currentHp = player.hp,
-                        maxHp = player.maxHp
+                        maxHp = player.maxHp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(16.dp)
+                            .padding(horizontal = 16.dp)
                     )
                 }
 
@@ -97,7 +101,11 @@ fun GameScreenQuer(
                     )
                     HpBar(
                         currentHp = enemy.hp,
-                        maxHp = enemy.maxHp
+                        maxHp = enemy.maxHp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(16.dp)
+                            .padding(horizontal = 16.dp)
                     )
                 }
             }
