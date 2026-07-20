@@ -31,7 +31,12 @@ import com.mikeo.mykotlinplayground.GameViewModel
 import com.mikeo.mykotlinplayground.ItemNamen
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import kotlinx.coroutines.delay
+import androidx.compose.foundation.layout.offset
 
 @Composable
 fun GameScreenHoch(
@@ -46,6 +51,8 @@ fun GameScreenHoch(
     val log by viewModel.log.collectAsState()
     val enemy by viewModel.enemy.collectAsState()
     val scrollState = rememberScrollState()
+    var playerAttacks by remember { mutableStateOf(false) }
+    var enemyAttacks by remember { mutableStateOf(false) }
 
 
     LaunchedEffect(log.size) {
@@ -173,7 +180,26 @@ fun GameScreenHoch(
                     .fillMaxWidth(0.7f)
                     .height(70.dp),
                 containerColor = Color.Red,
-                onClick = { viewModel.onEvent(GameEvent.AttackEnemy) })
+                onClick = {
+                    playerAttacks = true
+                    viewModel.onEvent(GameEvent.AttackEnemy)
+                }
+            )
+            LaunchedEffect(playerAttacks) {
+                if (playerAttacks) {
+                    delay(200)
+                    playerAttacks = false
+                    if (enemy.hp > 0) {
+                        enemyAttacks = true
+                    }
+                }
+            }
+            LaunchedEffect(enemyAttacks) {
+                if (enemyAttacks) {
+                    delay(200)
+                    enemyAttacks = false
+                }
+            }
             Text("Gegner: ${enemy.name}")
             Text("Level: ${enemy.level}")
             Row {
@@ -203,7 +229,9 @@ fun GameScreenHoch(
                 playerMaxHp = player.maxHp,
                 enemyName = enemy.name,
                 enemyHp = enemy.hp,
-                enemyMaxHp = enemy.maxHp
+                enemyMaxHp = enemy.maxHp,
+                playerAttacks = playerAttacks,
+                enemyAttacks = enemyAttacks
             )
         }
     }
@@ -216,14 +244,26 @@ fun BattleScene(
     playerMaxHp: Int,
     enemyName: String,
     enemyHp: Int,
-    enemyMaxHp: Int
+    enemyMaxHp: Int,
+    playerAttacks: Boolean = false,
+    enemyAttacks: Boolean = false
 ) {
+
+    val playerOffset by animateDpAsState(
+        targetValue = if (playerAttacks) 180.dp else 0.dp,
+        label = "playerAttackOffset"
+    )
+
+    val enemyOffset by animateDpAsState(
+        targetValue = if (enemyAttacks) -180.dp else 0.dp,
+        label = "enemyAttackOffset"
+    )
 
     Box(
         modifier = Modifier
             .fillMaxWidth(0.9f)
             .height(160.dp)
-            .clip(RoundedCornerShape(16.dp))
+            .clip(RoundedCornerShape(32.dp))
             .background(Color(0xFF8BC34A))
             .padding(16.dp)
     ) {
@@ -267,18 +307,26 @@ fun BattleScene(
             )
         }
 
+        Text(
+            text = "🧙",
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .offset(x = playerOffset),
+            fontSize = 60.sp,
 
+            )
 
         Text(
-            text = "🧙", modifier = Modifier.align(Alignment.CenterStart), fontSize = 40.sp
-        )
-
-        Text(
-            text = enemyIcon(enemyName), modifier = Modifier.align(Alignment.CenterEnd), fontSize = 40.sp
+            text = enemyIcon(enemyName),
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .offset(x = enemyOffset),
+            fontSize = 60.sp
         )
     }
 
 }
+
 fun enemyIcon(enemyName: String): String {
     return when (enemyName) {
         "Goblin" -> "👾"
@@ -302,6 +350,7 @@ fun GameScreenHochPreview() {
         onInventory = {},
         onShop = {})
 }
+
 @Preview(
     name = "Battle Scene",
     showBackground = true
@@ -312,7 +361,7 @@ fun BattleScenePreview() {
         playerName = "Felix",
         playerHp = 80,
         playerMaxHp = 100,
-        enemyName = "Goblin",
+        enemyName = "Wolf",
         enemyHp = 20,
         enemyMaxHp = 30
     )
