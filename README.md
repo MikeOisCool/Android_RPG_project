@@ -61,6 +61,7 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 - 2026-07-19: Verkaufspruefung fuer vorhandene Inventar-Items ausgelagert und getestet.
 - 2026-07-19: Item-Pruefhelfer aus GameLogic in eigene Datei ItemChecks verschoben.
 - 2026-07-19: Item-Icons fuer Shop und Inventar eingefuehrt; gemeinsame UI-Text-Hilfe fuer Item-Icons angelegt und Preis-Texte kompakter gemacht.
+- 2026-07-20: Erste 2D-Kampfszene im Hochformat eingebaut; GameScreen ist scrollbaar, BattleScene zeigt Spieler/Gegner mit Namen, HP-Balken und Boden.
 
 ## Aktuelle Features
 
@@ -96,6 +97,7 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 - Inventar-Verkaufspruefung - refactored und getestet am 2026-07-19
 - ItemChecks-Datei - angelegt am 2026-07-19
 - Item-Icons in Shop und Inventar - hinzugefuegt am 2026-07-19
+- 2D-Kampfszene im Hochformat - hinzugefuegt am 2026-07-20
 
 ## Item-Balancing
 

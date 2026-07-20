@@ -11,12 +11,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-
+import androidx.compose.foundation.layout.fillMaxSize
 
 @Composable
 fun HpBar(
     currentHp: Int,
     maxHp: Int,
+    modifier: Modifier = Modifier
+
 ){
     val progress = (currentHp.toFloat() / maxHp).coerceIn(0f, 1f)
 
@@ -27,17 +29,14 @@ fun HpBar(
     }
 
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .height(16.dp)
+        modifier = modifier
             .border(2.dp, Color.Black, RoundedCornerShape(12.dp))
             .background(Color.LightGray)
     ){
         Box(
             modifier = Modifier
                 .fillMaxWidth(progress)
-                .height(16.dp)
+                .fillMaxSize()
                 .background(barColor)
         )
     }

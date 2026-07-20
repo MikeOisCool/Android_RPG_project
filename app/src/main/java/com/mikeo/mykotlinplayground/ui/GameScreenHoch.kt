@@ -2,8 +2,10 @@ package com.mikeo.mykotlinplayground.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -27,6 +29,8 @@ import androidx.compose.ui.unit.sp
 import com.mikeo.mykotlinplayground.GameEvent
 import com.mikeo.mykotlinplayground.GameViewModel
 import com.mikeo.mykotlinplayground.ItemNamen
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 
 
 @Composable
@@ -39,15 +43,13 @@ fun GameScreenHoch(
 ) {
 
     val player by viewModel.player.collectAsState()
-
-
     val log by viewModel.log.collectAsState()
-
     val enemy by viewModel.enemy.collectAsState()
+    val scrollState = rememberScrollState()
+
 
     LaunchedEffect(log.size) {
-        if (log.isNotEmpty())
-            listState.animateScrollToItem(log.size - 1)
+        if (log.isNotEmpty()) listState.animateScrollToItem(log.size - 1)
     }
 
     if (player.isDead) {
@@ -60,7 +62,8 @@ fun GameScreenHoch(
             .fillMaxSize()
             .padding(8.dp)
             .clip(RoundedCornerShape(48.dp))
-            .background(Color(0xFF4CAF50)),
+            .background(Color(0xFF4CAF50))
+            .verticalScroll(scrollState),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -72,24 +75,23 @@ fun GameScreenHoch(
             GameLog(log = log, listState = listState, modifier = Modifier.height(120.dp))
 
 
-
-
-
             Text(
-                text = "Name: ${player.name} Level: ${player.level}",
-                fontSize = 24.sp
+                text = "Name: ${player.name} Level: ${player.level}", fontSize = 24.sp
             )
             Text(text = "HP: ${player.hp}/${player.maxHp} Gold: ${player.gold}", fontSize = 20.sp)
 
 
             HpBar(
                 currentHp = player.hp,
-                maxHp = player.maxHp
+                maxHp = player.maxHp,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(16.dp)
+                    .padding(horizontal = 16.dp)
             )
 
             Text(
-                text = "XP: ${player.xp}/${player.xpToNextLevel}",
-                fontSize = 18.sp
+                text = "XP: ${player.xp}/${player.xpToNextLevel}", fontSize = 18.sp
             )
 
             Column {
@@ -121,42 +123,31 @@ fun GameScreenHoch(
 
             Row {
                 GameButtonHoch(
-                    text = "Take Damage",
-                    onClick = { viewModel.onEvent(GameEvent.TakeDamage()) }
-                )
+                    text = "Take Damage", onClick = { viewModel.onEvent(GameEvent.TakeDamage()) })
 
                 GameButtonHoch(
-                    text = "Add Gold",
-                    onClick = { viewModel.onEvent(GameEvent.AddGold()) }
-                )
+                    text = "Add Gold", onClick = { viewModel.onEvent(GameEvent.AddGold()) })
             }
             Row {
                 GameButtonHoch(
-                    text = "Heilen",
-                    onClick = { viewModel.onEvent(GameEvent.Heal()) }
-                )
+                    text = "Heilen", onClick = { viewModel.onEvent(GameEvent.Heal()) })
                 val potionBigAmount =
                     player.inventory.items.find { it.name == ItemNamen.GROSSER_HEILTRANK }?.amount
                         ?: 0
                 GameButtonHoch(
                     text = "Big Heal (${potionBigAmount})",
-                    onClick = { viewModel.onEvent(GameEvent.UseBigPotion()) }
-                )
+                    onClick = { viewModel.onEvent(GameEvent.UseBigPotion()) })
             }
 
-Row {
-            GameButtonHoch(
-                text = "XP sammeln",
-                onClick = { viewModel.onEvent(GameEvent.GainXp()) }
-            )
+            Row {
+                GameButtonHoch(
+                    text = "XP sammeln", onClick = { viewModel.onEvent(GameEvent.GainXp()) })
 
-            GameButtonHoch(
-                text = "Shop öffnen",
-                onClick = {
-                    onShop()
-                }
-            )
-        }
+                GameButtonHoch(
+                    text = "Shop öffnen", onClick = {
+                        onShop()
+                    })
+            }
 
             Row(
                 modifier = Modifier.padding(bottom = 10.dp),
@@ -166,18 +157,14 @@ Row {
                 val potionAmount =
                     player.inventory.items.find { it.name == ItemNamen.HEILTRANK }?.amount ?: 0
                 GameButtonHoch(
-                    text = "Heiltrank (${potionAmount})",
-                    onClick = {
+                    text = "Heiltrank (${potionAmount})", onClick = {
                         viewModel.onEvent(GameEvent.UsePotion())
-                    }
-                )
+                    })
 
                 GameButtonHoch(
-                    text = "Inventar öffnen",
-                    onClick = {
+                    text = "Inventar öffnen", onClick = {
                         onInventory()
-                    }
-                )
+                    })
             }
             GameButtonHoch(
                 text = "Angreifen",
@@ -186,8 +173,7 @@ Row {
                     .fillMaxWidth(0.7f)
                     .height(70.dp),
                 containerColor = Color.Red,
-                onClick = { viewModel.onEvent(GameEvent.AttackEnemy) }
-            )
+                onClick = { viewModel.onEvent(GameEvent.AttackEnemy) })
             Text("Gegner: ${enemy.name}")
             Text("Level: ${enemy.level}")
             Row {
@@ -202,19 +188,110 @@ Row {
 
             HpBar(
                 currentHp = enemy.hp,
-                maxHp = enemy.maxHp
+                maxHp = enemy.maxHp,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(16.dp)
+                    .padding(horizontal = 16.dp)
             )
             GameButtonHoch(
-                text = "Fliehen",
-                onClick = { viewModel.onEvent(GameEvent.Flee) }
+                text = "Fliehen", onClick = { viewModel.onEvent(GameEvent.Flee) })
+            Spacer(modifier = Modifier.height(16.dp))
+            BattleScene(
+                playerName = player.name,
+                playerHp = player.hp,
+                playerMaxHp = player.maxHp,
+                enemyName = enemy.name,
+                enemyHp = enemy.hp,
+                enemyMaxHp = enemy.maxHp
             )
         }
     }
 }
 
+@Composable
+fun BattleScene(
+    playerName: String,
+    playerHp: Int,
+    playerMaxHp: Int,
+    enemyName: String,
+    enemyHp: Int,
+    enemyMaxHp: Int
+) {
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth(0.9f)
+            .height(160.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .background(Color(0xFF8BC34A))
+            .padding(16.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .height(40.dp)
+                .background(Color(0xFF5D4037))
+        )
+
+        Column(
+            modifier = Modifier.align(Alignment.TopStart), horizontalAlignment = Alignment.Start
+        ) {
+
+            Text(
+                text = "$playerName HP: $playerHp/$playerMaxHp", fontSize = 14.sp
+            )
+            HpBar(
+                currentHp = playerHp,
+                maxHp = playerMaxHp,
+                modifier = Modifier
+                    .width(120.dp)
+                    .height(8.dp)
+            )
+        }
+
+        Column(
+            modifier = Modifier.align(Alignment.TopEnd), horizontalAlignment = Alignment.End
+        ) {
+
+            Text(
+                text = "$enemyName HP: $enemyHp/$enemyMaxHp", fontSize = 14.sp
+            )
+            HpBar(
+                currentHp = enemyHp,
+                maxHp = enemyMaxHp,
+                modifier = Modifier
+                    .width(120.dp)
+                    .height(8.dp)
+            )
+        }
+
+
+
+        Text(
+            text = "🧙", modifier = Modifier.align(Alignment.CenterStart), fontSize = 40.sp
+        )
+
+        Text(
+            text = enemyIcon(enemyName), modifier = Modifier.align(Alignment.CenterEnd), fontSize = 40.sp
+        )
+    }
+
+}
+fun enemyIcon(enemyName: String): String {
+    return when (enemyName) {
+        "Goblin" -> "👾"
+        "Wolf" -> "🐺"
+        "Ork" -> "👹"
+        "Stier" -> "🐂"
+        else -> "👾"
+    }
+}
+
+
 @Preview(
-    name = "Game Screen Hoch",
-    showBackground = true
+    name = "Game Screen Hoch", showBackground = true
 )
 @Composable
 fun GameScreenHochPreview() {
@@ -223,6 +300,20 @@ fun GameScreenHochPreview() {
         listState = rememberLazyListState(),
         onGameOver = {},
         onInventory = {},
-        onShop = {}
+        onShop = {})
+}
+@Preview(
+    name = "Battle Scene",
+    showBackground = true
+)
+@Composable
+fun BattleScenePreview() {
+    BattleScene(
+        playerName = "Felix",
+        playerHp = 80,
+        playerMaxHp = 100,
+        enemyName = "Goblin",
+        enemyHp = 20,
+        enemyMaxHp = 30
     )
 }
