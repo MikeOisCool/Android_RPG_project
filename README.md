@@ -63,6 +63,7 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 - 2026-07-19: Item-Icons fuer Shop und Inventar eingefuehrt; gemeinsame UI-Text-Hilfe fuer Item-Icons angelegt und Preis-Texte kompakter gemacht.
 - 2026-07-20: Erste 2D-Kampfszene im Hochformat eingebaut; GameScreen ist scrollbaar, BattleScene zeigt Spieler/Gegner mit Namen, HP-Balken und Boden.
 - 2026-07-20: Erste Kampfanimation eingebaut; Spieler und Gegner bewegen sich beim Angriff kurz aufeinander zu, BattleScene nutzt gegnerspezifische Icons.
+- 2026-07-24: Kritische Treffer werden vor der Verteidigung berechnet; BattleScene zeigt Treffertexte fuer Spieler- und Gegnerangriffe.
 
 ## Aktuelle Features
 
@@ -100,6 +101,7 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 - Item-Icons in Shop und Inventar - hinzugefuegt am 2026-07-19
 - 2D-Kampfszene im Hochformat - hinzugefuegt am 2026-07-20
 - Kampfanimation in BattleScene - hinzugefuegt am 2026-07-20
+- BattleScene-Treffertexte und Krit-Schadensberechnung - angepasst am 2026-07-24
 
 ## Item-Balancing
 

@@ -53,6 +53,8 @@ fun GameScreenHoch(
     val scrollState = rememberScrollState()
     var playerAttacks by remember { mutableStateOf(false) }
     var enemyAttacks by remember { mutableStateOf(false) }
+    val lastPlayerHitText by viewModel.lastPlayerHitText.collectAsState()
+    val lastEnemyHitText by viewModel.lastEnemyHitText.collectAsState()
 
 
     LaunchedEffect(log.size) {
@@ -231,7 +233,9 @@ fun GameScreenHoch(
                 enemyHp = enemy.hp,
                 enemyMaxHp = enemy.maxHp,
                 playerAttacks = playerAttacks,
-                enemyAttacks = enemyAttacks
+                enemyAttacks = enemyAttacks,
+                hitPlayerText = lastPlayerHitText,
+                hitEnemyText = lastEnemyHitText
             )
         }
     }
@@ -246,7 +250,9 @@ fun BattleScene(
     enemyHp: Int,
     enemyMaxHp: Int,
     playerAttacks: Boolean = false,
-    enemyAttacks: Boolean = false
+    enemyAttacks: Boolean = false,
+    hitPlayerText: String? = null,
+    hitEnemyText: String? = null
 ) {
 
     val playerOffset by animateDpAsState(
@@ -275,6 +281,25 @@ fun BattleScene(
                 .background(Color(0xFF5D4037))
         )
 
+        Column(
+            modifier = Modifier.align(Alignment.Center),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            if (hitPlayerText != null) {
+                Text(
+                    text = hitPlayerText,
+                    color = Color.Red,
+                    fontSize = 16.sp
+                )
+            }
+            if (hitEnemyText != null) {
+                Text(
+                    text = hitEnemyText,
+                    color = Color.Red,
+                    fontSize = 16.sp
+                )
+            }
+        }
         Column(
             modifier = Modifier.align(Alignment.TopStart), horizontalAlignment = Alignment.Start
         ) {

@@ -241,25 +241,6 @@ private fun usePotionByName(
     )
 }
 
-fun damageEnemy(
-    enemy: Enemy, attackDamage: Int
-): EnemyDamageResult {
-    val finalDamage = calculateBaseDamage(
-        attackerAttack = attackDamage, defenderDefense = enemy.defense
-    )
-    return EnemyDamageResult(
-        enemy = enemy.copy(
-            hp = (enemy.hp - finalDamage).coerceAtLeast(0)
-        ), damage = finalDamage
-    )
-}
-
-fun calculateBaseDamage(
-    attackerAttack: Int, defenderDefense: Int
-): Int {
-    return (attackerAttack - defenderDefense).coerceAtLeast(0)
-}
-
 fun calculateAttack(
     baseAttack: Int, weaponBonus: Int
 ): Int {
@@ -267,12 +248,32 @@ fun calculateAttack(
 }
 
 fun calculateDamage(
-    baseDamage: Int, critChance: Int, critMultiplier: Int
+    attackDamage: Int, critChance: Int, critMultiplier: Int
 ): DamageResult {
     val criticalHit = chance(critChance)
-    val damage = if (criticalHit) baseDamage * critMultiplier else baseDamage
+    val damage = if (criticalHit) attackDamage * critMultiplier else attackDamage
     return DamageResult(
         amount = damage, isCritical = criticalHit
+    )
+}
+
+fun calculateDamageAfterDefense(
+    incomingDamage: Int, defenderDefense: Int
+): Int {
+    return (incomingDamage - defenderDefense).coerceAtLeast(0)
+}
+
+fun damageEnemy(
+    enemy: Enemy, attackDamage: Int
+): EnemyDamageResult {
+    val finalDamage = calculateDamageAfterDefense(
+        incomingDamage = attackDamage, defenderDefense = enemy.defense
+    )
+    return EnemyDamageResult(
+        enemy = enemy.copy(
+            hp = (enemy.hp - finalDamage).coerceAtLeast(0)
+        ),
+        damage = finalDamage
     )
 }
 

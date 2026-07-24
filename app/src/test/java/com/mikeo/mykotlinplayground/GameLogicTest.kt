@@ -276,6 +276,23 @@ class GameLogicTest {
         assertTrue(result)
     }
 
+    @Test
+    fun criticalEnemyDamageAppliesBeforeDefense() {
+        val criticalDamage = calculateDamage(
+            attackDamage = 8,
+            critChance = 100,
+            critMultiplier = 2
+        )
+
+        val finalDamage = calculateDamageAfterDefense(
+            incomingDamage = criticalDamage.amount,
+            defenderDefense = 10
+        )
+
+        assertTrue(criticalDamage.isCritical)
+        assertEquals(6, finalDamage)
+    }
+
     private fun testPlayer(
         hp: Int = 100,
         maxHp: Int = 100,

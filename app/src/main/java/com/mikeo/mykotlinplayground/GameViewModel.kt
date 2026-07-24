@@ -40,6 +40,10 @@ class GameViewModel : ViewModel() {
     private val _enemy = MutableStateFlow(
         EnemyFactory.createRandomEnemy(_player.value.level)
     )
+    private val _lastEnemyHitText = MutableStateFlow<String?>(null)
+    val lastEnemyHitText: StateFlow<String?> = _lastEnemyHitText
+    private val _lastPlayerHitText = MutableStateFlow<String?>(null)
+    val lastPlayerHitText: StateFlow<String?> = _lastPlayerHitText
     val enemy: StateFlow<Enemy> = _enemy
 
 
@@ -189,7 +193,11 @@ class GameViewModel : ViewModel() {
 
                 if (isPotionStackFull(event.item, _player.value.inventory)) {
                     addLog("🎒 ${event.item.name} ist schon voll")
-                } else if (isUniqueItemAlreadyInInventory(item = event.item, inventory = _player.value.inventory)) {
+                } else if (isUniqueItemAlreadyInInventory(
+                        item = event.item,
+                        inventory = _player.value.inventory
+                    )
+                ) {
                     addLog("🎒 ${event.item.name} ist schon im Inventar")
                 } else if (_player.value.gold < price) {
                     addLog("💰 Nicht genug Gold für ${event.item.name}!")
@@ -275,24 +283,32 @@ class GameViewModel : ViewModel() {
         }
 
         val defense = _player.value.equippedArmor?.defense ?: 0
-        val baseDamage = calculateBaseDamage(
-            attackerAttack = updatedEnemy.attack,
-            defenderDefense = defense
-        )
-        val enemyDamageResult = calculateDamage(
-            baseDamage = baseDamage,
+
+        val attackEnemyDamageResult = calculateDamage(
+            attackDamage = updatedEnemy.attack,
             critChance = enemyCritChance,
             critMultiplier = enemyCritMultiplier
         )
+
+        val finalEnemyDamage = calculateDamageAfterDefense(
+            incomingDamage = attackEnemyDamageResult.amount,
+            defenderDefense = defense
+        )
+
         val logMessage = damageLog(
             attackerName = updatedEnemy.name,
             targetName = _player.value.name,
-            damage = enemyDamageResult.amount,
-            isCritical = enemyDamageResult.isCritical
+            damage = finalEnemyDamage,
+            isCritical = attackEnemyDamageResult.isCritical
         )
+        _lastEnemyHitText.value = if (attackEnemyDamageResult.isCritical) {
+            "E an P💥 $finalEnemyDamage KRITISCH"
+        } else {
+            "E an  P $finalEnemyDamage Schaden"
+        }
         addLog(logMessage)
         onEvent(
-            GameEvent.TakeDamage(enemyDamageResult.amount)
+            GameEvent.TakeDamage(finalEnemyDamage)
         )
     }
 
@@ -305,7 +321,7 @@ class GameViewModel : ViewModel() {
         )
 
         val playerDamageResult = calculateDamage(
-            baseDamage = playerAttack,
+            attackDamage = playerAttack,
             critChance = playerCritChance,
             critMultiplier = playerCritMultiplier
         )
@@ -322,6 +338,11 @@ class GameViewModel : ViewModel() {
             damage = damagedEnemyResult.damage,
             isCritical = playerDamageResult.isCritical
         )
+        _lastPlayerHitText.value = if (playerDamageResult.isCritical) {
+            "P an E 💥 ${damagedEnemyResult.damage} KRITISCH"
+        } else {
+            "P an E ${damagedEnemyResult.damage} Schaden"
+        }
         addLog(logMessage)
 
         return damagedEnemyResult.enemy
