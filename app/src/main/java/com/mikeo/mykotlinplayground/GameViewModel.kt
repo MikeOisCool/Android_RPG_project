@@ -3,6 +3,7 @@ package com.mikeo.mykotlinplayground
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -40,12 +41,13 @@ class GameViewModel : ViewModel() {
     private val _enemy = MutableStateFlow(
         EnemyFactory.createRandomEnemy(_player.value.level)
     )
-    private val _lastEnemyHitText = MutableStateFlow<String?>(null)
-    val lastEnemyHitText: StateFlow<String?> = _lastEnemyHitText
-    private val _lastPlayerHitText = MutableStateFlow<String?>(null)
-    val lastPlayerHitText: StateFlow<String?> = _lastPlayerHitText
-    val enemy: StateFlow<Enemy> = _enemy
+    private val _leftBattleText = MutableStateFlow<String?>(null)
+    val leftBattleText: StateFlow<String?> = _leftBattleText
+    private val _rightBattleText = MutableStateFlow<String?>(null)
 
+    val rightBattleText: StateFlow<String?> = _rightBattleText
+    val enemy: StateFlow<Enemy> = _enemy
+    private var clearHitTextJob: Job? = null
 
     fun startGame(name: String) {
         _player.value = initialPlayer.copy(name = name)
@@ -259,13 +261,23 @@ class GameViewModel : ViewModel() {
                 defenderName = currentEnemy.name,
                 attackerName = _player.value.name
             )
+            _rightBattleText.value = "💨 Ausgewichen"
+            enemyAttacksPlayer(currentEnemy)
+            clearHitTextLater()
             return
         }
 
         val updatedEnemy = playerAttacksEnemy(currentEnemy)
 
         if (updatedEnemy.hp <= 0) {
-            handleEnemyDefeated(currentEnemy)
+            _rightBattleText.value = "💀 Tod"
+            _leftBattleText.value = "Sieg"
+
+            viewModelScope.launch {
+                delay(1000)
+                handleEnemyDefeated(currentEnemy)
+            }
+
             return
         }
         enemyAttacksPlayer(updatedEnemy)
@@ -279,6 +291,8 @@ class GameViewModel : ViewModel() {
                 defenderName = _player.value.name,
                 attackerName = updatedEnemy.name
             )
+            _leftBattleText.value = "💨 Ausgewichen"
+            clearHitTextLater()
             return
         }
 
@@ -301,11 +315,12 @@ class GameViewModel : ViewModel() {
             damage = finalEnemyDamage,
             isCritical = attackEnemyDamageResult.isCritical
         )
-        _lastEnemyHitText.value = if (attackEnemyDamageResult.isCritical) {
-            "E an P💥 $finalEnemyDamage KRITISCH"
+        _leftBattleText.value = if (attackEnemyDamageResult.isCritical) {
+            "💥 $finalEnemyDamage KRITISCH"
         } else {
-            "E an  P $finalEnemyDamage Schaden"
+            "$finalEnemyDamage Schaden"
         }
+        clearHitTextLater()
         addLog(logMessage)
         onEvent(
             GameEvent.TakeDamage(finalEnemyDamage)
@@ -338,14 +353,24 @@ class GameViewModel : ViewModel() {
             damage = damagedEnemyResult.damage,
             isCritical = playerDamageResult.isCritical
         )
-        _lastPlayerHitText.value = if (playerDamageResult.isCritical) {
-            "P an E 💥 ${damagedEnemyResult.damage} KRITISCH"
+        _rightBattleText.value = if (playerDamageResult.isCritical) {
+            "💥 ${damagedEnemyResult.damage} KRITISCH"
         } else {
-            "P an E ${damagedEnemyResult.damage} Schaden"
+            "${damagedEnemyResult.damage} Schaden"
         }
+        clearHitTextLater()
         addLog(logMessage)
 
         return damagedEnemyResult.enemy
+    }
+
+    private fun clearHitTextLater() {
+        clearHitTextJob?.cancel()
+        clearHitTextJob = viewModelScope.launch {
+            delay(1000)
+            _leftBattleText.value = null
+            _rightBattleText.value = null
+        }
     }
 
     private fun damageLog(

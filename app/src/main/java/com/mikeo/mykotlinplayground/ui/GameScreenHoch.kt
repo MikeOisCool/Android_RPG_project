@@ -53,8 +53,8 @@ fun GameScreenHoch(
     val scrollState = rememberScrollState()
     var playerAttacks by remember { mutableStateOf(false) }
     var enemyAttacks by remember { mutableStateOf(false) }
-    val lastPlayerHitText by viewModel.lastPlayerHitText.collectAsState()
-    val lastEnemyHitText by viewModel.lastEnemyHitText.collectAsState()
+    val rightBattleText by viewModel.rightBattleText.collectAsState()
+    val leftBattleText by viewModel.leftBattleText.collectAsState()
 
 
     LaunchedEffect(log.size) {
@@ -234,8 +234,8 @@ fun GameScreenHoch(
                 enemyMaxHp = enemy.maxHp,
                 playerAttacks = playerAttacks,
                 enemyAttacks = enemyAttacks,
-                hitPlayerText = lastPlayerHitText,
-                hitEnemyText = lastEnemyHitText
+                rightBattleText = rightBattleText,
+                leftBattleText = leftBattleText
             )
         }
     }
@@ -251,8 +251,8 @@ fun BattleScene(
     enemyMaxHp: Int,
     playerAttacks: Boolean = false,
     enemyAttacks: Boolean = false,
-    hitPlayerText: String? = null,
-    hitEnemyText: String? = null
+    rightBattleText: String? = null,
+    leftBattleText: String? = null
 ) {
 
     val playerOffset by animateDpAsState(
@@ -268,7 +268,7 @@ fun BattleScene(
     Box(
         modifier = Modifier
             .fillMaxWidth(0.9f)
-            .height(160.dp)
+            .height(200.dp)
             .clip(RoundedCornerShape(32.dp))
             .background(Color(0xFF8BC34A))
             .padding(16.dp)
@@ -281,25 +281,41 @@ fun BattleScene(
                 .background(Color(0xFF5D4037))
         )
 
-        Column(
-            modifier = Modifier.align(Alignment.Center),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            if (hitPlayerText != null) {
-                Text(
-                    text = hitPlayerText,
-                    color = Color.Red,
-                    fontSize = 16.sp
-                )
-            }
-            if (hitEnemyText != null) {
-                Text(
-                    text = hitEnemyText,
-                    color = Color.Red,
-                    fontSize = 16.sp
-                )
-            }
+        val rightBattleTextOffset by animateDpAsState(
+            targetValue = if (rightBattleText != null) (-50).dp else (-35).dp,
+            label = "rightBattleTextOffset"
+
+        )
+
+        val leftBattleTextOffset by animateDpAsState(
+            targetValue = if (leftBattleText != null) (-50).dp else (-35).dp,
+            label = "leftBattleTextOffset"
+
+        )
+        
+        if (leftBattleText != null) {
+            Text(
+                text = leftBattleText,
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
+                    .offset(y = leftBattleTextOffset),
+                color = if (leftBattleText.contains("KRIT")) Color.Red else Color.White,
+                fontSize = 16.sp
+            )
         }
+
+        if (rightBattleText != null) {
+            Text(
+                text = rightBattleText,
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .offset(y = rightBattleTextOffset),
+                color = if (rightBattleText.contains("KRIT")) Color.Red else Color.White,
+                fontSize = 16.sp
+            )
+        }
+
+
         Column(
             modifier = Modifier.align(Alignment.TopStart), horizontalAlignment = Alignment.Start
         ) {
@@ -336,7 +352,8 @@ fun BattleScene(
             text = "🧙",
             modifier = Modifier
                 .align(Alignment.CenterStart)
-                .offset(x = playerOffset),
+                .offset(x = playerOffset)
+                .offset(y = (15).dp),
             fontSize = 60.sp,
 
             )
@@ -345,7 +362,8 @@ fun BattleScene(
             text = enemyIcon(enemyName),
             modifier = Modifier
                 .align(Alignment.CenterEnd)
-                .offset(x = enemyOffset),
+                .offset(x = enemyOffset)
+                .offset(y = (15).dp),
             fontSize = 60.sp
         )
     }
