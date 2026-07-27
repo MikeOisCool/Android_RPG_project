@@ -32,11 +32,13 @@ import com.mikeo.mykotlinplayground.ItemNamen
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import kotlinx.coroutines.delay
 import androidx.compose.foundation.layout.offset
+import androidx.compose.ui.unit.Dp
 
 @Composable
 fun GameScreenHoch(
@@ -55,6 +57,8 @@ fun GameScreenHoch(
     var enemyAttacks by remember { mutableStateOf(false) }
     val rightBattleText by viewModel.rightBattleText.collectAsState()
     val leftBattleText by viewModel.leftBattleText.collectAsState()
+    val attackInProgress by viewModel.attackInProgress.collectAsState()
+    val canClickAttackButton = !attackInProgress && enemy.hp > 0 && !player.isDead
 
 
     LaunchedEffect(log.size) {
@@ -181,8 +185,10 @@ fun GameScreenHoch(
                 modifier = Modifier
                     .fillMaxWidth(0.7f)
                     .height(70.dp),
-                containerColor = Color.Red,
+                containerColor = if (canClickAttackButton) Color.Red else Color(0xff9e9e9e),
                 onClick = {
+                    if (!canClickAttackButton) return@GameButtonHoch
+
                     playerAttacks = true
                     viewModel.onEvent(GameEvent.AttackEnemy)
                 }
@@ -292,26 +298,20 @@ fun BattleScene(
             label = "leftBattleTextOffset"
 
         )
-        
+
         if (leftBattleText != null) {
-            Text(
-                text = leftBattleText,
-                modifier = Modifier
-                    .align(Alignment.CenterStart)
-                    .offset(y = leftBattleTextOffset),
-                color = if (leftBattleText.contains("KRIT")) Color.Red else Color.White,
-                fontSize = 16.sp
+            BattleFeedbackText(
+                battleText = leftBattleText,
+                alignment = Alignment.CenterStart,
+                offsetY = leftBattleTextOffset
             )
         }
 
         if (rightBattleText != null) {
-            Text(
-                text = rightBattleText,
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .offset(y = rightBattleTextOffset),
-                color = if (rightBattleText.contains("KRIT")) Color.Red else Color.White,
-                fontSize = 16.sp
+            BattleFeedbackText(
+                battleText = rightBattleText,
+                alignment = Alignment.CenterEnd,
+                offsetY = rightBattleTextOffset
             )
         }
 
@@ -367,6 +367,24 @@ fun BattleScene(
             fontSize = 60.sp
         )
     }
+
+}
+
+@Composable
+fun BoxScope.BattleFeedbackText(
+    battleText: String,
+    alignment: Alignment,
+    offsetY: Dp,
+) {
+
+    Text(
+        text = battleText,
+        modifier = Modifier
+            .align(alignment)
+            .offset(y = offsetY),
+        color = if (battleText.contains("KRIT")) Color.Red else Color.White,
+        fontSize = 16.sp
+    )
 
 }
 

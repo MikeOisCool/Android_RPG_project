@@ -2,6 +2,9 @@ package com.mikeo.mykotlinplayground
 
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+
 
 
 class GameViewModelTest {
@@ -29,4 +32,18 @@ class GameViewModelTest {
 
         assertTrue(lastLog.contains("${GameItems.woodWeapon} zuerst ab"))
     }
+
+    @Test
+    fun attackEnemyDoesNothingWhenPlayerIsDead() {
+        val viewModel = GameViewModel()
+
+        viewModel.onEvent(GameEvent.TakeDamage(amount = 1001))
+
+        val logSizeBeforeAttack = viewModel.log.value.size
+
+        viewModel.onEvent(GameEvent.AttackEnemy)
+
+        assertEquals(logSizeBeforeAttack, viewModel.log.value.size)
+    }
+
 }

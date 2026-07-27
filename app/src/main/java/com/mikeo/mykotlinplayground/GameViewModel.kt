@@ -22,7 +22,6 @@ class GameViewModel : ViewModel() {
     private val _player = MutableStateFlow(initialPlayer)
     private val _log = MutableStateFlow<List<String>>(emptyList())
 
-    private var healingInProgress = false
     val log: StateFlow<List<String>> = _log
     val player: StateFlow<Player> = _player
     private val playerDodgeChance = 10
@@ -48,6 +47,9 @@ class GameViewModel : ViewModel() {
     val rightBattleText: StateFlow<String?> = _rightBattleText
     val enemy: StateFlow<Enemy> = _enemy
     private var clearHitTextJob: Job? = null
+    private val _attackInProgress = MutableStateFlow(false)
+    val attackInProgress: StateFlow<Boolean> = _attackInProgress
+    private var healingInProgress = false
 
     fun startGame(name: String) {
         _player.value = initialPlayer.copy(name = name)
@@ -59,7 +61,7 @@ class GameViewModel : ViewModel() {
             is GameEvent.TakeDamage -> {
 
                 applyEvent(event)
-                addLog("\uD83D\uDC80 ${_player.value.name} hat ${_player.value.hp} HP übrig")
+                addLog("${_player.value.name} hat ${_player.value.hp} HP übrig")
                 if (_player.value.isDead) {
                     addLog("\uD83D\uDC80 ${_player.value.name} ist gestorben")
                     addLog("${_player.value.name} hat das Level ${_player.value.level} erreicht und hat ${_player.value.xp} XP! Sein Gold: ${_player.value.gold}")
@@ -167,6 +169,10 @@ class GameViewModel : ViewModel() {
             }
 
             is GameEvent.AttackEnemy -> {
+                if (!canStartAttack()) return
+
+                _attackInProgress.value = true
+
                 val enemyName = enemy.value.name
                 addLog("⚔️ Angriff auf $enemyName gestartet")
                 handleAttackEnemy()
@@ -227,6 +233,10 @@ class GameViewModel : ViewModel() {
         }
     }
 
+    private fun canStartAttack(): Boolean {
+        return !_attackInProgress.value && !_player.value.isDead && _enemy.value.hp > 0
+    }
+
     private fun usePotionWithLogs(
         event: GameEvent,
         itemName: String,
@@ -264,6 +274,7 @@ class GameViewModel : ViewModel() {
             _rightBattleText.value = "💨 Ausgewichen"
             enemyAttacksPlayer(currentEnemy)
             clearHitTextLater()
+            _attackInProgress.value = false
             return
         }
 
@@ -274,13 +285,19 @@ class GameViewModel : ViewModel() {
             _leftBattleText.value = "Sieg"
 
             viewModelScope.launch {
-                delay(1000)
-                handleEnemyDefeated(currentEnemy)
-            }
+                try {
+                    delay(1000)
+                    handleEnemyDefeated(currentEnemy)
+                } finally {
 
+                    _attackInProgress.value = false
+                }
+            }
             return
         }
+
         enemyAttacksPlayer(updatedEnemy)
+        _attackInProgress.value = false
     }
 
     private fun enemyAttacksPlayer(updatedEnemy: Enemy) {
@@ -397,8 +414,9 @@ class GameViewModel : ViewModel() {
 
 
     private fun handleEnemyDefeated(enemy: Enemy) {
-        addLog("🏆 ${enemy.name} wurde besiegt!")
+        if (_player.value.isDead) return
 
+        addLog("🏆 ${enemy.name} wurde besiegt!")
         handlePotionDrops()
         handleEquipmentDrops()
         rewardPlayer(enemy)
@@ -406,6 +424,8 @@ class GameViewModel : ViewModel() {
     }
 
     private fun rewardPlayer(enemy: Enemy) {
+        if (_player.value.isDead) return
+
         val levelVorher = _player.value.level
 
         applyEvent(GameEvent.AddGold(enemy.goldReward))
@@ -478,7 +498,7 @@ class GameViewModel : ViewModel() {
     }
 
     private fun spawnNextEnemy() {
-
+        if (_player.value.isDead) return
         val nextEnemy = EnemyFactory.createRandomEnemy(_player.value.level)
         _enemy.value = nextEnemy
 
@@ -531,5 +551,11 @@ class GameViewModel : ViewModel() {
         _player.value = initialPlayer.copy(name = _player.value.name)
         _enemy.value = EnemyFactory.createRandomEnemy(_player.value.level)
         _log.value = emptyList()
+        _leftBattleText.value = null
+        _rightBattleText.value = null
+        clearHitTextJob?.cancel()
+        clearHitTextJob = null
+        _attackInProgress.value = false
+        healingInProgress = false
     }
 }

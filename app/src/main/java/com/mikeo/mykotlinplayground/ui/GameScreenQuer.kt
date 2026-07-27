@@ -44,6 +44,9 @@ fun GameScreenQuer(
 
     val enemy by viewModel.enemy.collectAsState()
 
+    val attackInProgress by viewModel.attackInProgress.collectAsState()
+    val canClickAttackButton = !attackInProgress && enemy.hp > 0 && !player.isDead
+
     LaunchedEffect(log.size) {
         if (log.isNotEmpty())
             listState.animateScrollToItem(log.size - 1)
@@ -264,8 +267,14 @@ fun GameScreenQuer(
                             text = "Angreifen",
                             modifier = Modifier
                                 .fillMaxWidth(),
-                            containerColor = Color.Red,
-                            onClick = { viewModel.onEvent(GameEvent.AttackEnemy) }
+                            containerColor = if (canClickAttackButton) Color.Red else Color(
+                                0xff9e9e9e
+                            ),
+                            onClick = {
+                                if (!canClickAttackButton) return@GameButtonQuer
+
+                                viewModel.onEvent(GameEvent.AttackEnemy)
+                            }
                         )
                     }
                     Row(

@@ -65,6 +65,7 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 - 2026-07-20: Erste Kampfanimation eingebaut; Spieler und Gegner bewegen sich beim Angriff kurz aufeinander zu, BattleScene nutzt gegnerspezifische Icons.
 - 2026-07-24: Kritische Treffer werden vor der Verteidigung berechnet; BattleScene zeigt Treffertexte fuer Spieler- und Gegnerangriffe.
 - 2026-07-26: BattleScene-Feedback verbessert; Treffer-, Ausweich-, Tod- und Siegtexte werden links/rechts an der passenden Kampfposition angezeigt und zeitgesteuert ausgeblendet.
+- 2026-07-27: Angriffssperre gegen sehr schnelle Mehrfachklicks eingebaut; AttackEnemy wird bei laufendem Angriff, totem Spieler oder besiegtem Gegner ignoriert und der Angriffsbutton wird im Hoch- und Querformat sichtbar gesperrt.
 
 ## Aktuelle Features
 
@@ -104,6 +105,7 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 - Kampfanimation in BattleScene - hinzugefuegt am 2026-07-20
 - BattleScene-Treffertexte und Krit-Schadensberechnung - angepasst am 2026-07-24
 - BattleScene-Feedbacktexte fuer Treffer, Ausweichen, Tod und Sieg - angepasst am 2026-07-26
+- Angriffssperre fuer schnelle Mehrfachklicks - hinzugefuegt am 2026-07-27
 
 ## Item-Balancing
 
