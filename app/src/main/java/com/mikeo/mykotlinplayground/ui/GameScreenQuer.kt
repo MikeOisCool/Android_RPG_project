@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.mikeo.mykotlinplayground.GameEvent
 import com.mikeo.mykotlinplayground.GameViewModel
 import com.mikeo.mykotlinplayground.ItemNamen
+import kotlinx.coroutines.delay
 
 
 @Composable
@@ -52,9 +53,11 @@ fun GameScreenQuer(
             listState.animateScrollToItem(log.size - 1)
     }
 
-    if (player.isDead) {
-        onGameOver()
-        return
+    LaunchedEffect(player.isDead) {
+        if (player.isDead) {
+            delay(1200)
+            onGameOver()
+        }
     }
 
     Box(

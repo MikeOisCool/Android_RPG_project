@@ -39,6 +39,7 @@ import androidx.compose.runtime.setValue
 import kotlinx.coroutines.delay
 import androidx.compose.foundation.layout.offset
 import androidx.compose.ui.unit.Dp
+import androidx.compose.foundation.clickable
 
 @Composable
 fun GameScreenHoch(
@@ -65,9 +66,11 @@ fun GameScreenHoch(
         if (log.isNotEmpty()) listState.animateScrollToItem(log.size - 1)
     }
 
-    if (player.isDead) {
-        onGameOver()
-        return
+    LaunchedEffect(player.isDead) {
+        if (player.isDead) {
+            delay(1200)
+            onGameOver()
+        }
     }
 
     Column(
@@ -241,7 +244,13 @@ fun GameScreenHoch(
                 playerAttacks = playerAttacks,
                 enemyAttacks = enemyAttacks,
                 rightBattleText = rightBattleText,
-                leftBattleText = leftBattleText
+                leftBattleText = leftBattleText,
+                onEnemyClick = {
+                    if (canClickAttackButton) {
+                        playerAttacks = true
+                        viewModel.onEvent(GameEvent.AttackEnemy)
+                    }
+                }
             )
         }
     }
@@ -258,7 +267,8 @@ fun BattleScene(
     playerAttacks: Boolean = false,
     enemyAttacks: Boolean = false,
     rightBattleText: String? = null,
-    leftBattleText: String? = null
+    leftBattleText: String? = null,
+    onEnemyClick: () -> Unit = {}
 ) {
 
     val playerOffset by animateDpAsState(
@@ -274,7 +284,7 @@ fun BattleScene(
     Box(
         modifier = Modifier
             .fillMaxWidth(0.9f)
-            .height(200.dp)
+            .height(210.dp)
             .clip(RoundedCornerShape(32.dp))
             .background(Color(0xFF8BC34A))
             .padding(16.dp)
@@ -363,11 +373,11 @@ fun BattleScene(
             modifier = Modifier
                 .align(Alignment.CenterEnd)
                 .offset(x = enemyOffset)
-                .offset(y = (15).dp),
+                .offset(y = (15).dp)
+                .clickable { onEnemyClick() },
             fontSize = 60.sp
         )
     }
-
 }
 
 @Composable
@@ -382,7 +392,7 @@ fun BoxScope.BattleFeedbackText(
         modifier = Modifier
             .align(alignment)
             .offset(y = offsetY),
-        color = if (battleText.contains("KRIT")) Color.Red else Color.White,
+        color = if (battleText.contains("KRIT") || battleText.contains("Tod")) Color.Red else Color.White,
         fontSize = 16.sp
     )
 

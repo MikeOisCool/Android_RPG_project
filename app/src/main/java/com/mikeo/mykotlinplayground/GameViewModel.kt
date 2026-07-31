@@ -278,10 +278,12 @@ class GameViewModel : ViewModel() {
             return
         }
 
-        val updatedEnemy = playerAttacksEnemy(currentEnemy)
+        val damagedEnemyResult = playerAttacksEnemy(currentEnemy)
+        val updatedEnemy = damagedEnemyResult.enemy
+
 
         if (updatedEnemy.hp <= 0) {
-            _rightBattleText.value = "💀 Tod"
+            _rightBattleText.value = "${damagedEnemyResult.damage} 💀 Tod"
             _leftBattleText.value = "Sieg"
 
             viewModelScope.launch {
@@ -342,9 +344,13 @@ class GameViewModel : ViewModel() {
         onEvent(
             GameEvent.TakeDamage(finalEnemyDamage)
         )
+        if (_player.value.isDead) {
+            _leftBattleText.value = "$finalEnemyDamage 💀 Tod"
+            _rightBattleText.value = "Sieg"
+        }
     }
 
-    private fun playerAttacksEnemy(currentEnemy: Enemy): Enemy {
+    private fun playerAttacksEnemy(currentEnemy: Enemy): EnemyDamageResult {
 
         val weaponBonus = _player.value.equippedWeapon?.damage ?: 0
         val playerAttack = calculateAttack(
@@ -378,7 +384,7 @@ class GameViewModel : ViewModel() {
         clearHitTextLater()
         addLog(logMessage)
 
-        return damagedEnemyResult.enemy
+        return damagedEnemyResult
     }
 
     private fun clearHitTextLater() {
