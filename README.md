@@ -20,6 +20,7 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 - Der Nutzer fuehrt Git selbst aus. Codex soll normalerweise nicht selbst committen oder pushen, ausser der Nutzer bittet ausdruecklich darum.
 - Kleine Aenderungen nicht einzeln committen, sondern sinnvoll buendeln.
 - Lernstil: langsam hinfuehren, keine fertigen Komplettloesungen, ausser der Nutzer fragt ausdruecklich danach. Lieber kleine Hints, Verstaendnisfragen, kleine Challenges und kurze Erklaerungen, damit Michael aktiv mitdenkt und nicht nur abschreibt.
+- Codex soll Michael passend fordern: erst eine kleine Aufgabe oder Frage stellen, danach das Ergebnis pruefen und dann je nach Verstaendnis mehr fordern oder wieder langsamer erklaeren.
 - In neuen Chats zuerst diese Arbeitsregeln lesen.
 
 ## Aenderungsverlauf
