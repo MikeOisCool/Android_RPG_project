@@ -19,7 +19,7 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 - Wenn der Nutzer `git` schreibt, bedeutet das normalerweise: Aenderungen pruefen, sagen ob sie zusammenpassen, README bei Bedarf aktualisieren und dem Nutzer die drei Git-Zeilen geben.
 - Der Nutzer fuehrt Git selbst aus. Codex soll normalerweise nicht selbst committen oder pushen, ausser der Nutzer bittet ausdruecklich darum.
 - Kleine Aenderungen nicht einzeln committen, sondern sinnvoll buendeln.
-- Lernstil: langsam hinfuehren, keine fertigen Komplettloesungen, ausser der Nutzer fragt ausdruecklich danach. Lieber kleine Hints, Verstaendnisfragen und kurze Erklaerungen.
+- Lernstil: langsam hinfuehren, keine fertigen Komplettloesungen, ausser der Nutzer fragt ausdruecklich danach. Lieber kleine Hints, Verstaendnisfragen, kleine Challenges und kurze Erklaerungen, damit Michael aktiv mitdenkt und nicht nur abschreibt.
 - In neuen Chats zuerst diese Arbeitsregeln lesen.
 
 ## Aenderungsverlauf
@@ -66,6 +66,7 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 - 2026-07-24: Kritische Treffer werden vor der Verteidigung berechnet; BattleScene zeigt Treffertexte fuer Spieler- und Gegnerangriffe.
 - 2026-07-26: BattleScene-Feedback verbessert; Treffer-, Ausweich-, Tod- und Siegtexte werden links/rechts an der passenden Kampfposition angezeigt und zeitgesteuert ausgeblendet.
 - 2026-07-27: Angriffssperre gegen sehr schnelle Mehrfachklicks eingebaut; AttackEnemy wird bei laufendem Angriff, totem Spieler oder besiegtem Gegner ignoriert und der Angriffsbutton wird im Hoch- und Querformat sichtbar gesperrt.
+- 2026-08-01: BattleScene-Tod-Feedback verbessert; beim Besiegen eines Gegners oder beim Tod des Spielers werden Schaden, Tod und Sieg kurz sichtbar angezeigt, bevor zum naechsten Zustand gewechselt wird.
 
 ## Aktuelle Features
 
@@ -106,6 +107,7 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 - BattleScene-Treffertexte und Krit-Schadensberechnung - angepasst am 2026-07-24
 - BattleScene-Feedbacktexte fuer Treffer, Ausweichen, Tod und Sieg - angepasst am 2026-07-26
 - Angriffssperre fuer schnelle Mehrfachklicks - hinzugefuegt am 2026-07-27
+- BattleScene-Tod- und Siegfeedback - verbessert am 2026-08-01
 
 ## Item-Balancing
 

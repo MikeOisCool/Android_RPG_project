@@ -271,7 +271,7 @@ class GameViewModel : ViewModel() {
                 defenderName = currentEnemy.name,
                 attackerName = _player.value.name
             )
-            _rightBattleText.value = "💨 Ausgewichen"
+            _rightBattleText.value = "💨 Dodge"
             enemyAttacksPlayer(currentEnemy)
             clearHitTextLater()
             _attackInProgress.value = false
@@ -310,7 +310,7 @@ class GameViewModel : ViewModel() {
                 defenderName = _player.value.name,
                 attackerName = updatedEnemy.name
             )
-            _leftBattleText.value = "💨 Ausgewichen"
+            _leftBattleText.value = "💨 Dodge"
             clearHitTextLater()
             return
         }
@@ -335,9 +335,9 @@ class GameViewModel : ViewModel() {
             isCritical = attackEnemyDamageResult.isCritical
         )
         _leftBattleText.value = if (attackEnemyDamageResult.isCritical) {
-            "💥 $finalEnemyDamage KRITISCH"
+            "💥 $finalEnemyDamage KRIT"
         } else {
-            "$finalEnemyDamage Schaden"
+            "$finalEnemyDamage DMG"
         }
         clearHitTextLater()
         addLog(logMessage)
@@ -377,9 +377,9 @@ class GameViewModel : ViewModel() {
             isCritical = playerDamageResult.isCritical
         )
         _rightBattleText.value = if (playerDamageResult.isCritical) {
-            "💥 ${damagedEnemyResult.damage} KRITISCH"
+            "💥 ${damagedEnemyResult.damage} KRIT"
         } else {
-            "${damagedEnemyResult.damage} Schaden"
+            "${damagedEnemyResult.damage} DMG"
         }
         clearHitTextLater()
         addLog(logMessage)

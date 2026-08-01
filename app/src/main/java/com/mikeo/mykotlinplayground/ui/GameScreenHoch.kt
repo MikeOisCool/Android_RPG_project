@@ -40,6 +40,8 @@ import kotlinx.coroutines.delay
 import androidx.compose.foundation.layout.offset
 import androidx.compose.ui.unit.Dp
 import androidx.compose.foundation.clickable
+import androidx.compose.ui.text.font.FontWeight
+
 
 @Composable
 fun GameScreenHoch(
@@ -284,99 +286,125 @@ fun BattleScene(
     Box(
         modifier = Modifier
             .fillMaxWidth(0.9f)
-            .height(210.dp)
+            .height(230.dp)
             .clip(RoundedCornerShape(32.dp))
             .background(Color(0xFF8BC34A))
-            .padding(16.dp)
+
     ) {
         Box(
             modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
+                .offset(y = (10).dp)
+                .fillMaxWidth(0.95f)
+                .align(Alignment.TopCenter)
                 .height(40.dp)
-                .background(Color(0xFF5D4037))
+                .clip(RoundedCornerShape(16.dp))
+                .background(Color(0xFFFFD54F))
         )
-
-        val rightBattleTextOffset by animateDpAsState(
-            targetValue = if (rightBattleText != null) (-50).dp else (-35).dp,
-            label = "rightBattleTextOffset"
-
-        )
-
-        val leftBattleTextOffset by animateDpAsState(
-            targetValue = if (leftBattleText != null) (-50).dp else (-35).dp,
-            label = "leftBattleTextOffset"
-
-        )
-
-        if (leftBattleText != null) {
-            BattleFeedbackText(
-                battleText = leftBattleText,
-                alignment = Alignment.CenterStart,
-                offsetY = leftBattleTextOffset
-            )
-        }
-
-        if (rightBattleText != null) {
-            BattleFeedbackText(
-                battleText = rightBattleText,
-                alignment = Alignment.CenterEnd,
-                offsetY = rightBattleTextOffset
-            )
-        }
-
-
-        Column(
-            modifier = Modifier.align(Alignment.TopStart), horizontalAlignment = Alignment.Start
+        Box(
+            modifier = Modifier
+                .padding(16.dp)
         ) {
 
-            Text(
-                text = "$playerName HP: $playerHp/$playerMaxHp", fontSize = 14.sp
-            )
-            HpBar(
-                currentHp = playerHp,
-                maxHp = playerMaxHp,
+            Box(
                 modifier = Modifier
-                    .width(120.dp)
-                    .height(8.dp)
+                    .fillMaxSize()
+            ) {
+                Box(
+                    modifier = Modifier
+                        .offset(y = (-30).dp)
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth()
+                        .height(6.dp)
+                        .background(Color(0xFF2E7D32))
+
+                )
+                Box(
+                    modifier = Modifier
+                        .offset(y = (-10).dp)
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth()
+                        .height(20.dp)
+                        .background(Color(0xFF5D4037))
+                )
+                Text(
+                    text = "🧙",
+                    modifier = Modifier
+                        .align(Alignment.CenterStart)
+                        .offset(x = playerOffset)
+                        .offset(y = (30).dp),
+                    fontSize = 60.sp,
+
+                    )
+
+                Text(
+                    text = enemyIcon(enemyName),
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .offset(x = enemyOffset)
+                        .offset(y = (33).dp)
+                        .clickable { onEnemyClick() },
+                    fontSize = 60.sp
+                )
+            }
+            val rightBattleTextOffset by animateDpAsState(
+                targetValue = if (rightBattleText != null) (-35).dp else (-20).dp,
+                label = "rightBattleTextOffset"
+
             )
+
+            val leftBattleTextOffset by animateDpAsState(
+                targetValue = if (leftBattleText != null) (-35).dp else (-20).dp,
+                label = "leftBattleTextOffset"
+
+            )
+
+            if (leftBattleText != null) {
+                BattleFeedbackText(
+                    battleText = leftBattleText,
+                    alignment = Alignment.CenterStart,
+                    offsetY = leftBattleTextOffset
+                )
+            }
+
+            if (rightBattleText != null) {
+                BattleFeedbackText(
+                    battleText = rightBattleText,
+                    alignment = Alignment.CenterEnd,
+                    offsetY = rightBattleTextOffset
+                )
+            }
+            Column(
+                modifier = Modifier.align(Alignment.TopStart), horizontalAlignment = Alignment.Start
+            ) {
+
+                Text(
+                    text = "$playerName HP: $playerHp/$playerMaxHp", fontSize = 14.sp
+                )
+                HpBar(
+                    currentHp = playerHp,
+                    maxHp = playerMaxHp,
+                    modifier = Modifier
+                        .width(120.dp)
+                        .height(8.dp)
+                )
+            }
+
+            Column(
+                modifier = Modifier.align(Alignment.TopEnd), horizontalAlignment = Alignment.End
+            ) {
+
+                Text(
+                    text = "$enemyName HP: $enemyHp/$enemyMaxHp", fontSize = 14.sp
+                )
+                HpBar(
+                    currentHp = enemyHp,
+                    maxHp = enemyMaxHp,
+                    modifier = Modifier
+                        .width(120.dp)
+                        .height(8.dp)
+                )
+            }
         }
-
-        Column(
-            modifier = Modifier.align(Alignment.TopEnd), horizontalAlignment = Alignment.End
-        ) {
-
-            Text(
-                text = "$enemyName HP: $enemyHp/$enemyMaxHp", fontSize = 14.sp
-            )
-            HpBar(
-                currentHp = enemyHp,
-                maxHp = enemyMaxHp,
-                modifier = Modifier
-                    .width(120.dp)
-                    .height(8.dp)
-            )
-        }
-
-        Text(
-            text = "🧙",
-            modifier = Modifier
-                .align(Alignment.CenterStart)
-                .offset(x = playerOffset)
-                .offset(y = (15).dp),
-            fontSize = 60.sp,
-
-            )
-
-        Text(
-            text = enemyIcon(enemyName),
-            modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .offset(x = enemyOffset)
-                .offset(y = (15).dp)
-                .clickable { onEnemyClick() },
-            fontSize = 60.sp
-        )
     }
 }
 
@@ -391,9 +419,12 @@ fun BoxScope.BattleFeedbackText(
         text = battleText,
         modifier = Modifier
             .align(alignment)
-            .offset(y = offsetY),
+            .offset(y = offsetY)
+            .background(Color.Black.copy(alpha = 0.45f), RoundedCornerShape(8.dp))
+            .padding(horizontal = 10.dp, vertical = 4.dp),
         color = if (battleText.contains("KRIT") || battleText.contains("Tod")) Color.Red else Color.White,
-        fontSize = 16.sp
+        fontSize = 18.sp,
+        fontWeight = FontWeight.Bold
     )
 
 }
