@@ -196,8 +196,7 @@ fun GameScreenHoch(
 
                     playerAttacks = true
                     viewModel.onEvent(GameEvent.AttackEnemy)
-                }
-            )
+                })
             LaunchedEffect(playerAttacks) {
                 if (playerAttacks) {
                     delay(200)
@@ -252,8 +251,7 @@ fun GameScreenHoch(
                         playerAttacks = true
                         viewModel.onEvent(GameEvent.AttackEnemy)
                     }
-                }
-            )
+                })
         }
     }
 }
@@ -266,22 +264,13 @@ fun BattleScene(
     enemyName: String,
     enemyHp: Int,
     enemyMaxHp: Int,
-    playerAttacks: Boolean = false,
-    enemyAttacks: Boolean = false,
     rightBattleText: String? = null,
     leftBattleText: String? = null,
+    playerAttacks: Boolean = false,
+    enemyAttacks: Boolean = false,
     onEnemyClick: () -> Unit = {}
 ) {
 
-    val playerOffset by animateDpAsState(
-        targetValue = if (playerAttacks) 180.dp else 0.dp,
-        label = "playerAttackOffset"
-    )
-
-    val enemyOffset by animateDpAsState(
-        targetValue = if (enemyAttacks) -180.dp else 0.dp,
-        label = "enemyAttackOffset"
-    )
 
     Box(
         modifier = Modifier
@@ -301,111 +290,165 @@ fun BattleScene(
                 .background(Color(0xFFFFD54F))
         )
         Box(
-            modifier = Modifier
-                .padding(16.dp)
+            modifier = Modifier.padding(16.dp)
         ) {
 
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
+                modifier = Modifier.fillMaxSize()
             ) {
-                Box(
-                    modifier = Modifier
-                        .offset(y = (-30).dp)
-                        .align(Alignment.BottomCenter)
-                        .fillMaxWidth()
-                        .height(6.dp)
-                        .background(Color(0xFF2E7D32))
+                BattleGround()
 
-                )
-                Box(
-                    modifier = Modifier
-                        .offset(y = (-10).dp)
-                        .align(Alignment.BottomCenter)
-                        .fillMaxWidth()
-                        .height(20.dp)
-                        .background(Color(0xFF5D4037))
-                )
-                Text(
-                    text = "🧙",
-                    modifier = Modifier
-                        .align(Alignment.CenterStart)
-                        .offset(x = playerOffset)
-                        .offset(y = (30).dp),
-                    fontSize = 60.sp,
-
-                    )
-
-                Text(
-                    text = enemyIcon(enemyName),
-                    modifier = Modifier
-                        .align(Alignment.CenterEnd)
-                        .offset(x = enemyOffset)
-                        .offset(y = (33).dp)
-                        .clickable { onEnemyClick() },
-                    fontSize = 60.sp
+                BattleFighters(
+                    enemyName = enemyName,
+                    playerAttacks = playerAttacks,
+                    enemyAttacks = enemyAttacks,
+                    onEnemyClick = onEnemyClick
                 )
             }
-            val rightBattleTextOffset by animateDpAsState(
-                targetValue = if (rightBattleText != null) (-35).dp else (-20).dp,
-                label = "rightBattleTextOffset"
-
+            BattleFeedbackTexts(
+                rightBattleText = rightBattleText, leftBattleText = leftBattleText
             )
 
-            val leftBattleTextOffset by animateDpAsState(
-                targetValue = if (leftBattleText != null) (-35).dp else (-20).dp,
-                label = "leftBattleTextOffset"
-
+            BattleHpHeader(
+                playerName = playerName,
+                playerHp = playerHp,
+                playerMaxHp = playerMaxHp,
+                enemyName = enemyName,
+                enemyHp = enemyHp,
+                enemyMaxHp = enemyMaxHp
             )
-
-            if (leftBattleText != null) {
-                BattleFeedbackText(
-                    battleText = leftBattleText,
-                    alignment = Alignment.CenterStart,
-                    offsetY = leftBattleTextOffset
-                )
-            }
-
-            if (rightBattleText != null) {
-                BattleFeedbackText(
-                    battleText = rightBattleText,
-                    alignment = Alignment.CenterEnd,
-                    offsetY = rightBattleTextOffset
-                )
-            }
-            Column(
-                modifier = Modifier.align(Alignment.TopStart), horizontalAlignment = Alignment.Start
-            ) {
-
-                Text(
-                    text = "$playerName HP: $playerHp/$playerMaxHp", fontSize = 14.sp
-                )
-                HpBar(
-                    currentHp = playerHp,
-                    maxHp = playerMaxHp,
-                    modifier = Modifier
-                        .width(120.dp)
-                        .height(8.dp)
-                )
-            }
-
-            Column(
-                modifier = Modifier.align(Alignment.TopEnd), horizontalAlignment = Alignment.End
-            ) {
-
-                Text(
-                    text = "$enemyName HP: $enemyHp/$enemyMaxHp", fontSize = 14.sp
-                )
-                HpBar(
-                    currentHp = enemyHp,
-                    maxHp = enemyMaxHp,
-                    modifier = Modifier
-                        .width(120.dp)
-                        .height(8.dp)
-                )
-            }
         }
     }
+}
+
+@Composable
+fun BoxScope.BattleFeedbackTexts(
+    rightBattleText: String?, leftBattleText: String?
+) {
+    val rightBattleTextOffset by animateDpAsState(
+        targetValue = if (rightBattleText != null) (-35).dp else (-20).dp,
+        label = "rightBattleTextOffset"
+
+    )
+
+    val leftBattleTextOffset by animateDpAsState(
+        targetValue = if (leftBattleText != null) (-35).dp else (-20).dp,
+        label = "leftBattleTextOffset"
+
+    )
+
+    if (leftBattleText != null) {
+        BattleFeedbackText(
+            battleText = leftBattleText,
+            alignment = Alignment.CenterStart,
+            offsetY = leftBattleTextOffset
+        )
+    }
+
+    if (rightBattleText != null) {
+        BattleFeedbackText(
+            battleText = rightBattleText,
+            alignment = Alignment.CenterEnd,
+            offsetY = rightBattleTextOffset
+        )
+    }
+}
+
+@Composable
+fun BoxScope.BattleHpHeader(
+    playerName: String,
+    playerHp: Int,
+    playerMaxHp: Int,
+    enemyName: String,
+    enemyHp: Int,
+    enemyMaxHp: Int
+) {
+    Column(
+        modifier = Modifier.align(Alignment.TopStart), horizontalAlignment = Alignment.Start
+    ) {
+
+        Text(
+            text = "$playerName HP: $playerHp/$playerMaxHp", fontSize = 14.sp
+        )
+        HpBar(
+            currentHp = playerHp,
+            maxHp = playerMaxHp,
+            modifier = Modifier
+                .width(120.dp)
+                .height(8.dp)
+        )
+    }
+
+    Column(
+        modifier = Modifier.align(Alignment.TopEnd), horizontalAlignment = Alignment.End
+    ) {
+
+        Text(
+            text = "$enemyName HP: $enemyHp/$enemyMaxHp", fontSize = 14.sp
+        )
+        HpBar(
+            currentHp = enemyHp, maxHp = enemyMaxHp, modifier = Modifier
+                .width(120.dp)
+                .height(8.dp)
+        )
+    }
+}
+
+@Composable
+fun BoxScope.BattleFighters(
+    enemyName: String,
+    playerAttacks: Boolean = false,
+    enemyAttacks: Boolean = false,
+    onEnemyClick: () -> Unit = {}
+) {
+
+    val playerOffset by animateDpAsState(
+        targetValue = if (playerAttacks) 180.dp else 0.dp, label = "playerAttackOffset"
+    )
+
+    val enemyOffset by animateDpAsState(
+        targetValue = if (enemyAttacks) -180.dp else 0.dp, label = "enemyAttackOffset"
+    )
+
+    Text(
+        text = "🧙",
+        modifier = Modifier
+            .align(Alignment.CenterStart)
+            .offset(x = playerOffset)
+            .offset(y = (30).dp),
+        fontSize = 60.sp
+    )
+
+    Text(
+        text = enemyIcon(enemyName),
+        modifier = Modifier
+            .align(Alignment.CenterEnd)
+            .offset(x = enemyOffset)
+            .offset(y = (33).dp)
+            .clickable { onEnemyClick() },
+        fontSize = 60.sp
+    )
+}
+
+@Composable
+fun BoxScope.BattleGround() {
+    Box(
+        modifier = Modifier
+            .offset(y = (-30).dp)
+            .align(Alignment.BottomCenter)
+            .fillMaxWidth()
+            .height(6.dp)
+            .background(Color(0xFF2E7D32))
+
+    )
+    Box(
+        modifier = Modifier
+            .offset(y = (-10).dp)
+            .align(Alignment.BottomCenter)
+            .fillMaxWidth()
+            .height(20.dp)
+            .background(Color(0xFF5D4037))
+    )
 }
 
 @Composable
@@ -454,8 +497,7 @@ fun GameScreenHochPreview() {
 }
 
 @Preview(
-    name = "Battle Scene",
-    showBackground = true
+    name = "Battle Scene", showBackground = true
 )
 @Composable
 fun BattleScenePreview() {
