@@ -41,6 +41,8 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.ui.unit.Dp
 import androidx.compose.foundation.clickable
 import androidx.compose.ui.text.font.FontWeight
+import com.mikeo.mykotlinplayground.Player
+import com.mikeo.mykotlinplayground.Enemy
 
 
 @Composable
@@ -51,7 +53,6 @@ fun GameScreenHoch(
     onInventory: () -> Unit,
     onShop: () -> Unit
 ) {
-
     val player by viewModel.player.collectAsState()
     val log by viewModel.log.collectAsState()
     val enemy by viewModel.enemy.collectAsState()
@@ -62,7 +63,19 @@ fun GameScreenHoch(
     val leftBattleText by viewModel.leftBattleText.collectAsState()
     val attackInProgress by viewModel.attackInProgress.collectAsState()
     val canClickAttackButton = !attackInProgress && enemy.hp > 0 && !player.isDead
+    val onAttack = {
+        if (canClickAttackButton) {
+            playerAttacks = true
+            viewModel.onEvent(GameEvent.AttackEnemy)
+        }
+    }
+    val potionBigAmount = player.inventory.items.find {
+        it.name == ItemNamen.GROSSER_HEILTRANK
+    }?.amount ?: 0
 
+    val potionAmount = player.inventory.items.find {
+        it.name == ItemNamen.HEILTRANK
+    }?.amount ?: 0
 
     LaunchedEffect(log.size) {
         if (log.isNotEmpty()) listState.animateScrollToItem(log.size - 1)
@@ -72,6 +85,23 @@ fun GameScreenHoch(
         if (player.isDead) {
             delay(1200)
             onGameOver()
+        }
+    }
+
+    LaunchedEffect(playerAttacks) {
+        if (playerAttacks) {
+            delay(200)
+            playerAttacks = false
+            if (enemy.hp > 0) {
+                enemyAttacks = true
+            }
+        }
+    }
+
+    LaunchedEffect(enemyAttacks) {
+        if (enemyAttacks) {
+            delay(200)
+            enemyAttacks = false
         }
     }
 
@@ -93,165 +123,190 @@ fun GameScreenHoch(
             GameLog(log = log, listState = listState, modifier = Modifier.height(120.dp))
 
 
-            Text(
-                text = "Name: ${player.name} Level: ${player.level}", fontSize = 24.sp
-            )
-            Text(text = "HP: ${player.hp}/${player.maxHp} Gold: ${player.gold}", fontSize = 20.sp)
+            PlayerStatsBlock(player = player)
 
-
-            HpBar(
-                currentHp = player.hp,
-                maxHp = player.maxHp,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(16.dp)
-                    .padding(horizontal = 16.dp)
-            )
-
-            Text(
-                text = "XP: ${player.xp}/${player.xpToNextLevel}", fontSize = 18.sp
-            )
-
-            Column {
-                val weaponBonus = player.equippedWeapon?.damage ?: 0
-                val armorDefense = player.equippedArmor?.defense ?: 0
-                Row {
-                    Text("Angriff:", modifier = Modifier.width(120.dp))
-                    Text("${player.attack + weaponBonus}")
-                }
-                Row {
-                    Text("Verteidigung:", modifier = Modifier.width(120.dp))
-                    Text("$armorDefense")
-                }
-                Row {
-                    Text("Waffe:", modifier = Modifier.width(120.dp))
-                    Text(player.equippedWeapon?.name ?: "Keine")
-                }
-                Row {
-                    Text("Rüstung:", modifier = Modifier.width(120.dp))
-                    Text(player.equippedArmor?.name ?: "Keine")
-                }
-            }
-        }
-
-        Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-
-            Row {
-                GameButtonHoch(
-                    text = "Take Damage", onClick = { viewModel.onEvent(GameEvent.TakeDamage()) })
-
-                GameButtonHoch(
-                    text = "Add Gold", onClick = { viewModel.onEvent(GameEvent.AddGold()) })
-            }
-            Row {
-                GameButtonHoch(
-                    text = "Heilen", onClick = { viewModel.onEvent(GameEvent.Heal()) })
-                val potionBigAmount =
-                    player.inventory.items.find { it.name == ItemNamen.GROSSER_HEILTRANK }?.amount
-                        ?: 0
-                GameButtonHoch(
-                    text = "Big Heal (${potionBigAmount})",
-                    onClick = { viewModel.onEvent(GameEvent.UseBigPotion()) })
-            }
-
-            Row {
-                GameButtonHoch(
-                    text = "XP sammeln", onClick = { viewModel.onEvent(GameEvent.GainXp()) })
-
-                GameButtonHoch(
-                    text = "Shop öffnen", onClick = {
-                        onShop()
-                    })
-            }
-
-            Row(
-                modifier = Modifier.padding(bottom = 10.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                val potionAmount =
-                    player.inventory.items.find { it.name == ItemNamen.HEILTRANK }?.amount ?: 0
-                GameButtonHoch(
-                    text = "Heiltrank (${potionAmount})", onClick = {
-                        viewModel.onEvent(GameEvent.UsePotion())
-                    })
+                GameActionButtons(
+                    canClickAttackButton = canClickAttackButton,
+                    onInventory = onInventory,
+                    onShop = onShop,
+                    onAttack = onAttack,
+                    onTakeDamage = { viewModel.onEvent(GameEvent.TakeDamage()) },
+                    onAddGold = { viewModel.onEvent(GameEvent.AddGold()) },
+                    onHeal = { viewModel.onEvent(GameEvent.Heal()) },
+                    onGainXp = { viewModel.onEvent(GameEvent.GainXp()) },
+                    onUsePotion = { viewModel.onEvent(GameEvent.UsePotion()) },
+                    onUseBigPotion = { viewModel.onEvent(GameEvent.UseBigPotion()) },
+                    potionBigAmount = potionBigAmount,
+                    potionAmount = potionAmount
+                )
+
+                EnemyStatsBlock(enemy = enemy)
 
                 GameButtonHoch(
-                    text = "Inventar öffnen", onClick = {
-                        onInventory()
-                    })
-            }
-            GameButtonHoch(
-                text = "Angreifen",
-                fontSize = 24.sp,
-                modifier = Modifier
-                    .fillMaxWidth(0.7f)
-                    .height(70.dp),
-                containerColor = if (canClickAttackButton) Color.Red else Color(0xff9e9e9e),
-                onClick = {
-                    if (!canClickAttackButton) return@GameButtonHoch
+                    text = "Fliehen", onClick = { viewModel.onEvent(GameEvent.Flee) })
 
-                    playerAttacks = true
-                    viewModel.onEvent(GameEvent.AttackEnemy)
-                })
-            LaunchedEffect(playerAttacks) {
-                if (playerAttacks) {
-                    delay(200)
-                    playerAttacks = false
-                    if (enemy.hp > 0) {
-                        enemyAttacks = true
-                    }
-                }
-            }
-            LaunchedEffect(enemyAttacks) {
-                if (enemyAttacks) {
-                    delay(200)
-                    enemyAttacks = false
-                }
-            }
-            Text("Gegner: ${enemy.name}")
-            Text("Level: ${enemy.level}")
-            Row {
-                Text("ATK:", modifier = Modifier.width(60.dp))
-                Text("${enemy.attack}")
-            }
-            Row {
-                Text("DEF:", modifier = Modifier.width(60.dp))
-                Text("${enemy.defense}")
-            }
-            Text("HP: ${enemy.hp}")
+                Spacer(modifier = Modifier.height(16.dp))
 
-            HpBar(
-                currentHp = enemy.hp,
-                maxHp = enemy.maxHp,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(16.dp)
-                    .padding(horizontal = 16.dp)
-            )
-            GameButtonHoch(
-                text = "Fliehen", onClick = { viewModel.onEvent(GameEvent.Flee) })
-            Spacer(modifier = Modifier.height(16.dp))
-            BattleScene(
-                playerName = player.name,
-                playerHp = player.hp,
-                playerMaxHp = player.maxHp,
-                enemyName = enemy.name,
-                enemyHp = enemy.hp,
-                enemyMaxHp = enemy.maxHp,
-                playerAttacks = playerAttacks,
-                enemyAttacks = enemyAttacks,
-                rightBattleText = rightBattleText,
-                leftBattleText = leftBattleText,
-                onEnemyClick = {
-                    if (canClickAttackButton) {
-                        playerAttacks = true
-                        viewModel.onEvent(GameEvent.AttackEnemy)
-                    }
-                })
+                BattleScene(
+                    playerName = player.name,
+                    playerHp = player.hp,
+                    playerMaxHp = player.maxHp,
+                    enemyName = enemy.name,
+                    enemyHp = enemy.hp,
+                    enemyMaxHp = enemy.maxHp,
+                    playerAttacks = playerAttacks,
+                    enemyAttacks = enemyAttacks,
+                    rightBattleText = rightBattleText,
+                    leftBattleText = leftBattleText,
+                    onEnemyClick = onAttack
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun GameActionButtons(
+    canClickAttackButton: Boolean,
+    onInventory: () -> Unit,
+    onShop: () -> Unit,
+    onAttack: () -> Unit,
+    onTakeDamage: () -> Unit,
+    onAddGold: () -> Unit,
+    onHeal: () -> Unit,
+    onGainXp: () -> Unit,
+    onUsePotion: () -> Unit,
+    onUseBigPotion: () -> Unit,
+    potionBigAmount: Int,
+    potionAmount: Int
+) {
+    Row {
+        GameButtonHoch(
+            text = "Take Damage", onClick = { onTakeDamage() })
+
+        GameButtonHoch(
+            text = "Add Gold", onClick = onAddGold
+        )
+    }
+    Row {
+        GameButtonHoch(
+            text = "Heilen", onClick = onHeal
+        )
+
+        GameButtonHoch(
+            text = "Big Heal (${potionBigAmount})", onClick = onUseBigPotion
+        )
+    }
+
+    Row {
+        GameButtonHoch(
+            text = "XP sammeln", onClick = { onGainXp() })
+
+        GameButtonHoch(
+            text = "Shop öffnen", onClick = {
+                onShop()
+            })
+    }
+
+    Row(
+        modifier = Modifier.padding(bottom = 10.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+
+        GameButtonHoch(
+            text = "Heiltrank (${potionAmount})", onClick = {
+                onUsePotion()
+            })
+
+        GameButtonHoch(
+            text = "Inventar öffnen", onClick = {
+                onInventory()
+            })
+    }
+    GameButtonHoch(
+        text = "Angreifen",
+        fontSize = 24.sp,
+        modifier = Modifier
+            .fillMaxWidth(0.7f)
+            .height(70.dp),
+        containerColor = if (canClickAttackButton) Color.Red else Color(0xff9e9e9e),
+        onClick = onAttack
+    )
+}
+
+@Composable
+fun EnemyStatsBlock(
+    enemy: Enemy
+) {
+    Text("Gegner: ${enemy.name}", fontSize = 16.sp)
+    Text("Level: ${enemy.level}")
+    Row {
+        Text("ATK:", modifier = Modifier.width(60.dp))
+        Text("${enemy.attack}")
+    }
+    Row {
+        Text("DEF:", modifier = Modifier.width(60.dp))
+        Text("${enemy.defense}")
+    }
+    Text("HP: ${enemy.hp}")
+
+    HpBar(
+        currentHp = enemy.hp,
+        maxHp = enemy.maxHp,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(16.dp)
+            .padding(horizontal = 16.dp)
+    )
+}
+
+@Composable
+fun PlayerStatsBlock(
+    player: Player
+) {
+
+    Text(
+        text = "Name: ${player.name} Level: ${player.level}", fontSize = 24.sp
+    )
+    Text(text = "HP: ${player.hp}/${player.maxHp} Gold: ${player.gold}", fontSize = 20.sp)
+
+
+    HpBar(
+        currentHp = player.hp,
+        maxHp = player.maxHp,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(16.dp)
+            .padding(horizontal = 16.dp)
+    )
+
+    Text(
+        text = "XP: ${player.xp}/${player.xpToNextLevel}", fontSize = 18.sp
+    )
+
+    Column {
+        val weaponBonus = player.equippedWeapon?.damage ?: 0
+        val armorDefense = player.equippedArmor?.defense ?: 0
+        Row {
+            Text("Angriff:", modifier = Modifier.width(120.dp))
+            Text("${player.attack + weaponBonus}")
+        }
+        Row {
+            Text("Verteidigung:", modifier = Modifier.width(120.dp))
+            Text("$armorDefense")
+        }
+        Row {
+            Text("Waffe:", modifier = Modifier.width(120.dp))
+            Text(player.equippedWeapon?.name ?: "Keine")
+        }
+        Row {
+            Text("Rüstung:", modifier = Modifier.width(120.dp))
+            Text(player.equippedArmor?.name ?: "Keine")
         }
     }
 }
