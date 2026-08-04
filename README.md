@@ -69,6 +69,7 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 - 2026-07-27: Angriffssperre gegen sehr schnelle Mehrfachklicks eingebaut; AttackEnemy wird bei laufendem Angriff, totem Spieler oder besiegtem Gegner ignoriert und der Angriffsbutton wird im Hoch- und Querformat sichtbar gesperrt.
 - 2026-08-01: BattleScene-Tod-Feedback verbessert; beim Besiegen eines Gegners oder beim Tod des Spielers werden Schaden, Tod und Sieg kurz sichtbar angezeigt, bevor zum naechsten Zustand gewechselt wird.
 - 2026-08-02: GameScreenHoch weiter refactored; PlayerStatsBlock, GameActionButtons und EnemyStatsBlock trennen Anzeige, Werte und Button-Aktionen klarer vom ViewModel.
+- 2026-08-04: Stats-Anzeige im Hoch- und Querformat weiter refactored; kleine StatRow/StatQuer-Bausteine reduzieren doppelte Label/Wert-Anzeigen.
 
 ## Aktuelle Features
 
@@ -111,6 +112,7 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 - Angriffssperre fuer schnelle Mehrfachklicks - hinzugefuegt am 2026-07-27
 - BattleScene-Tod- und Siegfeedback - verbessert am 2026-08-01
 - GameScreenHoch-UI-Bloecke und Button-Aktionen - refactored am 2026-08-02
+- Stat-Anzeigen fuer Hoch- und Querformat - refactored am 2026-08-04
 
 ## Item-Balancing
 

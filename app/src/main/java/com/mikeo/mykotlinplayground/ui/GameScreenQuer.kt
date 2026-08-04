@@ -39,18 +39,13 @@ fun GameScreenQuer(
     onInventory: () -> Unit
 ) {
     val player by viewModel.player.collectAsState()
-
-
     val log by viewModel.log.collectAsState()
-
     val enemy by viewModel.enemy.collectAsState()
-
     val attackInProgress by viewModel.attackInProgress.collectAsState()
     val canClickAttackButton = !attackInProgress && enemy.hp > 0 && !player.isDead
 
     LaunchedEffect(log.size) {
-        if (log.isNotEmpty())
-            listState.animateScrollToItem(log.size - 1)
+        if (log.isNotEmpty()) listState.animateScrollToItem(log.size - 1)
     }
 
     LaunchedEffect(player.isDead) {
@@ -70,8 +65,7 @@ fun GameScreenQuer(
     ) {
 
         Column(
-            modifier = Modifier
-                .fillMaxSize()
+            modifier = Modifier.fillMaxSize()
         ) {
             Row(
                 modifier = Modifier
@@ -129,47 +123,42 @@ fun GameScreenQuer(
                     val weaponBonus = player.equippedWeapon?.damage ?: 0
                     val armorDefense = player.equippedArmor?.defense ?: 0
 
-                    val labelWidth = 65.dp
-                    val valueWidth = 65.dp
-
                     Column {
 
                         Row {
-                            Text("Level:", modifier = Modifier.width(labelWidth))
-                            Text("${player.level}", modifier = Modifier.width(valueWidth))
-
-                            Text("Gold:", modifier = Modifier.width(labelWidth))
-                            Text("${player.gold}")
+                            StatQuer(label = "Level:", value = "${player.level}")
+                            StatQuer(label = "Gold:", value = "${player.gold}")
                         }
 
                         Row {
-                            Text("XP:", modifier = Modifier.width(labelWidth))
-                            Text("${player.xp}/${player.xpToNextLevel}")
+                            StatQuer(label = "XP:", value = "${player.xp}/${player.xpToNextLevel}")
                         }
 
                         Spacer(modifier = Modifier.height(6.dp))
 
                         Row {
-                            Text("ATK:", modifier = Modifier.width(labelWidth))
-                            Text("${player.attack + weaponBonus}", modifier = Modifier.width(65.dp))
-
-                            Text("DEF:", modifier = Modifier.width(60.dp))
-                            Text("$armorDefense")
+                            StatQuer(label = "ATK:", value = "${player.attack + weaponBonus}")
+                            StatQuer(label = "DEF:", value = "$armorDefense")
                         }
 
                         Spacer(modifier = Modifier.height(6.dp))
 
                         Row {
-                            Text("Waffe:", modifier = Modifier.width(70.dp))
-                            Text(player.equippedWeapon?.name ?: "-")
+                            StatQuer(
+                                label = "Waffe:",
+                                value = player.equippedWeapon?.name ?: "-",
+                                labelWidth = 70
+                            )
                         }
 
                         Row {
-                            Text("Rüstung:", modifier = Modifier.width(70.dp))
-                            Text(player.equippedArmor?.name ?: "-")
+                            StatQuer(
+                                label = "Rüstung:",
+                                value = player.equippedArmor?.name ?: "-",
+                                labelWidth = 70
+                            )
                         }
                     }
-
                 }
 
                 Column(
@@ -177,19 +166,11 @@ fun GameScreenQuer(
                         .weight(5f)
                         .padding(start = 180.dp)
                 ) {
-
-
-                    Text("Gegner: ${enemy.name}")
-                    Text("Level: ${enemy.level}")
-                    Text("HP: ${enemy.hp}")
-                    Text("ATK: ${enemy.attack}")
-                    Text("DEF: ${enemy.defense}")
-
-
+                    StatQuer(label = "Gegner:", value = "${enemy.name}")
+                    StatQuer(label = "Level:", value = "${enemy.level}")
+                    StatQuer(label = "ATK:", value = "${enemy.attack}")
+                    StatQuer(label = "DEF:", value = "${enemy.defense}")
                 }
-
-
-
                 Column(
                     modifier = Modifier
                         .weight(5f)
@@ -203,34 +184,28 @@ fun GameScreenQuer(
 
                         GameButtonQuer(
                             text = "Take Damage",
-                            onClick = { viewModel.onEvent(GameEvent.TakeDamage()) }
-                        )
+                            onClick = { viewModel.onEvent(GameEvent.TakeDamage()) })
 
                         Box(
                             modifier = Modifier.padding(end = 25.dp)
                         ) {
                             GameButtonQuer(
                                 text = "Add Gold",
-                                onClick = { viewModel.onEvent(GameEvent.AddGold()) }
-                            )
+                                onClick = { viewModel.onEvent(GameEvent.AddGold()) })
                         }
-
                     }
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         GameButtonQuer(
-                            text = "Heilen",
-                            onClick = { viewModel.onEvent(GameEvent.Heal()) }
-                        )
+                            text = "Heilen", onClick = { viewModel.onEvent(GameEvent.Heal()) })
                         Box(
                             modifier = Modifier.padding(end = 25.dp)
                         ) {
                             GameButtonQuer(
                                 text = "XP sammeln",
-                                onClick = { viewModel.onEvent(GameEvent.GainXp()) }
-                            )
+                                onClick = { viewModel.onEvent(GameEvent.GainXp()) })
                         }
                     }
 
@@ -245,22 +220,17 @@ fun GameScreenQuer(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         GameButtonQuer(
-                            text = "Heil (${potionAmount?.amount ?: 0})",
-                            onClick = {
+                            text = "Heil (${potionAmount?.amount ?: 0})", onClick = {
                                 viewModel.onEvent(GameEvent.UsePotion())
-                            }
-                        )
+                            })
                         Box(
                             modifier = Modifier.padding(end = 25.dp)
                         ) {
                             GameButtonQuer(
-                                text = "Gr-Heil (${potionBigAmount?.amount ?: 0})",
-                                onClick = {
+                                text = "Gr-Heil (${potionBigAmount?.amount ?: 0})", onClick = {
                                     viewModel.onEvent(GameEvent.UseBigPotion())
-                                }
-                            )
+                                })
                         }
-
                     }
 
                     Box(
@@ -268,8 +238,7 @@ fun GameScreenQuer(
                     ) {
                         GameButtonQuer(
                             text = "Angreifen",
-                            modifier = Modifier
-                                .fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth(),
                             containerColor = if (canClickAttackButton) Color.Red else Color(
                                 0xff9e9e9e
                             ),
@@ -277,8 +246,7 @@ fun GameScreenQuer(
                                 if (!canClickAttackButton) return@GameButtonQuer
 
                                 viewModel.onEvent(GameEvent.AttackEnemy)
-                            }
-                        )
+                            })
                     }
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -287,8 +255,7 @@ fun GameScreenQuer(
                         GameButtonQuer(
                             text = "Fliehen",
 
-                            onClick = { viewModel.onEvent(GameEvent.Flee) }
-                        )
+                            onClick = { viewModel.onEvent(GameEvent.Flee) })
                         Box(
                             modifier = Modifier.padding(end = 25.dp)
                         ) {
@@ -297,16 +264,11 @@ fun GameScreenQuer(
 
                                 onClick = {
                                     onInventory()
-                                }
-                            )
+                                })
                         }
                     }
-
                 }
-
-
             }
-
         }
         GameLog(
             log = log,
@@ -320,11 +282,14 @@ fun GameScreenQuer(
     }
 }
 
+@Composable
+fun StatQuer(label: String, value: String, labelWidth: Int = 65) {
+    Text(label, modifier = Modifier.width(labelWidth.dp))
+    Text(value, modifier = Modifier.width(labelWidth.dp))
+}
+
 @Preview(
-    name = "Game Screen Quer",
-    showBackground = true,
-    widthDp = 800,
-    heightDp = 400
+    name = "Game Screen Quer", showBackground = true, widthDp = 800, heightDp = 400
 )
 @Composable
 fun GameScreenQuerPreview() {
@@ -336,7 +301,6 @@ fun GameScreenQuerPreview() {
         viewModel = viewModel,
         listState = rememberLazyListState(),
         onGameOver = {},
-        onInventory = {}
-    )
+        onInventory = {})
 }
 

@@ -44,7 +44,6 @@ import androidx.compose.ui.text.font.FontWeight
 import com.mikeo.mykotlinplayground.Player
 import com.mikeo.mykotlinplayground.Enemy
 
-
 @Composable
 fun GameScreenHoch(
     viewModel: GameViewModel,
@@ -120,8 +119,7 @@ fun GameScreenHoch(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            GameLog(log = log, listState = listState, modifier = Modifier.height(120.dp))
-
+            GameLog(log = log, listState = listState, modifier = Modifier.height(110.dp))
 
             PlayerStatsBlock(player = player)
 
@@ -145,7 +143,7 @@ fun GameScreenHoch(
                     potionAmount = potionAmount
                 )
 
-                EnemyStatsBlock(enemy = enemy)
+                EnemyStatsBlockHoch(enemy = enemy)
 
                 GameButtonHoch(
                     text = "Fliehen", onClick = { viewModel.onEvent(GameEvent.Flee) })
@@ -240,19 +238,14 @@ fun GameActionButtons(
 }
 
 @Composable
-fun EnemyStatsBlock(
+fun EnemyStatsBlockHoch(
     enemy: Enemy
 ) {
     Text("Gegner: ${enemy.name}", fontSize = 16.sp)
     Text("Level: ${enemy.level}")
-    Row {
-        Text("ATK:", modifier = Modifier.width(60.dp))
-        Text("${enemy.attack}")
-    }
-    Row {
-        Text("DEF:", modifier = Modifier.width(60.dp))
-        Text("${enemy.defense}")
-    }
+    StatRow(label = "ATK:", value = "${enemy.attack}")
+    StatRow(label = "DEF:", value = "${enemy.defense}")
+
     Text("HP: ${enemy.hp}")
 
     HpBar(
@@ -266,6 +259,14 @@ fun EnemyStatsBlock(
 }
 
 @Composable
+fun StatRow(label: String, value: String, labelWidth: Dp = 60.dp) {
+    Row {
+        Text(label, modifier = Modifier.width(labelWidth))
+        Text(value)
+    }
+}
+
+@Composable
 fun PlayerStatsBlock(
     player: Player
 ) {
@@ -274,7 +275,6 @@ fun PlayerStatsBlock(
         text = "Name: ${player.name} Level: ${player.level}", fontSize = 24.sp
     )
     Text(text = "HP: ${player.hp}/${player.maxHp} Gold: ${player.gold}", fontSize = 20.sp)
-
 
     HpBar(
         currentHp = player.hp,
@@ -325,7 +325,6 @@ fun BattleScene(
     enemyAttacks: Boolean = false,
     onEnemyClick: () -> Unit = {}
 ) {
-
 
     Box(
         modifier = Modifier
