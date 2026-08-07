@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.mikeo.mykotlinplayground.GameEvent
 import com.mikeo.mykotlinplayground.GameViewModel
 import com.mikeo.mykotlinplayground.ItemNamen
+import com.mikeo.mykotlinplayground.Player
 import kotlinx.coroutines.delay
 
 
@@ -43,6 +44,7 @@ fun GameScreenQuer(
     val enemy by viewModel.enemy.collectAsState()
     val attackInProgress by viewModel.attackInProgress.collectAsState()
     val canClickAttackButton = !attackInProgress && enemy.hp > 0 && !player.isDead
+
 
     LaunchedEffect(log.size) {
         if (log.isNotEmpty()) listState.animateScrollToItem(log.size - 1)
@@ -177,99 +179,31 @@ fun GameScreenQuer(
                         .offset(x = (0).dp),
                     verticalArrangement = Arrangement.spacedBy(0.dp)
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-
-                        GameButtonQuer(
-                            text = "Take Damage",
-                            onClick = { viewModel.onEvent(GameEvent.TakeDamage()) })
-
-                        Box(
-                            modifier = Modifier.padding(end = 25.dp)
-                        ) {
-                            GameButtonQuer(
-                                text = "Add Gold",
-                                onClick = { viewModel.onEvent(GameEvent.AddGold()) })
-                        }
-                    }
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        GameButtonQuer(
-                            text = "Heilen", onClick = { viewModel.onEvent(GameEvent.Heal()) })
-                        Box(
-                            modifier = Modifier.padding(end = 25.dp)
-                        ) {
-                            GameButtonQuer(
-                                text = "XP sammeln",
-                                onClick = { viewModel.onEvent(GameEvent.GainXp()) })
-                        }
-                    }
-
                     val potionAmount =
-                        player.inventory.items.find { it.name == ItemNamen.HEILTRANK }
+                        player.inventory.items.find { it.name == ItemNamen.HEILTRANK }?.amount ?: 0
                     val potionBigAmount =
-                        player.inventory.items.find { it.name == ItemNamen.GROSSER_HEILTRANK }
+                        player.inventory.items.find { it.name == ItemNamen.GROSSER_HEILTRANK }?.amount ?: 0
 
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        GameButtonQuer(
-                            text = "Heil (${potionAmount?.amount ?: 0})", onClick = {
-                                viewModel.onEvent(GameEvent.UsePotion())
-                            })
-                        Box(
-                            modifier = Modifier.padding(end = 25.dp)
-                        ) {
-                            GameButtonQuer(
-                                text = "Gr-Heil (${potionBigAmount?.amount ?: 0})", onClick = {
-                                    viewModel.onEvent(GameEvent.UseBigPotion())
-                                })
+                    GameActionButtonsQuer(
+                        potionAmount = potionAmount,
+                        potionBigAmount = potionBigAmount,
+                        canClickAttackButton = canClickAttackButton,
+                        onTakeDamage = { viewModel.onEvent(GameEvent.TakeDamage()) },
+                        onAddGold = { viewModel.onEvent(GameEvent.AddGold()) },
+                        onHeal = { viewModel.onEvent(GameEvent.Heal()) },
+                        onGainXp = { viewModel.onEvent(GameEvent.GainXp()) },
+                        onUsePotion = { viewModel.onEvent(GameEvent.UsePotion()) },
+                        onUseBigPotion = { viewModel.onEvent(GameEvent.UseBigPotion()) },
+                        onAttack = { viewModel.onEvent(GameEvent.AttackEnemy) },
+                        onFlee = { viewModel.onEvent(GameEvent.Flee) },
+                        onInventory = {
+                            onInventory()
                         }
-                    }
-
-                    Box(
-                        modifier = Modifier.padding(end = 25.dp)
-                    ) {
-                        GameButtonQuer(
-                            text = "Angreifen",
-                            modifier = Modifier.fillMaxWidth(),
-                            containerColor = if (canClickAttackButton) Color.Red else Color(
-                                0xff9e9e9e
-                            ),
-                            onClick = {
-                                if (!canClickAttackButton) return@GameButtonQuer
-
-                                viewModel.onEvent(GameEvent.AttackEnemy)
-                            })
-                    }
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        GameButtonQuer(
-                            text = "Fliehen",
-
-                            onClick = { viewModel.onEvent(GameEvent.Flee) })
-                        Box(
-                            modifier = Modifier.padding(end = 25.dp)
-                        ) {
-                            GameButtonQuer(
-                                text = "Inventar",
-
-                                onClick = {
-                                    onInventory()
-                                })
-                        }
-                    }
+                    )
                 }
             }
         }
+
         GameLog(
             log = log,
             listState = listState,
@@ -281,6 +215,113 @@ fun GameScreenQuer(
         )
     }
 }
+
+@Composable
+fun GameActionButtonsQuer(
+    potionAmount: Int,
+    potionBigAmount: Int,
+    canClickAttackButton: Boolean,
+    onTakeDamage: () -> Unit,
+    onAddGold: () -> Unit,
+    onHeal: () -> Unit,
+    onGainXp: () -> Unit,
+    onUsePotion: () -> Unit,
+    onUseBigPotion: () -> Unit,
+    onAttack: () -> Unit,
+    onFlee: () -> Unit,
+    onInventory: () -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+
+        GameButtonQuer(
+            text = "Take Damage",
+            onClick = onTakeDamage
+        )
+
+        Box(
+            modifier = Modifier.padding(end = 25.dp)
+        ) {
+            GameButtonQuer(
+                text = "Add Gold",
+                onClick = onAddGold
+            )
+        }
+    }
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        GameButtonQuer(
+            text = "Heilen",
+            onClick = onHeal
+        )
+        Box(
+            modifier = Modifier.padding(end = 25.dp)
+        ) {
+            GameButtonQuer(
+                text = "XP sammeln",
+                onClick = onGainXp
+            )
+        }
+    }
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        GameButtonQuer(
+            text = "Heil (${potionAmount})",
+            onClick = onUsePotion
+        )
+        Box(
+            modifier = Modifier.padding(end = 25.dp)
+        ) {
+            GameButtonQuer(
+                text = "Gr-Heil (${potionBigAmount})",
+                onClick = onUseBigPotion
+            )
+        }
+    }
+
+    Box(
+        modifier = Modifier.padding(end = 25.dp)
+    ) {
+        GameButtonQuer(
+            text = "Angreifen",
+            modifier = Modifier.fillMaxWidth(),
+            containerColor = if (canClickAttackButton) Color.Red else Color(
+                0xff9e9e9e
+            ),
+            onClick = {
+                if (!canClickAttackButton) return@GameButtonQuer
+
+                onAttack()
+            })
+    }
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        GameButtonQuer(
+            text = "Fliehen",
+
+            onClick = onFlee
+        )
+        Box(
+            modifier = Modifier.padding(end = 25.dp)
+        ) {
+            GameButtonQuer(
+                text = "Inventar",
+
+                onClick = onInventory
+            )
+        }
+    }
+}
+
 
 @Composable
 fun StatQuer(label: String, value: String, labelWidth: Int = 65) {

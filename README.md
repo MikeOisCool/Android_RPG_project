@@ -21,6 +21,8 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 - Kleine Aenderungen nicht einzeln committen, sondern sinnvoll buendeln.
 - Lernstil: langsam hinfuehren, keine fertigen Komplettloesungen, ausser der Nutzer fragt ausdruecklich danach. Lieber kleine Hints, Verstaendnisfragen, kleine Challenges und kurze Erklaerungen, damit Michael aktiv mitdenkt und nicht nur abschreibt.
 - Codex soll Michael passend fordern: erst eine kleine Aufgabe oder Frage stellen, danach das Ergebnis pruefen und dann je nach Verstaendnis mehr fordern oder wieder langsamer erklaeren.
+- Codex soll vor dem naechsten Arbeitsschritt kurz sagen, welchen Schritt es vorschlaegt und warum, damit Michael entscheiden kann, ob dieses Thema jetzt dran ist oder ob ein anderes Thema sinnvoller ist.
+- Codex soll darauf achten, nicht zu viele gleichartige Refactor-Schritte direkt hintereinander vorzuschlagen, wenn sie thematisch besser in einen vorherigen Commit gepasst haetten.
 - In neuen Chats zuerst diese Arbeitsregeln lesen.
 
 ## Aenderungsverlauf
