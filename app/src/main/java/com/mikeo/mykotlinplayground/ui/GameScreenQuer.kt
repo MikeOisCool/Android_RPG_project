@@ -86,7 +86,7 @@ fun GameScreenQuer(
             .fillMaxWidth()
             .verticalScroll(scrollState)
 
-    ){
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -101,50 +101,18 @@ fun GameScreenQuer(
                 modifier = Modifier
                     .fillMaxSize()
 
-
             ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Row {
-                            Text(
-                                text = player.name,
-                                modifier = Modifier
-                                    .padding(start = 30.dp)
-                                    .width(100.dp)
-                            )
-
-                            Text("HP: ${player.hp}/${player.maxHp}")
-                        }
-                        HpBar(
-                            currentHp = player.hp,
-                            maxHp = player.maxHp,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(16.dp)
-                                .padding(horizontal = 16.dp)
-                        )
-                    }
-
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            "Gegner HP: ${enemy.hp}/${enemy.maxHp}",
-                            modifier = Modifier.padding(start = 30.dp)
-                        )
-                        HpBar(
-                            currentHp = enemy.hp,
-                            maxHp = enemy.maxHp,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(16.dp)
-                                .padding(horizontal = 16.dp)
-                        )
-                    }
+                    TopHpBarsQuer(
+                        player = player,
+                        enemy = enemy
+                    )
                 }
+
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -158,43 +126,17 @@ fun GameScreenQuer(
                     ) {
                         val weaponBonus = player.equippedWeapon?.damage ?: 0
                         val armorDefense = player.equippedArmor?.defense ?: 0
+                        val equippedWeapon = player.equippedWeapon?.name ?: "-"
+                        val equippedArmor = player.equippedArmor?.name ?: "-"
 
-                        Column {
+                        PlayerStatsBlockQuer(
+                            player = player,
+                            weaponBonus = weaponBonus,
+                            armorDefense = armorDefense,
+                            equippedWeapon = equippedWeapon,
+                            equippedArmor = equippedArmor
 
-                            Row {
-                                StatQuer(label = "Level:", value = "${player.level}")
-                                StatQuer(label = "Gold:", value = "${player.gold}")
-                            }
-
-                            Row {
-                                StatQuer(label = "XP:", value = "${player.xp}/${player.xpToNextLevel}")
-                            }
-
-                            Spacer(modifier = Modifier.height(6.dp))
-
-                            Row {
-                                StatQuer(label = "ATK:", value = "${player.attack + weaponBonus}")
-                                StatQuer(label = "DEF:", value = "$armorDefense")
-                            }
-
-                            Spacer(modifier = Modifier.height(6.dp))
-
-                            Row {
-                                StatQuer(
-                                    label = "Waffe:",
-                                    value = player.equippedWeapon?.name ?: "-",
-                                    labelWidth = 70
-                                )
-                            }
-
-                            Row {
-                                StatQuer(
-                                    label = "Rüstung:",
-                                    value = player.equippedArmor?.name ?: "-",
-                                    labelWidth = 70
-                                )
-                            }
-                        }
+                        )
                     }
 
                     Column(
@@ -202,10 +144,8 @@ fun GameScreenQuer(
                             .weight(5f)
                             .padding(start = 180.dp)
                     ) {
-                        StatQuer(label = "Gegner:", value = "${enemy.name}")
-                        StatQuer(label = "Level:", value = "${enemy.level}")
-                        StatQuer(label = "ATK:", value = "${enemy.attack}")
-                        StatQuer(label = "DEF:", value = "${enemy.defense}")
+                        EnemyStatsBlockQuer(enemy = enemy)
+
                     }
                     Column(
                         modifier = Modifier
@@ -214,7 +154,8 @@ fun GameScreenQuer(
                         verticalArrangement = Arrangement.spacedBy(0.dp)
                     ) {
                         val potionAmount =
-                            player.inventory.items.find { it.name == ItemNamen.HEILTRANK }?.amount ?: 0
+                            player.inventory.items.find { it.name == ItemNamen.HEILTRANK }?.amount
+                                ?: 0
                         val potionBigAmount =
                             player.inventory.items.find { it.name == ItemNamen.GROSSER_HEILTRANK }?.amount
                                 ?: 0
@@ -241,7 +182,6 @@ fun GameScreenQuer(
                 }
 
             }
-
             GameLog(
                 log = log,
                 listState = listState,
@@ -260,7 +200,7 @@ fun GameScreenQuer(
                 .background(Color(0xFF4CAF50)),
             horizontalArrangement = Arrangement.End,
 
-        ) {
+            ) {
             GameLog(
                 log = log,
                 listState = listState,
@@ -294,6 +234,112 @@ fun GameScreenQuer(
                     .weight(1f)
                     .height(400.dp)
                     .padding(bottom = 16.dp)
+            )
+        }
+    }
+}
+
+@Composable
+fun TopHpBarsQuer(
+    player: com.mikeo.mykotlinplayground.Player,
+    enemy: com.mikeo.mykotlinplayground.Enemy
+) {
+
+    Row(modifier = Modifier.fillMaxWidth(1f))
+    {
+        Column(modifier = Modifier.weight(1f)) {
+            Row(
+                horizontalArrangement = Arrangement
+                    .spacedBy(8.dp),
+                modifier = Modifier.offset(x = (30).dp),
+            )
+            {
+                Text(text = player.name)
+                Text("HP: ${player.hp}/${player.maxHp}")
+            }
+            HpBar(
+                currentHp = player.hp,
+                maxHp = player.maxHp,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(16.dp)
+                    .padding(horizontal = 16.dp)
+            )
+        }
+
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
+            Text(
+                "Gegner HP: ${enemy.hp}/${enemy.maxHp}",
+                modifier = Modifier.padding(start = 30.dp)
+            )
+            HpBar(
+                currentHp = enemy.hp,
+                maxHp = enemy.maxHp,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(16.dp)
+                    .padding(horizontal = 16.dp)
+            )
+        }
+    }
+}
+
+@Composable
+fun EnemyStatsBlockQuer(
+    enemy: com.mikeo.mykotlinplayground.Enemy
+) {
+
+    StatQuer(label = "Gegner:", value = "${enemy.name}")
+    StatQuer(label = "Level:", value = "${enemy.level}")
+    StatQuer(label = "ATK:", value = "${enemy.attack}")
+    StatQuer(label = "DEF:", value = "${enemy.defense}")
+}
+
+@Composable
+fun PlayerStatsBlockQuer(
+    player: com.mikeo.mykotlinplayground.Player,
+
+    weaponBonus: Int,
+    armorDefense: Int,
+    equippedWeapon: String,
+    equippedArmor: String
+) {
+
+    Column {
+
+        Row {
+            StatQuer(label = "Level:", value = "${player.level}")
+            StatQuer(label = "Gold:", value = "${player.gold}")
+        }
+
+        Row {
+            StatQuer(label = "XP:", value = "${player.xp}/${player.xpToNextLevel}")
+        }
+
+        Spacer(modifier = Modifier.height(6.dp))
+
+        Row {
+            StatQuer(label = "ATK:", value = "${player.attack + weaponBonus}")
+            StatQuer(label = "DEF:", value = "$armorDefense")
+        }
+
+        Spacer(modifier = Modifier.height(6.dp))
+
+        Row {
+            StatQuer(
+                label = "Waffe:",
+                value = equippedWeapon,
+                labelWidth = 70
+            )
+        }
+
+        Row {
+            StatQuer(
+                label = "Rüstung:",
+                value = equippedArmor,
+                labelWidth = 70
             )
         }
     }

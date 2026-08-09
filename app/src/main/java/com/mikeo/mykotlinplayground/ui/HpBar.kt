@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.draw.clip
 
 @Composable
 fun HpBar(
@@ -30,8 +31,10 @@ fun HpBar(
 
     Box(
         modifier = modifier
-            .border(2.dp, Color.Black, RoundedCornerShape(12.dp))
+            .clip(RoundedCornerShape(12.dp))
             .background(Color.LightGray)
+            .border(2.dp, Color.Black, RoundedCornerShape(12.dp))
+
     ){
         Box(
             modifier = Modifier
