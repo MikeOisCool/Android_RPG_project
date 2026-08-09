@@ -28,6 +28,8 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun BattleScene(
+    hpHeaderBackgroundOffsetY: Int = 10,
+    battleHpHeaderOffsetY: Int = 0,
     playerName: String,
     playerOnGroundOffsetY: Int = 0,
     playerAttackMoveX: Int = 0,
@@ -56,7 +58,7 @@ fun BattleScene(
     ) {
         Box(
             modifier = Modifier
-                .offset(y = (10).dp)
+                .offset(y = (hpHeaderBackgroundOffsetY).dp)
                 .fillMaxWidth(0.95f)
                 .align(Alignment.TopCenter)
                 .height(40.dp)
@@ -68,6 +70,7 @@ fun BattleScene(
         ) {
 
             BattleHpHeader(
+                battleHpHeaderOffsetY = battleHpHeaderOffsetY,
                 playerName = playerName,
                 playerHp = playerHp,
                 playerMaxHp = playerMaxHp,
@@ -135,6 +138,7 @@ fun BoxScope.BattleFeedbackTexts(
 
 @Composable
 fun BoxScope.BattleHpHeader(
+    battleHpHeaderOffsetY: Int,
     playerName: String,
     playerHp: Int,
     playerMaxHp: Int,
@@ -143,7 +147,9 @@ fun BoxScope.BattleHpHeader(
     enemyMaxHp: Int
 ) {
     Column(
-        modifier = Modifier.align(Alignment.TopStart), horizontalAlignment = Alignment.Start
+        modifier = Modifier
+            .align(Alignment.TopStart)
+            .offset(y = (battleHpHeaderOffsetY).dp), horizontalAlignment = Alignment.Start
     ) {
 
         Text(
@@ -159,7 +165,9 @@ fun BoxScope.BattleHpHeader(
     }
 
     Column(
-        modifier = Modifier.align(Alignment.TopEnd), horizontalAlignment = Alignment.End
+        modifier = Modifier
+            .align(Alignment.TopEnd)
+            .offset(y = (battleHpHeaderOffsetY).dp), horizontalAlignment = Alignment.End
     ) {
 
         Text(

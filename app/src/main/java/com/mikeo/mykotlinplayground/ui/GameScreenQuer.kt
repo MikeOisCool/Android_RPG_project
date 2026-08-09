@@ -271,6 +271,8 @@ fun GameScreenQuer(
             )
 
             BattleScene(
+                hpHeaderBackgroundOffsetY = 24,
+                battleHpHeaderOffsetY = 14,
                 playerName = player.name,
                 playerOnGroundOffsetY = 110,
                 playerAttackMoveX = 260,
