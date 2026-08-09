@@ -14,12 +14,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -28,7 +33,6 @@ import androidx.compose.ui.unit.dp
 import com.mikeo.mykotlinplayground.GameEvent
 import com.mikeo.mykotlinplayground.GameViewModel
 import com.mikeo.mykotlinplayground.ItemNamen
-import com.mikeo.mykotlinplayground.Player
 import kotlinx.coroutines.delay
 
 
@@ -42,8 +46,19 @@ fun GameScreenQuer(
     val player by viewModel.player.collectAsState()
     val log by viewModel.log.collectAsState()
     val enemy by viewModel.enemy.collectAsState()
+    val scrollState = rememberScrollState()
+    var playerAttacks by remember { mutableStateOf(false) }
+    var enemyAttacks by remember { mutableStateOf(false) }
+    val rightBattleText by viewModel.rightBattleText.collectAsState()
+    val leftBattleText by viewModel.leftBattleText.collectAsState()
     val attackInProgress by viewModel.attackInProgress.collectAsState()
     val canClickAttackButton = !attackInProgress && enemy.hp > 0 && !player.isDead
+    val onAttack = {
+        if (canClickAttackButton) {
+            playerAttacks = true
+            viewModel.onEvent(GameEvent.AttackEnemy)
+        }
+    }
 
 
     LaunchedEffect(log.size) {
@@ -57,162 +72,226 @@ fun GameScreenQuer(
         }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(8.dp)
-            .clip(RoundedCornerShape(48.dp))
-            .background(Color(0xFF4CAF50))
-            .padding(12.dp)
-    ) {
+    BattleAnimationEffects(
+        playerAttacks = playerAttacks,
+        enemyAttacks = enemyAttacks,
+        enemyHp = enemy.hp,
+        onPlayerAttackFinished = { playerAttacks = false },
+        onEnemyAttackStarted = { enemyAttacks = true },
+        onEnemyAttackFinished = { enemyAttacks = false }
+    )
 
-        Column(
-            modifier = Modifier.fillMaxSize()
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .verticalScroll(scrollState)
+
+    ){
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(400.dp)
+                .padding(8.dp)
+                .clip(RoundedCornerShape(48.dp))
+                .background(Color(0xFF4CAF50))
+                .padding(12.dp)
         ) {
-            Row(
+
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    .fillMaxSize()
+
+
             ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Row {
-                        Text(
-                            text = player.name,
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Row {
+                            Text(
+                                text = player.name,
+                                modifier = Modifier
+                                    .padding(start = 30.dp)
+                                    .width(100.dp)
+                            )
+
+                            Text("HP: ${player.hp}/${player.maxHp}")
+                        }
+                        HpBar(
+                            currentHp = player.hp,
+                            maxHp = player.maxHp,
                             modifier = Modifier
-                                .padding(start = 30.dp)
-                                .width(100.dp)
+                                .fillMaxWidth()
+                                .height(16.dp)
+                                .padding(horizontal = 16.dp)
+                        )
+                    }
+
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            "Gegner HP: ${enemy.hp}/${enemy.maxHp}",
+                            modifier = Modifier.padding(start = 30.dp)
+                        )
+                        HpBar(
+                            currentHp = enemy.hp,
+                            maxHp = enemy.maxHp,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(16.dp)
+                                .padding(horizontal = 16.dp)
+                        )
+                    }
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                ) {
+
+                    Column(
+                        modifier = Modifier
+                            .weight(5f)
+                            .padding(start = 30.dp)
+                    ) {
+                        val weaponBonus = player.equippedWeapon?.damage ?: 0
+                        val armorDefense = player.equippedArmor?.defense ?: 0
+
+                        Column {
+
+                            Row {
+                                StatQuer(label = "Level:", value = "${player.level}")
+                                StatQuer(label = "Gold:", value = "${player.gold}")
+                            }
+
+                            Row {
+                                StatQuer(label = "XP:", value = "${player.xp}/${player.xpToNextLevel}")
+                            }
+
+                            Spacer(modifier = Modifier.height(6.dp))
+
+                            Row {
+                                StatQuer(label = "ATK:", value = "${player.attack + weaponBonus}")
+                                StatQuer(label = "DEF:", value = "$armorDefense")
+                            }
+
+                            Spacer(modifier = Modifier.height(6.dp))
+
+                            Row {
+                                StatQuer(
+                                    label = "Waffe:",
+                                    value = player.equippedWeapon?.name ?: "-",
+                                    labelWidth = 70
+                                )
+                            }
+
+                            Row {
+                                StatQuer(
+                                    label = "Rüstung:",
+                                    value = player.equippedArmor?.name ?: "-",
+                                    labelWidth = 70
+                                )
+                            }
+                        }
+                    }
+
+                    Column(
+                        modifier = Modifier
+                            .weight(5f)
+                            .padding(start = 180.dp)
+                    ) {
+                        StatQuer(label = "Gegner:", value = "${enemy.name}")
+                        StatQuer(label = "Level:", value = "${enemy.level}")
+                        StatQuer(label = "ATK:", value = "${enemy.attack}")
+                        StatQuer(label = "DEF:", value = "${enemy.defense}")
+                    }
+                    Column(
+                        modifier = Modifier
+                            .weight(5f)
+                            .offset(x = (0).dp),
+                        verticalArrangement = Arrangement.spacedBy(0.dp)
+                    ) {
+                        val potionAmount =
+                            player.inventory.items.find { it.name == ItemNamen.HEILTRANK }?.amount ?: 0
+                        val potionBigAmount =
+                            player.inventory.items.find { it.name == ItemNamen.GROSSER_HEILTRANK }?.amount
+                                ?: 0
+
+                        GameActionButtonsQuer(
+                            potionAmount = potionAmount,
+                            potionBigAmount = potionBigAmount,
+                            canClickAttackButton = canClickAttackButton,
+                            onTakeDamage = { viewModel.onEvent(GameEvent.TakeDamage()) },
+                            onAddGold = { viewModel.onEvent(GameEvent.AddGold()) },
+                            onHeal = { viewModel.onEvent(GameEvent.Heal()) },
+                            onGainXp = { viewModel.onEvent(GameEvent.GainXp()) },
+                            onUsePotion = { viewModel.onEvent(GameEvent.UsePotion()) },
+                            onUseBigPotion = { viewModel.onEvent(GameEvent.UseBigPotion()) },
+                            onAttack = onAttack,
+                            onFlee = { viewModel.onEvent(GameEvent.Flee) },
+                            onInventory = {
+                                onInventory()
+                            }
                         )
 
-                        Text("HP: ${player.hp}/${player.maxHp}")
                     }
-                    HpBar(
-                        currentHp = player.hp,
-                        maxHp = player.maxHp,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(16.dp)
-                            .padding(horizontal = 16.dp)
-                    )
+
                 }
 
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        "Gegner HP: ${enemy.hp}/${enemy.maxHp}",
-                        modifier = Modifier.padding(start = 30.dp)
-                    )
-                    HpBar(
-                        currentHp = enemy.hp,
-                        maxHp = enemy.maxHp,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(16.dp)
-                            .padding(horizontal = 16.dp)
-                    )
-                }
             }
-            Row(
+
+            GameLog(
+                log = log,
+                listState = listState,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-            ) {
-
-                Column(
-                    modifier = Modifier
-                        .weight(5f)
-                        .padding(start = 30.dp)
-                ) {
-                    val weaponBonus = player.equippedWeapon?.damage ?: 0
-                    val armorDefense = player.equippedArmor?.defense ?: 0
-
-                    Column {
-
-                        Row {
-                            StatQuer(label = "Level:", value = "${player.level}")
-                            StatQuer(label = "Gold:", value = "${player.gold}")
-                        }
-
-                        Row {
-                            StatQuer(label = "XP:", value = "${player.xp}/${player.xpToNextLevel}")
-                        }
-
-                        Spacer(modifier = Modifier.height(6.dp))
-
-                        Row {
-                            StatQuer(label = "ATK:", value = "${player.attack + weaponBonus}")
-                            StatQuer(label = "DEF:", value = "$armorDefense")
-                        }
-
-                        Spacer(modifier = Modifier.height(6.dp))
-
-                        Row {
-                            StatQuer(
-                                label = "Waffe:",
-                                value = player.equippedWeapon?.name ?: "-",
-                                labelWidth = 70
-                            )
-                        }
-
-                        Row {
-                            StatQuer(
-                                label = "Rüstung:",
-                                value = player.equippedArmor?.name ?: "-",
-                                labelWidth = 70
-                            )
-                        }
-                    }
-                }
-
-                Column(
-                    modifier = Modifier
-                        .weight(5f)
-                        .padding(start = 180.dp)
-                ) {
-                    StatQuer(label = "Gegner:", value = "${enemy.name}")
-                    StatQuer(label = "Level:", value = "${enemy.level}")
-                    StatQuer(label = "ATK:", value = "${enemy.attack}")
-                    StatQuer(label = "DEF:", value = "${enemy.defense}")
-                }
-                Column(
-                    modifier = Modifier
-                        .weight(5f)
-                        .offset(x = (0).dp),
-                    verticalArrangement = Arrangement.spacedBy(0.dp)
-                ) {
-                    val potionAmount =
-                        player.inventory.items.find { it.name == ItemNamen.HEILTRANK }?.amount ?: 0
-                    val potionBigAmount =
-                        player.inventory.items.find { it.name == ItemNamen.GROSSER_HEILTRANK }?.amount ?: 0
-
-                    GameActionButtonsQuer(
-                        potionAmount = potionAmount,
-                        potionBigAmount = potionBigAmount,
-                        canClickAttackButton = canClickAttackButton,
-                        onTakeDamage = { viewModel.onEvent(GameEvent.TakeDamage()) },
-                        onAddGold = { viewModel.onEvent(GameEvent.AddGold()) },
-                        onHeal = { viewModel.onEvent(GameEvent.Heal()) },
-                        onGainXp = { viewModel.onEvent(GameEvent.GainXp()) },
-                        onUsePotion = { viewModel.onEvent(GameEvent.UsePotion()) },
-                        onUseBigPotion = { viewModel.onEvent(GameEvent.UseBigPotion()) },
-                        onAttack = { viewModel.onEvent(GameEvent.AttackEnemy) },
-                        onFlee = { viewModel.onEvent(GameEvent.Flee) },
-                        onInventory = {
-                            onInventory()
-                        }
-                    )
-                }
-            }
+                    .align(androidx.compose.ui.Alignment.BottomStart)
+                    .fillMaxWidth(0.65f)
+                    .height(210.dp)
+                    .padding(start = 25.dp, end = 30.dp, bottom = 20.dp)
+            )
         }
-
-        GameLog(
-            log = log,
-            listState = listState,
+        Row(
             modifier = Modifier
-                .align(androidx.compose.ui.Alignment.BottomStart)
-                .fillMaxWidth(0.65f)
-                .height(210.dp)
-                .padding(start = 25.dp, end = 30.dp, bottom = 20.dp)
-        )
+                .fillMaxWidth()
+                .padding(8.dp)
+                .clip(RoundedCornerShape(48.dp))
+                .background(Color(0xFF4CAF50)),
+            horizontalArrangement = Arrangement.End,
+
+        ) {
+            GameLog(
+                log = log,
+                listState = listState,
+                modifier = Modifier
+                    .weight(1f)
+                    .height(400.dp)
+                    .padding(start = 25.dp, end = 30.dp, bottom = 20.dp)
+            )
+
+            BattleScene(
+                playerName = player.name,
+                playerOnGroundOffsetY = 110,
+                playerAttackMoveX = 260,
+                playerHp = player.hp,
+                playerMaxHp = player.maxHp,
+                enemyName = enemy.name,
+                enemyOnGroundOffsetY = 115,
+                enemyAttackMoveX = 260,
+                enemyHp = enemy.hp,
+                enemyMaxHp = enemy.maxHp,
+                playerAttacks = playerAttacks,
+                enemyAttacks = enemyAttacks,
+                rightBattleText = rightBattleText,
+                leftBattleText = leftBattleText,
+                onEnemyClick = onAttack,
+                modifier = Modifier
+                    .weight(1f)
+                    .height(400.dp)
+                    .padding(bottom = 16.dp)
+            )
+        }
     }
 }
 
@@ -345,3 +424,19 @@ fun GameScreenQuerPreview() {
         onInventory = {})
 }
 
+@Preview(
+    name = "Battle Scene", showBackground = true
+)
+@Composable
+fun BattleSceneQuerPreview() {
+    BattleScene(
+        playerName = "Felix",
+        playerHp = 80,
+        playerOnGroundOffsetY = 30,
+        enemyOnGroundOffsetY = 30,
+        playerMaxHp = 100,
+        enemyName = "Wolf",
+        enemyHp = 20,
+        enemyMaxHp = 30
+    )
+}
