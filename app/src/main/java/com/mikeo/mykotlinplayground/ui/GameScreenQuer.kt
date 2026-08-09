@@ -271,16 +271,18 @@ fun GameScreenQuer(
             )
 
             BattleScene(
-                hpHeaderBackgroundOffsetY = 24,
-                battleHpHeaderOffsetY = 14,
+                layout = BattleSceneLayout(
+                    hpHeaderBackgroundOffsetY = 24,
+                    battleHpHeaderOffsetY = 14,
+                    playerOnGroundOffsetY = 110,
+                    playerAttackMoveX = 260,
+                    enemyOnGroundOffsetY = 115,
+                    enemyAttackMoveX = 260
+                ),
                 playerName = player.name,
-                playerOnGroundOffsetY = 110,
-                playerAttackMoveX = 260,
                 playerHp = player.hp,
                 playerMaxHp = player.maxHp,
                 enemyName = enemy.name,
-                enemyOnGroundOffsetY = 115,
-                enemyAttackMoveX = 260,
                 enemyHp = enemy.hp,
                 enemyMaxHp = enemy.maxHp,
                 playerAttacks = playerAttacks,
@@ -432,10 +434,12 @@ fun GameScreenQuerPreview() {
 @Composable
 fun BattleSceneQuerPreview() {
     BattleScene(
+        layout = BattleSceneLayout(
+            enemyOnGroundOffsetY = 30,
+            playerOnGroundOffsetY = 30
+        ),
         playerName = "Felix",
         playerHp = 80,
-        playerOnGroundOffsetY = 30,
-        enemyOnGroundOffsetY = 30,
         playerMaxHp = 100,
         enemyName = "Wolf",
         enemyHp = 20,

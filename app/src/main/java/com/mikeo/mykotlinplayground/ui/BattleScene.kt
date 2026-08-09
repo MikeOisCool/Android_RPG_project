@@ -25,19 +25,22 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+data class BattleSceneLayout(
+    val hpHeaderBackgroundOffsetY: Int = 10,
+    val battleHpHeaderOffsetY: Int = 0,
+    val playerOnGroundOffsetY: Int = 0,
+    val playerAttackMoveX: Int = 0,
+    val enemyOnGroundOffsetY: Int = 0,
+    val enemyAttackMoveX: Int = 0
+)
 
 @Composable
 fun BattleScene(
-    hpHeaderBackgroundOffsetY: Int = 10,
-    battleHpHeaderOffsetY: Int = 0,
+    layout: BattleSceneLayout = BattleSceneLayout(),
     playerName: String,
-    playerOnGroundOffsetY: Int = 0,
-    playerAttackMoveX: Int = 0,
     playerHp: Int,
     playerMaxHp: Int,
     enemyName: String,
-    enemyOnGroundOffsetY: Int = 0,
-    enemyAttackMoveX: Int = 0,
     enemyHp: Int,
     enemyMaxHp: Int,
     rightBattleText: String? = null,
@@ -58,7 +61,7 @@ fun BattleScene(
     ) {
         Box(
             modifier = Modifier
-                .offset(y = (hpHeaderBackgroundOffsetY).dp)
+                .offset(y = (layout.hpHeaderBackgroundOffsetY).dp)
                 .fillMaxWidth(0.95f)
                 .align(Alignment.TopCenter)
                 .height(40.dp)
@@ -70,7 +73,7 @@ fun BattleScene(
         ) {
 
             BattleHpHeader(
-                battleHpHeaderOffsetY = battleHpHeaderOffsetY,
+                battleHpHeaderOffsetY = layout.battleHpHeaderOffsetY,
                 playerName = playerName,
                 playerHp = playerHp,
                 playerMaxHp = playerMaxHp,
@@ -92,10 +95,10 @@ fun BattleScene(
                     enemyName = enemyName,
                     playerAttacks = playerAttacks,
                     enemyAttacks = enemyAttacks,
-                    playerOnGroundOffsetY = playerOnGroundOffsetY,
-                    playerAttackMoveX = playerAttackMoveX,
-                    enemyAttackMoveX = enemyAttackMoveX,
-                    enemyOnGroundOffsetY = enemyOnGroundOffsetY,
+                    playerOnGroundOffsetY = layout.playerOnGroundOffsetY,
+                    playerAttackMoveX = layout.playerAttackMoveX,
+                    enemyAttackMoveX = layout.enemyAttackMoveX,
+                    enemyOnGroundOffsetY = layout.enemyOnGroundOffsetY,
                     onEnemyClick = onEnemyClick
                 )
             }

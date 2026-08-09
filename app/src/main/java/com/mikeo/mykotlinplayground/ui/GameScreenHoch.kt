@@ -137,14 +137,16 @@ fun GameScreenHoch(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 BattleScene(
+                    layout = BattleSceneLayout(
+                        playerOnGroundOffsetY = 30,
+                        playerAttackMoveX = 180,
+                        enemyOnGroundOffsetY = 30,
+                        enemyAttackMoveX = 180
+                    ),
                     playerName = player.name,
-                    playerOnGroundOffsetY = 30,
-                    playerAttackMoveX = 180,
                     playerHp = player.hp,
                     playerMaxHp = player.maxHp,
                     enemyName = enemy.name,
-                    enemyOnGroundOffsetY = 30,
-                    enemyAttackMoveX = 180,
                     enemyHp = enemy.hp,
                     enemyMaxHp = enemy.maxHp,
                     playerAttacks = playerAttacks,
