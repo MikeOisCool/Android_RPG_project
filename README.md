@@ -19,59 +19,67 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 - Wenn der Nutzer `git` schreibt, bedeutet das normalerweise: Aenderungen pruefen, sagen ob sie zusammenpassen, README bei Bedarf aktualisieren und dem Nutzer die drei Git-Zeilen geben.
 - Der Nutzer fuehrt Git selbst aus. Codex soll normalerweise nicht selbst committen oder pushen, ausser der Nutzer bittet ausdruecklich darum.
 - Kleine Aenderungen nicht einzeln committen, sondern sinnvoll buendeln.
+- Wenn der Nutzer `commit` schreibt, soll Codex vor den Git-Zeilen pruefen, ob es noch eine kleine naheliegende Aenderung gibt, die thematisch zu diesem Commit gehoert. Falls ja, soll Codex Michael zuerst bitten, diese kleine Aenderung noch mitzunehmen.
+- Codex soll bei Commit-Wuenschen aktiv fragen: "Passt noch etwas Kleines zu diesem Thema in denselben Commit?" und erst danach die Git-Zeilen geben.
 - Lernstil: langsam hinfuehren, keine fertigen Komplettloesungen, ausser der Nutzer fragt ausdruecklich danach. Lieber kleine Hints, Verstaendnisfragen, kleine Challenges und kurze Erklaerungen, damit Michael aktiv mitdenkt und nicht nur abschreibt.
+- Michaels Wissensstand ist nicht mehr reiner Anfang. Codex soll ihn als fortgeschrittenen Anfaenger behandeln: nicht alles vorkauen, sondern zuerst Denkfehler finden lassen, kleine Aufgaben stellen und danach gezielt erklaeren.
+- Bei einfachen Syntaxfehlern darf Codex kurz direkt helfen. Bei Logik, Architektur, Tests und Compose-State soll Codex erst eine Frage oder einen kleinen Hinweis geben, damit Michael selbst weiterdenkt.
+- Codex soll nach Michaels eigener Loesung aktiv pruefen: Passt die Logik? Ist der Name gut? Gibt es einen einfacheren Ausdruck? Passt es zum bestehenden Stil?
 - Codex soll Michael passend fordern: erst eine kleine Aufgabe oder Frage stellen, danach das Ergebnis pruefen und dann je nach Verstaendnis mehr fordern oder wieder langsamer erklaeren.
+- Codex soll Michael mehr fordern, wenn er ein Thema sichtbar verstanden hat, z.B. durch kleine Zusatztests, Refactoring-Fragen oder "Was passiert bei Level 3?"-Aufgaben.
+- Codex soll aber wieder langsamer werden, wenn ein neues Kotlin/Compose-Konzept auftaucht, z.B. `remember`, `by`, `LaunchedEffect`, `Modifier`, `StateFlow` oder Testaufbau.
 - Codex soll vor dem naechsten Arbeitsschritt kurz sagen, welchen Schritt es vorschlaegt und warum, damit Michael entscheiden kann, ob dieses Thema jetzt dran ist oder ob ein anderes Thema sinnvoller ist.
 - Codex soll darauf achten, nicht zu viele gleichartige Refactor-Schritte direkt hintereinander vorzuschlagen, wenn sie thematisch besser in einen vorherigen Commit gepasst haetten.
 - In neuen Chats zuerst diese Arbeitsregeln lesen.
 
-## Aenderungsverlauf
+## Aenderungsverlauf, neueste Eintraege zuerst
 
 - Hinweis: Die Datumsangaben sind aus den Git-Commits abgeleitet. Sie zeigen, wann ein Feature oder Refactoring ins Repository gekommen ist.
 
-- 2026-06-14: Projektbasis gestartet (`RPG Version 0.1`), README angelegt, erste Kampf- und Drop-Logik refactored.
-- 2026-06-27: Inventar erweitert; Waffen, Heiltraenke, Item-System und Waffenlogik wurden aufgebaut/refactored.
-- 2026-06-28: Weapon-Equip-System auf Item-Objekte umgestellt; Armor-System mit Ausruesten, Defense und Inventar-Updates eingebaut.
-- 2026-06-28: Compose Previews fuer Game Screens ergaenzt; Game Screens, Player-Stats-Layout und scrollbares Inventar verbessert.
-- 2026-06-28: DropManager und Item-Drop-System refactored; Inventory-Handling verbessert.
-- 2026-06-30: Drop- und Combat-Systeme weiter refactored.
-- 2026-07-03: Drops refactored und Inventory-UI verbessert.
-- 2026-07-04: InventorySection und EquipItem UI refactored; PotionItem als eigene Composable extrahiert.
-- 2026-07-04: Game-Balance-Werte im GameViewModel extrahiert.
-- 2026-07-05: Potion-Usage-Logic und Potion-Logging getrennt/refactored.
-- 2026-07-05: Dodge-Handling, Dodge-Chancen und Dodge-Logging klarer getrennt.
-- 2026-07-05: DamageResult eingefuehrt und Damage-Logik/Combat-Berechnung schrittweise geklaert.
-- 2026-07-05: Base-Damage, Attack-Berechnung und Combat-Damage-Results extrahiert/refactored.
-- 2026-07-05: Inventory-Item-Vorbereitung in sichtbare Potion/Weapon/Armor-Listen geklaert.
-- 2026-07-06: Inventory-Item-Display weiter verfeinert.
-- 2026-07-06: RemoveInventoryItem/Event/Logic/ViewModel/UI eingebaut; nicht ausgeruestete Waffen/Ruestungen koennen aus dem Inventar entfernt werden.
-- 2026-07-08: Inventory-Logiktests und DropManager-Tests wurden ergaenzt; grosser Heiltrank Level-1-Test wurde vom Nutzer geschrieben und verstanden.
-- 2026-07-08: Arbeitsregeln fuer Codex sowie Vision und Lernziel in der README festgehalten: Nutzer schreibt Code selbst, Codex erklaert/prueft und haelt README aktuell.
-- 2026-07-08: Waffe und Ruestung koennen im Inventar abgelegt werden, ohne aus dem Inventar entfernt zu werden; GameLogic-Tests dafuer wurden vom Nutzer ergaenzt.
+- 2026-08-15: Arbeitsregeln fuer Codex aktualisiert; Michaels Lernniveau wird als fortgeschrittener Anfaenger eingeordnet, Codex soll aktiver fordern, eigene Loesungen genauer pruefen und bei Commit-Wuenschen thematisch passende kleine Restarbeiten vorher ansprechen.
+- 2026-08-04: Stats-Anzeige im Hoch- und Querformat weiter refactored; kleine StatRow/StatQuer-Bausteine reduzieren doppelte Label/Wert-Anzeigen.
+- 2026-08-02: GameScreenHoch weiter refactored; PlayerStatsBlock, GameActionButtons und EnemyStatsBlock trennen Anzeige, Werte und Button-Aktionen klarer vom ViewModel.
+- 2026-08-01: BattleScene-Tod-Feedback verbessert; beim Besiegen eines Gegners oder beim Tod des Spielers werden Schaden, Tod und Sieg kurz sichtbar angezeigt, bevor zum naechsten Zustand gewechselt wird.
+- 2026-07-27: Angriffssperre gegen sehr schnelle Mehrfachklicks eingebaut; AttackEnemy wird bei laufendem Angriff, totem Spieler oder besiegtem Gegner ignoriert und der Angriffsbutton wird im Hoch- und Querformat sichtbar gesperrt.
+- 2026-07-26: BattleScene-Feedback verbessert; Treffer-, Ausweich-, Tod- und Siegtexte werden links/rechts an der passenden Kampfposition angezeigt und zeitgesteuert ausgeblendet.
+- 2026-07-24: Kritische Treffer werden vor der Verteidigung berechnet; BattleScene zeigt Treffertexte fuer Spieler- und Gegnerangriffe.
+- 2026-07-20: Erste 2D-Kampfszene im Hochformat eingebaut; GameScreen ist scrollbaar, BattleScene zeigt Spieler/Gegner mit Namen, HP-Balken und Boden.
+- 2026-07-20: Erste Kampfanimation eingebaut; Spieler und Gegner bewegen sich beim Angriff kurz aufeinander zu, BattleScene nutzt gegnerspezifische Icons.
+- 2026-07-19: Shop-Logtexte in eigene Hilfsfunktionen ausgelagert und mit GameLogText-Tests abgesichert.
+- 2026-07-19: Item-Zustandspruefungen fuer Shop-Events ausgelagert; ViewModel nutzt Helfer fuer ausgeruestete Items, Unique-Items und Waffen/Ruestungen.
+- 2026-07-19: Shop-Logs im GameViewModel ergaenzt; doppelte Unique-Kaeufe und Verkauf ausgeruesteter Ausruestung werden abgefangen und mit ViewModel-Tests geprueft.
+- 2026-07-19: Shop-Verkaufsbereiche weiter refactored; Verkauf von Traenken, Waffen und Ruestung laeuft ueber gemeinsame Shop-Komponenten. Waffen/Ruestung werden nicht mehr im Inventar weggeworfen, sondern ueber den Shop verkauft.
+- 2026-07-19: Shop-Angebotsanzeige weiter refactored; Kaufstatus-Texte und Kaufbutton-Text wurden aus der UI-Entscheidung herausgezogen.
+- 2026-07-19: Item-Pruefhelfer aus GameLogic in eigene Datei ItemChecks verschoben.
+- 2026-07-19: Item-Icons fuer Shop und Inventar eingefuehrt; gemeinsame UI-Text-Hilfe fuer Item-Icons angelegt und Preis-Texte kompakter gemacht.
+- 2026-07-19: Verkaufspruefung fuer vorhandene Inventar-Items ausgelagert und getestet.
+- 2026-07-19: Unit-Tests fuer Item-Zustandshelfer ergaenzt.
+- 2026-07-19: Shop-Kaufpruefungen fuer volle Heiltrank-Stacks und Unique-Items vereinheitlicht; GameLogic, ViewModel und ShopScreen nutzen gemeinsame Helfer.
+- 2026-07-18: Shop-UI-Texte und Button-Darstellung ueberarbeitet; eigene Shop-Section und Shop-Buttons eingefuehrt, leere Texte zentriert und Shop-Verlassen-Button korrekt ausserhalb der Waffenliste platziert.
+- 2026-07-15: GameLogic-Tests fuer Shop-Kauflogik ergaenzt; Heiltrank-Stacking, fehlendes Gold, Verkaufspreise und doppelte Waffenkaeufe werden geprueft.
+- 2026-07-14: Haendler/Shop-Screen umgesetzt: levelabhaengige Angebote, Kaufen und Verkaufen, Gold-Pruefung, Stack-Limit fuer Heiltraenke sowie Verkaufsschutz fuer ausgeruestete Waffen/Ruestungen.
 - 2026-07-11: GameLog-Meldungen fuer Angriff, Entfernen von Inventar-Items sowie Ablegen von Waffe und Ruestung ergaenzt.
 - 2026-07-11: Haendler-Konzept mit levelabhaengigem Angebot, dynamischen Heiltrank-Preisen und Verkaufspreisen dokumentiert.
 - 2026-07-11: Item-Balancing fuer Heiltraenke, Waffen und Ruestungen zentral in der README dokumentiert.
-- 2026-07-14: Haendler/Shop-Screen umgesetzt: levelabhaengige Angebote, Kaufen und Verkaufen, Gold-Pruefung, Stack-Limit fuer Heiltraenke sowie Verkaufsschutz fuer ausgeruestete Waffen/Ruestungen.
-- 2026-07-15: GameLogic-Tests fuer Shop-Kauflogik ergaenzt; Heiltrank-Stacking, fehlendes Gold, Verkaufspreise und doppelte Waffenkaeufe werden geprueft.
-- 2026-07-18: Shop-UI-Texte und Button-Darstellung ueberarbeitet; eigene Shop-Section und Shop-Buttons eingefuehrt, leere Texte zentriert und Shop-Verlassen-Button korrekt ausserhalb der Waffenliste platziert.
-- 2026-07-19: Shop-Verkaufsbereiche weiter refactored; Verkauf von Traenken, Waffen und Ruestung laeuft ueber gemeinsame Shop-Komponenten. Waffen/Ruestung werden nicht mehr im Inventar weggeworfen, sondern ueber den Shop verkauft.
-- 2026-07-19: Shop-Angebotsanzeige weiter refactored; Kaufstatus-Texte und Kaufbutton-Text wurden aus der UI-Entscheidung herausgezogen.
-- 2026-07-19: Shop-Logs im GameViewModel ergaenzt; doppelte Unique-Kaeufe und Verkauf ausgeruesteter Ausruestung werden abgefangen und mit ViewModel-Tests geprueft.
-- 2026-07-19: Shop-Logtexte in eigene Hilfsfunktionen ausgelagert und mit GameLogText-Tests abgesichert.
-- 2026-07-19: Item-Zustandspruefungen fuer Shop-Events ausgelagert; ViewModel nutzt Helfer fuer ausgeruestete Items, Unique-Items und Waffen/Ruestungen.
-- 2026-07-19: Unit-Tests fuer Item-Zustandshelfer ergaenzt.
-- 2026-07-19: Shop-Kaufpruefungen fuer volle Heiltrank-Stacks und Unique-Items vereinheitlicht; GameLogic, ViewModel und ShopScreen nutzen gemeinsame Helfer.
-- 2026-07-19: Verkaufspruefung fuer vorhandene Inventar-Items ausgelagert und getestet.
-- 2026-07-19: Item-Pruefhelfer aus GameLogic in eigene Datei ItemChecks verschoben.
-- 2026-07-19: Item-Icons fuer Shop und Inventar eingefuehrt; gemeinsame UI-Text-Hilfe fuer Item-Icons angelegt und Preis-Texte kompakter gemacht.
-- 2026-07-20: Erste 2D-Kampfszene im Hochformat eingebaut; GameScreen ist scrollbaar, BattleScene zeigt Spieler/Gegner mit Namen, HP-Balken und Boden.
-- 2026-07-20: Erste Kampfanimation eingebaut; Spieler und Gegner bewegen sich beim Angriff kurz aufeinander zu, BattleScene nutzt gegnerspezifische Icons.
-- 2026-07-24: Kritische Treffer werden vor der Verteidigung berechnet; BattleScene zeigt Treffertexte fuer Spieler- und Gegnerangriffe.
-- 2026-07-26: BattleScene-Feedback verbessert; Treffer-, Ausweich-, Tod- und Siegtexte werden links/rechts an der passenden Kampfposition angezeigt und zeitgesteuert ausgeblendet.
-- 2026-07-27: Angriffssperre gegen sehr schnelle Mehrfachklicks eingebaut; AttackEnemy wird bei laufendem Angriff, totem Spieler oder besiegtem Gegner ignoriert und der Angriffsbutton wird im Hoch- und Querformat sichtbar gesperrt.
-- 2026-08-01: BattleScene-Tod-Feedback verbessert; beim Besiegen eines Gegners oder beim Tod des Spielers werden Schaden, Tod und Sieg kurz sichtbar angezeigt, bevor zum naechsten Zustand gewechselt wird.
-- 2026-08-02: GameScreenHoch weiter refactored; PlayerStatsBlock, GameActionButtons und EnemyStatsBlock trennen Anzeige, Werte und Button-Aktionen klarer vom ViewModel.
-- 2026-08-04: Stats-Anzeige im Hoch- und Querformat weiter refactored; kleine StatRow/StatQuer-Bausteine reduzieren doppelte Label/Wert-Anzeigen.
+- 2026-07-08: Inventory-Logiktests und DropManager-Tests wurden ergaenzt; grosser Heiltrank Level-1-Test wurde vom Nutzer geschrieben und verstanden.
+- 2026-07-08: Arbeitsregeln fuer Codex sowie Vision und Lernziel in der README festgehalten: Nutzer schreibt Code selbst, Codex erklaert/prueft und haelt README aktuell.
+- 2026-07-08: Waffe und Ruestung koennen im Inventar abgelegt werden, ohne aus dem Inventar entfernt zu werden; GameLogic-Tests dafuer wurden vom Nutzer ergaenzt.
+- 2026-07-06: Inventory-Item-Display weiter verfeinert.
+- 2026-07-06: RemoveInventoryItem/Event/Logic/ViewModel/UI eingebaut; nicht ausgeruestete Waffen/Ruestungen koennen aus dem Inventar entfernt werden.
+- 2026-07-05: Dodge-Handling, Dodge-Chancen und Dodge-Logging klarer getrennt.
+- 2026-07-05: Potion-Usage-Logic und Potion-Logging getrennt/refactored.
+- 2026-07-05: DamageResult eingefuehrt und Damage-Logik/Combat-Berechnung schrittweise geklaert.
+- 2026-07-05: Inventory-Item-Vorbereitung in sichtbare Potion/Weapon/Armor-Listen geklaert.
+- 2026-07-05: Base-Damage, Attack-Berechnung und Combat-Damage-Results extrahiert/refactored.
+- 2026-07-04: InventorySection und EquipItem UI refactored; PotionItem als eigene Composable extrahiert.
+- 2026-07-04: Game-Balance-Werte im GameViewModel extrahiert.
+- 2026-07-03: Drops refactored und Inventory-UI verbessert.
+- 2026-06-30: Drop- und Combat-Systeme weiter refactored.
+- 2026-06-28: Weapon-Equip-System auf Item-Objekte umgestellt; Armor-System mit Ausruesten, Defense und Inventar-Updates eingebaut.
+- 2026-06-28: Compose Previews fuer Game Screens ergaenzt; Game Screens, Player-Stats-Layout und scrollbares Inventar verbessert.
+- 2026-06-28: DropManager und Item-Drop-System refactored; Inventory-Handling verbessert.
+- 2026-06-27: Inventar erweitert; Waffen, Heiltraenke, Item-System und Waffenlogik wurden aufgebaut/refactored.
+- 2026-06-14: Projektbasis gestartet (`RPG Version 0.1`), README angelegt, erste Kampf- und Drop-Logik refactored.
 
 ## Aktuelle Features
 
@@ -89,7 +97,7 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 - Grosser Heiltrank - nachweisbar seit 2026-06-27, Tests ergaenzt am 2026-07-08
 - Heiltrank-Drops - nachweisbar seit 2026-06-14, DropManager refactored am 2026-06-28
 - Inventar-Screen - seit 2026-06-14, UI refactored am 2026-07-04 und 2026-07-06
-- Items aus Inventar entfernen - hinzugefuegt am 2026-07-06
+- Items aus Inventar entfernen - hinzugefuegt am 2026-07-06; Waffen und Ruestungen werden inzwischen bevorzugt ueber den Shop verkauft
 - Waffe und Ruestung ablegen - hinzugefuegt am 2026-07-08
 - Hoch- und Querformat - Game-Screen-Previews/Layout verbessert am 2026-06-28
 - Inventory- und DropManager-Tests - hinzugefuegt am 2026-07-08
@@ -172,12 +180,19 @@ Beim Verkaufen gelten folgende Regeln:
 - Waffen und Ruestungen werden als ganzes Item verkauft.
 - Ausgeruestete Waffen und Ruestungen werden im Shop nicht als verkaufbar angeboten.
 
+## Naechste Lernfelder
+
+- Tests fuer neue GameLogic-Regeln konsequenter schreiben
+- ViewModel-Logs und GameLogic-Zustand sauber getrennt halten
+- Compose-Layouts weiter in kleine, wiederverwendbare Bausteine aufteilen
+- BattleScene und Querformat-UI weiter stabilisieren
+- Bestehende Features wie Haendler, Kampfanimationen und BattleFeedback weiter verbessern
+
 ## Geplante Features
 
-- Kampf-Grafiken/Animationen fuer Angriffe, Schaden, Ausweichen und kritische Treffer
-- Händler
 - Quests
 - Speichern und Laden
+- Bessere Grafik/Assets
 
 ## Technologien
 
@@ -186,7 +201,9 @@ Beim Verkaufen gelten folgende Regeln:
 - ViewModel
 - StateFlow
 - Navigation Compose
+- JUnit
+- Coroutines
 
 ## Status
 
-Version 0.1
+Lernprojekt in aktiver Entwicklung
