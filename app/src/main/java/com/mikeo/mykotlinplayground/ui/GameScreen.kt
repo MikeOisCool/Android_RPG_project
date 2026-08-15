@@ -21,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 fun GameScreen(
     viewModel: GameViewModel = viewModel(),
     listState: LazyListState,
+    topLogState: LazyListState,
     onGameOver: () -> Unit,
     onInventory: () -> Unit,
     onShop: () -> Unit,
@@ -73,6 +74,7 @@ fun GameScreen(
     if (isLandscape) {
         GameScreenQuer(
             viewModel = viewModel,
+            topLogState = topLogState,
             listState = listState,
             onGameOver = onGameOver,
             onInventory = onInventory

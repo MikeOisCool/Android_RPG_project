@@ -41,6 +41,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun GameScreenQuer(
     viewModel: GameViewModel,
+    topLogState: LazyListState,
     listState: LazyListState,
     onGameOver: () -> Unit,
     onInventory: () -> Unit
@@ -63,7 +64,10 @@ fun GameScreenQuer(
     }
 
     LaunchedEffect(log.size) {
-        if (log.isNotEmpty()) listState.animateScrollToItem(log.size - 1)
+        if (log.isNotEmpty()) {
+            topLogState.animateScrollToItem(log.size - 1)
+            listState.animateScrollToItem(log.size - 1)
+        }
     }
 
     LaunchedEffect(player.isDead) {
@@ -86,7 +90,6 @@ fun GameScreenQuer(
         modifier = Modifier
             .fillMaxWidth()
             .verticalScroll(scrollState)
-
     ) {
         Box(
             modifier = Modifier
@@ -177,20 +180,17 @@ fun GameScreenQuer(
                                 onInventory()
                             }
                         )
-
                     }
-
                 }
-
             }
             GameLog(
                 log = log,
-                listState = listState,
+                listState = topLogState,
                 modifier = Modifier
                     .align(androidx.compose.ui.Alignment.BottomStart)
                     .fillMaxWidth(0.65f)
-                    .height(210.dp)
-                    .padding(start = 25.dp, end = 30.dp, bottom = 20.dp)
+                    .height(200.dp)
+                    .padding(start = 25.dp, top = 10.dp, end = 30.dp, bottom = 0.dp)
             )
         }
         Row(
@@ -208,7 +208,7 @@ fun GameScreenQuer(
                 modifier = Modifier
                     .weight(1f)
                     .height(400.dp)
-                    .padding(start = 25.dp, end = 30.dp, bottom = 20.dp)
+                    .padding(start = 25.dp, top = 35.dp, end = 30.dp, bottom = 20.dp)
             )
 
             BattleScene(
@@ -272,7 +272,7 @@ fun TopHpBarsQuer(
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                "Gegner HP: ${enemy.hp}/${enemy.maxHp}",
+                "Gegner ${enemy.name} HP: ${enemy.hp}/${enemy.maxHp}",
                 modifier = Modifier.padding(start = 30.dp)
             )
             HpBar(
@@ -291,7 +291,6 @@ fun TopHpBarsQuer(
 fun EnemyStatsBlockQuer(
     enemy: Enemy
 ) {
-
     StatQuer(label = "Gegner:", value = "${enemy.name}")
     StatQuer(label = "Level:", value = "${enemy.level}")
     StatQuer(label = "ATK:", value = "${enemy.attack}")
@@ -505,9 +504,11 @@ fun GameScreenQuerPreview() {
 
     GameScreenQuer(
         viewModel = viewModel,
+        topLogState = rememberLazyListState(),
         listState = rememberLazyListState(),
-        onGameOver = {},
-        onInventory = {})
+        onInventory = {},
+        onGameOver = {}
+    )
 }
 
 @Preview(

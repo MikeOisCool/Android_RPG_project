@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 fun AppNavigation() {
     val navController = rememberNavController()
     val viewModel: GameViewModel = viewModel()
+    val topLogState = rememberLazyListState()
     val listState = rememberLazyListState()
 
     NavHost(
@@ -36,6 +37,7 @@ fun AppNavigation() {
             GameScreen(
                 viewModel = viewModel,
                 listState = listState,
+                topLogState = topLogState,
                 onGameOver = {
                     navController.navigate("game_over_screen")
                 },
