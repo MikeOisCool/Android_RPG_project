@@ -300,8 +300,7 @@ fun EnemyStatsBlockQuer(
 
 @Composable
 fun PlayerStatsBlockQuer(
-    player: com.mikeo.mykotlinplayground.Player,
-
+    player: Player,
     weaponBonus: Int,
     armorDefense: Int,
     equippedWeapon: String,
@@ -361,6 +360,33 @@ fun GameActionButtonsQuer(
     onFlee: () -> Unit,
     onInventory: () -> Unit
 ) {
+
+    DebugActionButtonsQuer(
+        onTakeDamage = onTakeDamage,
+        onAddGold = onAddGold,
+        onHeal = onHeal,
+        onGainXp = onGainXp
+    )
+
+    MainActionButtonsQuer(
+        potionAmount = potionAmount,
+        potionBigAmount = potionBigAmount,
+        canClickAttackButton = canClickAttackButton,
+        onUsePotion = onUsePotion,
+        onUseBigPotion = onUseBigPotion,
+        onAttack = onAttack,
+        onFlee = onFlee,
+        onInventory = onInventory
+    )
+}
+
+@Composable
+fun DebugActionButtonsQuer(
+    onTakeDamage: () -> Unit,
+    onAddGold: () -> Unit,
+    onHeal: () -> Unit,
+    onGainXp: () -> Unit
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
@@ -397,7 +423,19 @@ fun GameActionButtonsQuer(
             )
         }
     }
+}
 
+@Composable
+fun MainActionButtonsQuer(
+    potionAmount: Int,
+    potionBigAmount: Int,
+    canClickAttackButton: Boolean,
+    onUsePotion: () -> Unit,
+    onUseBigPotion: () -> Unit,
+    onAttack: () -> Unit,
+    onFlee: () -> Unit,
+    onInventory: () -> Unit
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
@@ -437,7 +475,6 @@ fun GameActionButtonsQuer(
     ) {
         GameButtonQuer(
             text = "Fliehen",
-
             onClick = onFlee
         )
         Box(
@@ -445,13 +482,11 @@ fun GameActionButtonsQuer(
         ) {
             GameButtonQuer(
                 text = "Inventar",
-
                 onClick = onInventory
             )
         }
     }
 }
-
 
 @Composable
 fun StatQuer(label: String, value: String, labelWidth: Int = 65) {
