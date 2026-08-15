@@ -30,7 +30,7 @@ class GameLogicTest {
             gold = 200
         )
         var updatedPlayer = player
-        for (x in 1..12 ) {
+        for (x in 1..12) {
             updatedPlayer = handleEvent(updatedPlayer, GameEvent.BuyItem(GameItems.healPotion))
         }
         val potion = updatedPlayer.inventory.items.single()
@@ -70,7 +70,7 @@ class GameLogicTest {
             gold = 0
         )
         var updatedPlayer = player
-        repeat (12) {
+        repeat(12) {
             updatedPlayer = handleEvent(updatedPlayer, GameEvent.BuyItem(GameItems.healPotion))
         }
         val potion = updatedPlayer.inventory.items.single()
@@ -155,7 +155,8 @@ class GameLogicTest {
     fun buyWeaponDoesNotAddDuplicateWeapon() {
         val player = testPlayer(
             inventory = Inventory(items = emptyList()),
-            gold = 100)
+            gold = 100
+        )
         var updatedPlayer = handleEvent(player, GameEvent.BuyItem(GameItems.woodWeapon))
         updatedPlayer = handleEvent(updatedPlayer, GameEvent.BuyItem(GameItems.woodWeapon))
         updatedPlayer = handleEvent(updatedPlayer, GameEvent.BuyItem(GameItems.woodWeapon))
@@ -291,6 +292,52 @@ class GameLogicTest {
 
         assertTrue(criticalDamage.isCritical)
         assertEquals(6, finalDamage)
+    }
+
+    @Test
+    fun canFleeWithNotEnoughGold() {
+        val player = testPlayer(
+            gold = 0
+        )
+        val goldVorher = player.gold
+        val updatedPlayer = handleEvent(player, GameEvent.Flee)
+
+        assertTrue(updatedPlayer.gold == goldVorher)
+    }
+
+    @Test
+    fun canFleeWithEnoughGold() {
+        val player = testPlayer(
+            gold = 100
+        )
+        val goldVorher = player.gold
+        val updatedPlayer = handleEvent(player, GameEvent.Flee)
+
+        assertTrue(updatedPlayer.gold < goldVorher)
+        assertEquals(80, updatedPlayer.gold)
+    }
+
+    @Test
+    fun canFleeWithEnoughGoldLevel3() {
+        val player = testPlayer(
+            gold = 100,
+            level = 3
+        )
+        val updatedPlayer = handleEvent(player, GameEvent.Flee)
+
+        assertEquals(60, updatedPlayer.gold)
+    }
+
+    @Test
+    fun canFleeWithExactGold() {
+        val player = testPlayer(
+            gold = 20,
+            level = 1
+        )
+
+        val updatedPlayer = handleEvent(player, GameEvent.Flee)
+
+        assertEquals(0, updatedPlayer.gold)
     }
 
     private fun testPlayer(

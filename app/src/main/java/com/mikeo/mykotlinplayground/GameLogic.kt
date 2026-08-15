@@ -101,33 +101,38 @@ fun handleEvent(
                 player
             } else if (isPotionStackFull(event.item, player.inventory)) {
                 player
-            } else if (isUniqueItemAlreadyInInventory(item = event.item, inventory = player.inventory)) {
+            } else if (isUniqueItemAlreadyInInventory(
+                    item = event.item,
+                    inventory = player.inventory
+                )
+            ) {
                 player
             } else {
 
-            val newItems = when (event.item.type) {
-                ItemType.POTION -> {
-                   if (itemInventory != null) {
+                val newItems = when (event.item.type) {
+                    ItemType.POTION -> {
+                        if (itemInventory != null) {
 
-                        player.inventory.items.map { item ->
-                            if (item.name == event.item.name) {
-                                item.copy(amount = item.amount + 1)
-                            } else {
-                                item
+                            player.inventory.items.map { item ->
+                                if (item.name == event.item.name) {
+                                    item.copy(amount = item.amount + 1)
+                                } else {
+                                    item
+                                }
                             }
+                        } else {
+                            player.inventory.items + event.item
                         }
-                    } else {
-                        player.inventory.items + event.item
-                   }
-                }
+                    }
 
-                ItemType.WEAPON -> {
+                    ItemType.WEAPON -> {
                         player.inventory.items + event.item
-                }
-                ItemType.ARMOR -> {
+                    }
+
+                    ItemType.ARMOR -> {
                         player.inventory.items + event.item
+                    }
                 }
-            }
                 player.copy(
                     inventory = player.inventory.copy(items = newItems),
                     gold = player.gold - price
@@ -169,14 +174,12 @@ fun handleEvent(
 
         is GameEvent.Flee -> {
 
-            val fleeCost = 20 + (player.level - 1) * 10
-
-            if (player.gold < fleeCost) {
-                player
-            } else {
+            if (canFlee(player.level, player.gold)) {
                 player.copy(
-                    gold = player.gold - fleeCost
+                    gold = player.gold - fleeCost(player.level)
                 )
+            } else {
+                player
             }
         }
 
@@ -212,6 +215,14 @@ fun handleEvent(
             )
         }
     }
+}
+
+private fun fleeCost(playerLevel: Int): Int {
+    return 20 + (playerLevel - 1) * 10
+}
+
+private fun canFlee(playerLevel: Int, gold: Int): Boolean {
+    return gold >= fleeCost(playerLevel)
 }
 
 private fun usePotionByName(
