@@ -30,9 +30,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.mikeo.mykotlinplayground.Enemy
 import com.mikeo.mykotlinplayground.GameEvent
 import com.mikeo.mykotlinplayground.GameViewModel
 import com.mikeo.mykotlinplayground.ItemNamen
+import com.mikeo.mykotlinplayground.Player
 import kotlinx.coroutines.delay
 
 
@@ -59,7 +61,6 @@ fun GameScreenQuer(
             viewModel.onEvent(GameEvent.AttackEnemy)
         }
     }
-
 
     LaunchedEffect(log.size) {
         if (log.isNotEmpty()) listState.animateScrollToItem(log.size - 1)
@@ -241,8 +242,8 @@ fun GameScreenQuer(
 
 @Composable
 fun TopHpBarsQuer(
-    player: com.mikeo.mykotlinplayground.Player,
-    enemy: com.mikeo.mykotlinplayground.Enemy
+    player: Player,
+    enemy: Enemy
 ) {
 
     Row(modifier = Modifier.fillMaxWidth(1f))
@@ -288,7 +289,7 @@ fun TopHpBarsQuer(
 
 @Composable
 fun EnemyStatsBlockQuer(
-    enemy: com.mikeo.mykotlinplayground.Enemy
+    enemy: Enemy
 ) {
 
     StatQuer(label = "Gegner:", value = "${enemy.name}")
