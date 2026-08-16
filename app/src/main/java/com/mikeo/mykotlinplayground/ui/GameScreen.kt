@@ -77,7 +77,8 @@ fun GameScreen(
             topLogState = topLogState,
             listState = listState,
             onGameOver = onGameOver,
-            onInventory = onInventory
+            onInventory = onInventory,
+            onShop = onShop
         )
     } else {
         GameScreenHoch(

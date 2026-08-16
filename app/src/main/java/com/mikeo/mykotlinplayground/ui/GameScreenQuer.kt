@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,8 +29,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.mikeo.mykotlinplayground.Enemy
 import com.mikeo.mykotlinplayground.GameEvent
 import com.mikeo.mykotlinplayground.GameViewModel
@@ -44,7 +48,8 @@ fun GameScreenQuer(
     topLogState: LazyListState,
     listState: LazyListState,
     onGameOver: () -> Unit,
-    onInventory: () -> Unit
+    onInventory: () -> Unit,
+    onShop: () -> Unit
 ) {
     val player by viewModel.player.collectAsState()
     val log by viewModel.log.collectAsState()
@@ -91,108 +96,25 @@ fun GameScreenQuer(
             .fillMaxWidth()
             .verticalScroll(scrollState)
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(400.dp)
-                .padding(8.dp)
-                .clip(RoundedCornerShape(48.dp))
-                .background(Color(0xFF4CAF50))
-                .padding(12.dp)
-        ) {
 
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
+        LandscapeMainPanel(
+            player = player,
+            enemy = enemy,
+            log = log,
+            topLogState = topLogState,
+            canClickAttackButton = canClickAttackButton,
+            onAttack = onAttack,
+            onInventory = onInventory,
+            onTakeDamage = { viewModel.onEvent(GameEvent.TakeDamage()) },
+            onAddGold = { viewModel.onEvent(GameEvent.AddGold()) },
+            onHeal = { viewModel.onEvent(GameEvent.Heal()) },
+            onGainXp = { viewModel.onEvent(GameEvent.GainXp()) },
+            onUsePotion = { viewModel.onEvent(GameEvent.UsePotion()) },
+            onUseBigPotion = { viewModel.onEvent(GameEvent.UseBigPotion()) },
+            onShop = onShop,
+            onFlee = { viewModel.onEvent(GameEvent.Flee) }
+        )
 
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                ) {
-                    TopHpBarsQuer(
-                        player = player,
-                        enemy = enemy
-                    )
-                }
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                ) {
-
-                    Column(
-                        modifier = Modifier
-                            .weight(5f)
-                            .padding(start = 30.dp)
-                    ) {
-                        val weaponBonus = player.equippedWeapon?.damage ?: 0
-                        val armorDefense = player.equippedArmor?.defense ?: 0
-                        val equippedWeapon = player.equippedWeapon?.name ?: "-"
-                        val equippedArmor = player.equippedArmor?.name ?: "-"
-
-                        PlayerStatsBlockQuer(
-                            player = player,
-                            weaponBonus = weaponBonus,
-                            armorDefense = armorDefense,
-                            equippedWeapon = equippedWeapon,
-                            equippedArmor = equippedArmor
-
-                        )
-                    }
-
-                    Column(
-                        modifier = Modifier
-                            .weight(5f)
-                            .padding(start = 180.dp)
-                    ) {
-                        EnemyStatsBlockQuer(enemy = enemy)
-
-                    }
-                    Column(
-                        modifier = Modifier
-                            .weight(5f)
-                            .offset(x = (0).dp),
-                        verticalArrangement = Arrangement.spacedBy(0.dp)
-                    ) {
-                        val potionAmount =
-                            player.inventory.items.find { it.name == ItemNamen.HEILTRANK }?.amount
-                                ?: 0
-                        val potionBigAmount =
-                            player.inventory.items.find { it.name == ItemNamen.GROSSER_HEILTRANK }?.amount
-                                ?: 0
-
-                        GameActionButtonsQuer(
-                            potionAmount = potionAmount,
-                            potionBigAmount = potionBigAmount,
-                            canClickAttackButton = canClickAttackButton,
-                            onTakeDamage = { viewModel.onEvent(GameEvent.TakeDamage()) },
-                            onAddGold = { viewModel.onEvent(GameEvent.AddGold()) },
-                            onHeal = { viewModel.onEvent(GameEvent.Heal()) },
-                            onGainXp = { viewModel.onEvent(GameEvent.GainXp()) },
-                            onUsePotion = { viewModel.onEvent(GameEvent.UsePotion()) },
-                            onUseBigPotion = { viewModel.onEvent(GameEvent.UseBigPotion()) },
-                            onAttack = onAttack,
-                            onFlee = { viewModel.onEvent(GameEvent.Flee) },
-                            onInventory = {
-                                onInventory()
-                            }
-                        )
-                    }
-                }
-            }
-            GameLog(
-                log = log,
-                listState = topLogState,
-                modifier = Modifier
-                    .align(androidx.compose.ui.Alignment.BottomStart)
-                    .fillMaxWidth(0.65f)
-                    .height(200.dp)
-                    .padding(start = 25.dp, top = 10.dp, end = 30.dp, bottom = 0.dp)
-            )
-        }
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -239,6 +161,127 @@ fun GameScreenQuer(
         }
     }
 }
+
+@Composable
+fun LandscapeMainPanel(
+    player: Player,
+    enemy: Enemy,
+    log: List<String>,
+    topLogState: LazyListState,
+    canClickAttackButton: Boolean,
+    onTakeDamage: () -> Unit,
+    onAddGold: () -> Unit,
+    onHeal: () -> Unit,
+    onGainXp: () -> Unit,
+    onUsePotion: () -> Unit,
+    onUseBigPotion: () -> Unit,
+    onAttack: () -> Unit,
+    onFlee: () -> Unit,
+    onShop: () -> Unit,
+    onInventory: () -> Unit,
+
+    ) {
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(400.dp)
+            .padding(8.dp)
+            .clip(RoundedCornerShape(48.dp))
+            .background(Color(0xFF4CAF50))
+            .padding(12.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+            ) {
+                TopHpBarsQuer(
+                    player = player,
+                    enemy = enemy
+                )
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            ) {
+
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = 30.dp)
+                ) {
+                    val weaponBonus = player.equippedWeapon?.damage ?: 0
+                    val armorDefense = player.equippedArmor?.defense ?: 0
+                    val equippedWeapon = player.equippedWeapon?.name ?: "-"
+                    val equippedArmor = player.equippedArmor?.name ?: "-"
+
+                    PlayerStatsBlockQuer(
+                        player = player,
+                        weaponBonus = weaponBonus,
+                        armorDefense = armorDefense,
+                        equippedWeapon = equippedWeapon,
+                        equippedArmor = equippedArmor
+                    )
+
+                    GameLog(
+                        log = log,
+                        listState = topLogState,
+                        modifier = Modifier
+                            .height(200.dp)
+                            .padding(start = 0.dp, top = 5.dp, end = 0.dp)
+                    )
+                }
+                Row(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .padding(start = 30.dp)
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        EnemyStatsBlockQuer(enemy = enemy)
+                    }
+
+                    Column(modifier = Modifier.weight(3f)) {
+                        val potionAmount =
+                            player.inventory.items.find { it.name == ItemNamen.HEILTRANK }?.amount
+                                ?: 0
+                        val potionBigAmount =
+                            player.inventory.items.find { it.name == ItemNamen.GROSSER_HEILTRANK }?.amount
+                                ?: 0
+
+                        GameActionButtonsQuer(
+                            potionAmount = potionAmount,
+                            potionBigAmount = potionBigAmount,
+                            canClickAttackButton = canClickAttackButton,
+                            onTakeDamage = onTakeDamage,
+                            onAddGold = { onAddGold() },
+                            onHeal = { onHeal() },
+                            onGainXp = { onGainXp() },
+                            onUsePotion = { onUsePotion() },
+                            onUseBigPotion = { onUseBigPotion() },
+                            onAttack = onAttack,
+                            onFlee = onFlee,
+                            onShop = onShop,
+                            onInventory = {
+                                onInventory()
+                            }
+                        )
+                    }
+                }
+
+            }
+        }
+    }
+}
+
 
 @Composable
 fun TopHpBarsQuer(
@@ -291,7 +334,12 @@ fun TopHpBarsQuer(
 fun EnemyStatsBlockQuer(
     enemy: Enemy
 ) {
-    StatQuer(label = "Gegner:", value = "${enemy.name}")
+    Text(
+        text = enemy.name,
+        fontSize = 16.sp,
+        fontWeight = FontWeight.Bold,
+        modifier = Modifier.padding(start = 35.dp)
+    )
     StatQuer(label = "Level:", value = "${enemy.level}")
     StatQuer(label = "ATK:", value = "${enemy.attack}")
     StatQuer(label = "DEF:", value = "${enemy.defense}")
@@ -357,6 +405,7 @@ fun GameActionButtonsQuer(
     onUseBigPotion: () -> Unit,
     onAttack: () -> Unit,
     onFlee: () -> Unit,
+    onShop: () -> Unit,
     onInventory: () -> Unit
 ) {
 
@@ -375,6 +424,7 @@ fun GameActionButtonsQuer(
         onUseBigPotion = onUseBigPotion,
         onAttack = onAttack,
         onFlee = onFlee,
+        onShop = onShop,
         onInventory = onInventory
     )
 }
@@ -432,6 +482,7 @@ fun MainActionButtonsQuer(
     onUsePotion: () -> Unit,
     onUseBigPotion: () -> Unit,
     onAttack: () -> Unit,
+    onShop: () -> Unit,
     onFlee: () -> Unit,
     onInventory: () -> Unit
 ) {
@@ -468,29 +519,48 @@ fun MainActionButtonsQuer(
                 onAttack()
             })
     }
-    Row(
+    Column(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
+
+        ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Box(
+                modifier = Modifier.padding(end = 25.dp)
+            ) {
+                GameButtonQuer(
+                    text = "Inventar",
+                    onClick = onInventory
+                )
+            }
+            Box(
+                modifier = Modifier.padding(end = 25.dp)
+            ) {
+                GameButtonQuer(
+                    text = "Shop",
+                    onClick = onShop
+                )
+            }
+
+        }
         GameButtonQuer(
             text = "Fliehen",
-            onClick = onFlee
+            onClick = onFlee,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(end = 25.dp),
         )
-        Box(
-            modifier = Modifier.padding(end = 25.dp)
-        ) {
-            GameButtonQuer(
-                text = "Inventar",
-                onClick = onInventory
-            )
-        }
     }
 }
 
 @Composable
-fun StatQuer(label: String, value: String, labelWidth: Int = 65) {
-    Text(label, modifier = Modifier.width(labelWidth.dp))
-    Text(value, modifier = Modifier.width(labelWidth.dp))
+fun StatQuer(label: String, value: String, labelWidth: Int = 60) {
+    Row {
+        Text(label, modifier = Modifier.width(labelWidth.dp))
+        Text(value, modifier = Modifier.width(labelWidth.dp))
+    }
 }
 
 @Preview(
@@ -507,6 +577,7 @@ fun GameScreenQuerPreview() {
         topLogState = rememberLazyListState(),
         listState = rememberLazyListState(),
         onInventory = {},
+        onShop = {},
         onGameOver = {}
     )
 }
