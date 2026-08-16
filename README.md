@@ -18,6 +18,8 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 - Die README liegt bei Codex und soll aktuell gehalten werden, besonders mit Datum, wenn wichtige Aenderungen gemacht wurden.
 - Wenn der Nutzer `git` schreibt, bedeutet das normalerweise: Aenderungen pruefen, sagen ob sie zusammenpassen, README bei Bedarf aktualisieren und dem Nutzer die drei Git-Zeilen geben.
 - Der Nutzer fuehrt Git selbst aus. Codex soll normalerweise nicht selbst committen oder pushen, ausser der Nutzer bittet ausdruecklich darum.
+- Wenn ein neues Thema begonnen wird, soll Codex sich zuerst in die relevanten Dateien vollstaendig einlesen und erst danach Hints, Bewertungen oder naechste Schritte geben.
+- Bei jedem Commit-Wunsch soll Codex pruefen, ob die README oder der Aenderungsverlauf angepasst werden muss. Wenn ein relevanter Eintrag fehlt, soll Codex die README vor den Git-Zeilen angleichen.
 - Kleine Aenderungen nicht einzeln committen, sondern sinnvoll buendeln.
 - Wenn der Nutzer `commit` schreibt, soll Codex vor den Git-Zeilen pruefen, ob es noch eine kleine naheliegende Aenderung gibt, die thematisch zu diesem Commit gehoert. Falls ja, soll Codex Michael zuerst bitten, diese kleine Aenderung noch mitzunehmen.
 - Codex soll bei Commit-Wuenschen aktiv fragen: "Passt noch etwas Kleines zu diesem Thema in denselben Commit?" und erst danach die Git-Zeilen geben.
@@ -36,6 +38,8 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 
 - Hinweis: Die Datumsangaben sind aus den Git-Commits abgeleitet. Sie zeigen, wann ein Feature oder Refactoring ins Repository gekommen ist.
 
+- 2026-08-16: Querformat-GameScreen weiter stabilisiert; TopLog, Spielerwerte, Gegnerwerte und Aktionsbuttons wurden klarer in linke und rechte Bereiche aufgeteilt, der Shop ist auch im Querformat erreichbar.
+- 2026-08-16: Inventar schuetzt tote Spieler vor Ausruestungswechseln; Waffe und Ruestung koennen nach dem Tod nicht mehr aus- oder angelegt werden.
 - 2026-08-15: Arbeitsregeln fuer Codex aktualisiert; Michaels Lernniveau wird als fortgeschrittener Anfaenger eingeordnet, Codex soll aktiver fordern, eigene Loesungen genauer pruefen und bei Commit-Wuenschen thematisch passende kleine Restarbeiten vorher ansprechen.
 - 2026-08-04: Stats-Anzeige im Hoch- und Querformat weiter refactored; kleine StatRow/StatQuer-Bausteine reduzieren doppelte Label/Wert-Anzeigen.
 - 2026-08-02: GameScreenHoch weiter refactored; PlayerStatsBlock, GameActionButtons und EnemyStatsBlock trennen Anzeige, Werte und Button-Aktionen klarer vom ViewModel.
@@ -123,6 +127,8 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 - BattleScene-Tod- und Siegfeedback - verbessert am 2026-08-01
 - GameScreenHoch-UI-Bloecke und Button-Aktionen - refactored am 2026-08-02
 - Stat-Anzeigen fuer Hoch- und Querformat - refactored am 2026-08-04
+- Querformat-GameScreen mit eigenem TopLog, Shop-Aktion und klarerer Bereichsaufteilung - verbessert am 2026-08-16
+- Ausruestungsaenderungen werden blockiert, wenn der Spieler tot ist - hinzugefuegt am 2026-08-16
 
 ## Item-Balancing
 
