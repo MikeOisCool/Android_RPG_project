@@ -30,6 +30,7 @@ import com.mikeo.mykotlinplayground.GameEvent
 import com.mikeo.mykotlinplayground.GameViewModel
 import com.mikeo.mykotlinplayground.Item
 import com.mikeo.mykotlinplayground.ItemType
+import com.mikeo.mykotlinplayground.Player
 import com.mikeo.mykotlinplayground.calculateItemHeal
 
 @Composable
@@ -87,6 +88,7 @@ fun InventoryScreen(
 
             armorItems.forEach { item ->
                 EquipItem(
+                    player = player,
                     statText = "Verteidigung",
                     statValue = item.defense,
                     isEquipped = player.equippedArmor?.name == item.name,
@@ -113,6 +115,7 @@ fun InventoryScreen(
         ) {
             weaponItems.forEach { item ->
                 EquipItem(
+                    player = player,
                     statText = "Angriff",
                     statValue = item.damage,
                     isEquipped = player.equippedWeapon?.name == item.name,
@@ -186,6 +189,7 @@ fun InventorySection(
 
 @Composable
 fun EquipItem(
+    player: Player,
     statText: String,
     statValue: Int,
     isEquipped: Boolean,
@@ -205,10 +209,10 @@ fun EquipItem(
             .fillMaxWidth(0.7f)
             .height(90.dp),
         onClick = {
+            if (player.isDead) return@ShopButton
             if (!isEquipped) {
                 onEquip()
-            }
-            if (isEquipped) {
+            } else {
                 unequip()
             }
         }
