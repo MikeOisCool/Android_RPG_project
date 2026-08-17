@@ -295,6 +295,60 @@ class GameLogicTest {
     }
 
     @Test
+    fun deadPlayerCannotEquipWeapon() {
+        val player = testPlayer(
+            hp = 0,
+            isDead = true,
+            inventory = Inventory(items = listOf(GameItems.woodWeapon))
+        )
+
+        val updatedPlayer = handleEvent(player, GameEvent.EquipWeapon(GameItems.woodWeapon))
+
+        assertEquals(player, updatedPlayer)
+    }
+
+    @Test
+    fun deadPlayerCannotUnequipWeapon() {
+        val player = testPlayer(
+            hp = 0,
+            isDead = true,
+            inventory = Inventory(items = listOf(GameItems.woodWeapon)),
+            equippedWeapon = GameItems.woodWeapon
+        )
+
+        val updatedPlayer = handleEvent(player, GameEvent.UnequipWeapon)
+
+        assertEquals(player, updatedPlayer)
+    }
+
+    @Test
+    fun deadPlayerCannotEquipArmor() {
+        val player = testPlayer(
+            hp = 0,
+            isDead = true,
+            inventory = Inventory(items = listOf(GameItems.ironArmor))
+        )
+
+        val updatedPlayer = handleEvent(player, GameEvent.EquipArmor(GameItems.ironArmor))
+
+        assertEquals(player, updatedPlayer)
+    }
+
+    @Test
+    fun deadPlayerCannotUnequipArmor() {
+        val player = testPlayer(
+            hp = 0,
+            isDead = true,
+            inventory = Inventory(items = listOf(GameItems.ironArmor)),
+            equippedArmor = GameItems.ironArmor
+        )
+
+        val updatedPlayer = handleEvent(player, GameEvent.UnequipArmor)
+
+        assertEquals(player, updatedPlayer)
+    }
+
+    @Test
     fun canFleeWithNotEnoughGold() {
         val player = testPlayer(
             gold = 0
@@ -347,7 +401,8 @@ class GameLogicTest {
         inventory: Inventory = Inventory(items = emptyList()),
         equippedWeapon: Item? = null,
         equippedArmor: Item? = null,
-        gold: Int = 50
+        gold: Int = 50,
+        isDead: Boolean = false
     ): Player {
         return Player(
             name = "TestPlayer",
@@ -358,7 +413,7 @@ class GameLogicTest {
             equippedWeapon = equippedWeapon,
             equippedArmor = equippedArmor,
             gold = gold,
-            isDead = false,
+            isDead = isDead,
             level = level
         )
     }

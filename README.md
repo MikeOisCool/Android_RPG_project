@@ -38,6 +38,7 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 
 - Hinweis: Die Datumsangaben sind aus den Git-Commits abgeleitet. Sie zeigen, wann ein Feature oder Refactoring ins Repository gekommen ist.
 
+- 2026-08-17: GameLogic schuetzt tote Spieler vor Ausruestungswechseln; Equip/Unequip fuer Waffen und Ruestungen wird bei Tod ignoriert und mit Tests abgesichert.
 - 2026-08-16: Querformat-GameScreen weiter stabilisiert; TopLog, Spielerwerte, Gegnerwerte und Aktionsbuttons wurden klarer in linke und rechte Bereiche aufgeteilt, der Shop ist auch im Querformat erreichbar.
 - 2026-08-16: Inventar schuetzt tote Spieler vor Ausruestungswechseln; Waffe und Ruestung koennen nach dem Tod nicht mehr aus- oder angelegt werden.
 - 2026-08-15: Arbeitsregeln fuer Codex aktualisiert; Michaels Lernniveau wird als fortgeschrittener Anfaenger eingeordnet, Codex soll aktiver fordern, eigene Loesungen genauer pruefen und bei Commit-Wuenschen thematisch passende kleine Restarbeiten vorher ansprechen.
@@ -129,6 +130,7 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 - Stat-Anzeigen fuer Hoch- und Querformat - refactored am 2026-08-04
 - Querformat-GameScreen mit eigenem TopLog, Shop-Aktion und klarerer Bereichsaufteilung - verbessert am 2026-08-16
 - Ausruestungsaenderungen werden blockiert, wenn der Spieler tot ist - hinzugefuegt am 2026-08-16
+- GameLogic-Tests fuer blockierte Ausruestungswechsel bei totem Spieler - hinzugefuegt am 2026-08-17
 
 ## Item-Balancing
 

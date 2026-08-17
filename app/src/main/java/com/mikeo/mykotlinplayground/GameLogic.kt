@@ -49,6 +49,7 @@ fun handleEvent(
         }
 
         is GameEvent.EquipWeapon -> {
+            if (player.isDead) return player
             val hasWeapon = player.inventory.items.contains(event.weapon)
             if (hasWeapon) {
                 player.copy(
@@ -60,6 +61,7 @@ fun handleEvent(
         }
 
         is GameEvent.EquipArmor -> {
+            if (player.isDead) return player
             val hasArmor = player.inventory.items.contains(event.armor)
             if (hasArmor) {
                 player.copy(
@@ -68,6 +70,16 @@ fun handleEvent(
             } else {
                 player
             }
+        }
+
+        is GameEvent.UnequipWeapon -> {
+            if (player.isDead) return player
+            player.copy(equippedWeapon = null)
+        }
+
+        is GameEvent.UnequipArmor -> {
+            if (player.isDead) return player
+            player.copy(equippedArmor = null)
         }
 
         is GameEvent.RemoveInventoryItem -> {
@@ -162,15 +174,6 @@ fun handleEvent(
             }
 
         }
-
-        is GameEvent.UnequipWeapon -> {
-            player.copy(equippedWeapon = null)
-        }
-
-        is GameEvent.UnequipArmor -> {
-            player.copy(equippedArmor = null)
-        }
-
 
         is GameEvent.Flee -> {
 
