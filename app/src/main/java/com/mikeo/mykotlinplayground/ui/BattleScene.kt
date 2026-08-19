@@ -1,6 +1,11 @@
 package com.mikeo.mykotlinplayground.ui
 
+import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -32,17 +37,18 @@ data class BattleSceneLayout(
     val playerOnGroundOffsetY: Int = 0,
     val playerAttackMoveX: Int = 0,
     val enemyOnGroundOffsetY: Int = 0,
+    val enemyVisualOffsetY: Dp = 5.dp,
     val enemyAttackMoveX: Int = 0
 )
 
 data class BattleSkyLayout(
-    val sunOffsetX: Int = -18,
-    val sunOffsetY: Int = 38,
+    val sunOffsetX: Int = 0,
+    val sunOffsetY: Int = -40,
     val cloudStartOffsetX: Int = 40,
     val cloudStartOffsetY: Int = 58,
     val cloudCenterOffsetY: Int = 72,
     val cloudCenterOffsetX: Int = 0,
-    val sunSize: Int = 20,
+    val sunSize: Int = 40,
     val cloudStartSize: Int = 20,
     val cloudCenterSize: Int = 27
 )
@@ -125,6 +131,7 @@ fun BattleScene(
                     playerAttackMoveX = layoutScene.playerAttackMoveX,
                     enemyAttackMoveX = layoutScene.enemyAttackMoveX,
                     enemyOnGroundOffsetY = layoutScene.enemyOnGroundOffsetY,
+                    enemyVisualOffsetY = layoutScene.enemyVisualOffsetY,
                     onEnemyClick = onEnemyClick
                 )
             }
@@ -181,7 +188,7 @@ fun BoxScope.BattleSkyDecorations(
     Text(
         text = "☀️",
         modifier = Modifier
-            .align(Alignment.TopEnd)
+            .align(Alignment.Center)
             .offset(x = sunOffsetX.dp, y = sunOffsetY.dp),
         fontSize = sunSize.sp
     )
@@ -260,9 +267,32 @@ fun BoxScope.BattleFighters(
     playerOnGroundOffsetY: Int,
     playerAttackMoveX: Int,
     enemyOnGroundOffsetY: Int,
+    enemyVisualOffsetY: Dp,
     enemyAttackMoveX: Int,
     onEnemyClick: () -> Unit = {}
 ) {
+    val infiniteTransition = rememberInfiniteTransition(label = "idleOffsetY")
+
+    val idlePlayerOffsetY by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1.5f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1000),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "idlePlayerOffsetY"
+    )
+
+    val idleEnemyOffsetY by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1000),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "idleEnemyOffsetY"
+    )
+
 
     val playerOffsetX by animateDpAsState(
         targetValue = if (playerAttacks) playerAttackMoveX.dp else 0.dp,
@@ -272,6 +302,7 @@ fun BoxScope.BattleFighters(
     val enemyOffsetX by animateDpAsState(
         targetValue = if (enemyAttacks) -enemyAttackMoveX.dp else 0.dp, label = "enemyAttackOffset"
     )
+    //Schatten Spieler
     Box(
         modifier = Modifier
             .align(Alignment.CenterStart)
@@ -287,10 +318,11 @@ fun BoxScope.BattleFighters(
         modifier = Modifier
             .align(Alignment.CenterStart)
             .offset(x = playerOffsetX)
-            .offset(y = playerOnGroundOffsetY.dp),
+            .offset(y = playerOnGroundOffsetY.dp + idlePlayerOffsetY.dp),
         fontSize = 60.sp
     )
 
+    //Schatten Gegner
     Box(
         modifier = Modifier
             .align(Alignment.CenterEnd)
@@ -307,7 +339,7 @@ fun BoxScope.BattleFighters(
         modifier = Modifier
             .align(Alignment.CenterEnd)
             .offset(x = enemyOffsetX)
-            .offset(y = enemyOnGroundOffsetY.dp)
+            .offset(y = enemyOnGroundOffsetY.dp + idleEnemyOffsetY.dp + enemyVisualOffsetY)
             .clickable { onEnemyClick() },
         fontSize = 60.sp
     )

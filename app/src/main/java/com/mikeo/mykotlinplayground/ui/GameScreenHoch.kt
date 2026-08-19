@@ -165,34 +165,6 @@ fun GameScreenHoch(
 }
 
 @Composable
-fun BattleAnimationEffects(
-    playerAttacks: Boolean,
-    enemyAttacks: Boolean,
-    enemyHp: Int = 0,
-    onPlayerAttackFinished: () -> Unit,
-    onEnemyAttackStarted: () -> Unit,
-    onEnemyAttackFinished: () -> Unit
-) {
-    LaunchedEffect(playerAttacks) {
-        if (playerAttacks) {
-            delay(200)
-            onPlayerAttackFinished()
-            if (enemyHp > 0) {
-                onEnemyAttackStarted()
-            }
-        }
-    }
-
-    LaunchedEffect(enemyAttacks) {
-        if (enemyAttacks) {
-            delay(200)
-            onEnemyAttackFinished()
-        }
-    }
-
-}
-
-@Composable
 fun GameActionButtons(
     canClickAttackButton: Boolean,
     onInventory: () -> Unit,

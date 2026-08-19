@@ -141,11 +141,9 @@ fun GameScreenQuer(
                     enemyAttackMoveX = 260
                 ),
                 layoutSky = BattleSkyLayout(
-                    sunOffsetX = -30,
-                    sunOffsetY = 98,
                     cloudStartOffsetX = 40,
                     cloudStartOffsetY = 88,
-                    cloudCenterOffsetY = 72,
+                    cloudCenterOffsetY = 122,
                     cloudCenterOffsetX = 0,
                     sunSize = 50,
                     cloudStartSize = 40,
