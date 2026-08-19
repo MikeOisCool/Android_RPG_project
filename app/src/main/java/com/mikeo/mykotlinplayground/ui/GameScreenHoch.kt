@@ -87,8 +87,7 @@ fun GameScreenHoch(
         enemyHp = enemy.hp,
         onPlayerAttackFinished = { playerAttacks = false },
         onEnemyAttackStarted = { enemyAttacks = true },
-        onEnemyAttackFinished = { enemyAttacks = false }
-    )
+        onEnemyAttackFinished = { enemyAttacks = false })
 
     Column(
         modifier = Modifier
@@ -137,12 +136,13 @@ fun GameScreenHoch(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 BattleScene(
-                    layout = BattleSceneLayout(
-                        playerOnGroundOffsetY = 30,
+                    layoutScene = BattleSceneLayout(
+                        playerOnGroundOffsetY = 10,
                         playerAttackMoveX = 180,
-                        enemyOnGroundOffsetY = 30,
+                        enemyOnGroundOffsetY = 10,
                         enemyAttackMoveX = 180
                     ),
+                    layoutSky = BattleSkyLayout(),
                     playerName = player.name,
                     playerHp = player.hp,
                     playerMaxHp = player.maxHp,
@@ -355,11 +355,14 @@ fun GameScreenHochPreview() {
 @Composable
 fun BattleScenePreview() {
     BattleScene(
+        layoutScene = BattleSceneLayout(
+            enemyOnGroundOffsetY = 17, playerOnGroundOffsetY = 17
+        ),
         playerName = "Felix",
         playerHp = 80,
         playerMaxHp = 100,
         enemyName = "Wolf",
         enemyHp = 20,
         enemyMaxHp = 30
-    )
+        )
 }

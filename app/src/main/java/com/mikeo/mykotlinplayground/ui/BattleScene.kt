@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -34,9 +35,22 @@ data class BattleSceneLayout(
     val enemyAttackMoveX: Int = 0
 )
 
+data class BattleSkyLayout(
+    val sunOffsetX: Int = -18,
+    val sunOffsetY: Int = 38,
+    val cloudStartOffsetX: Int = 40,
+    val cloudStartOffsetY: Int = 58,
+    val cloudCenterOffsetY: Int = 72,
+    val cloudCenterOffsetX: Int = 0,
+    val sunSize: Int = 20,
+    val cloudStartSize: Int = 20,
+    val cloudCenterSize: Int = 27
+)
+
 @Composable
 fun BattleScene(
-    layout: BattleSceneLayout = BattleSceneLayout(),
+    layoutScene: BattleSceneLayout = BattleSceneLayout(),
+    layoutSky: BattleSkyLayout = BattleSkyLayout(),
     playerName: String,
     playerHp: Int,
     playerMaxHp: Int,
@@ -56,12 +70,12 @@ fun BattleScene(
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(32.dp))
-            .background(Color(0xFF8BC34A))
+            .background(Color(0xFF81D4FA))
 
     ) {
         Box(
             modifier = Modifier
-                .offset(y = (layout.hpHeaderBackgroundOffsetY).dp)
+                .offset(y = (layoutScene.hpHeaderBackgroundOffsetY).dp)
                 .fillMaxWidth(0.95f)
                 .align(Alignment.TopCenter)
                 .height(40.dp)
@@ -72,8 +86,20 @@ fun BattleScene(
             modifier = Modifier.padding(16.dp)
         ) {
 
+            BattleSkyDecorations(
+                sunOffsetX = layoutSky.sunOffsetX,
+                sunOffsetY = layoutSky.sunOffsetY,
+                cloudStartOffsetX = layoutSky.cloudStartOffsetX,
+                cloudStartOffsetY = layoutSky.cloudStartOffsetY,
+                cloudCenterOffsetY = layoutSky.cloudCenterOffsetY,
+                cloudCenterOffsetX = layoutSky.cloudCenterOffsetX,
+                sunSize = layoutSky.sunSize,
+                cloudStartSize = layoutSky.cloudStartSize,
+                cloudCenterSize = layoutSky.cloudCenterSize
+            )
+
             BattleHpHeader(
-                battleHpHeaderOffsetY = layout.battleHpHeaderOffsetY,
+                battleHpHeaderOffsetY = layoutScene.battleHpHeaderOffsetY,
                 playerName = playerName,
                 playerHp = playerHp,
                 playerMaxHp = playerMaxHp,
@@ -95,10 +121,10 @@ fun BattleScene(
                     enemyName = enemyName,
                     playerAttacks = playerAttacks,
                     enemyAttacks = enemyAttacks,
-                    playerOnGroundOffsetY = layout.playerOnGroundOffsetY,
-                    playerAttackMoveX = layout.playerAttackMoveX,
-                    enemyAttackMoveX = layout.enemyAttackMoveX,
-                    enemyOnGroundOffsetY = layout.enemyOnGroundOffsetY,
+                    playerOnGroundOffsetY = layoutScene.playerOnGroundOffsetY,
+                    playerAttackMoveX = layoutScene.playerAttackMoveX,
+                    enemyAttackMoveX = layoutScene.enemyAttackMoveX,
+                    enemyOnGroundOffsetY = layoutScene.enemyOnGroundOffsetY,
                     onEnemyClick = onEnemyClick
                 )
             }
@@ -140,6 +166,46 @@ fun BoxScope.BattleFeedbackTexts(
 }
 
 @Composable
+fun BoxScope.BattleSkyDecorations(
+    sunOffsetX: Int,
+    sunOffsetY: Int,
+    cloudStartOffsetX: Int,
+    cloudStartOffsetY: Int,
+    cloudCenterOffsetY: Int,
+    cloudCenterOffsetX: Int,
+    sunSize: Int,
+    cloudStartSize: Int,
+    cloudCenterSize: Int
+) {
+    // Sonne
+    Text(
+        text = "☀️",
+        modifier = Modifier
+            .align(Alignment.TopEnd)
+            .offset(x = sunOffsetX.dp, y = sunOffsetY.dp),
+        fontSize = sunSize.sp
+    )
+
+    // Wolke links
+    Text(
+        text = "☁️",
+        modifier = Modifier
+            .align(Alignment.TopStart)
+            .offset(x = cloudStartOffsetX.dp, y = cloudStartOffsetY.dp),
+        fontSize = cloudStartSize.sp
+    )
+
+    // Wolke mittig
+    Text(
+        text = "☁️",
+        modifier = Modifier
+            .align(Alignment.TopCenter)
+            .offset(x = cloudCenterOffsetX.dp, y = cloudCenterOffsetY.dp),
+        fontSize = cloudCenterSize.sp
+    )
+}
+
+@Composable
 fun BoxScope.BattleHpHeader(
     battleHpHeaderOffsetY: Int,
     playerName: String,
@@ -152,7 +218,8 @@ fun BoxScope.BattleHpHeader(
     Column(
         modifier = Modifier
             .align(Alignment.TopStart)
-            .offset(y = (battleHpHeaderOffsetY).dp), horizontalAlignment = Alignment.Start
+            .offset(y = (battleHpHeaderOffsetY).dp),
+        horizontalAlignment = Alignment.Start
     ) {
 
         Text(
@@ -170,7 +237,8 @@ fun BoxScope.BattleHpHeader(
     Column(
         modifier = Modifier
             .align(Alignment.TopEnd)
-            .offset(y = (battleHpHeaderOffsetY).dp), horizontalAlignment = Alignment.End
+            .offset(y = (battleHpHeaderOffsetY).dp),
+        horizontalAlignment = Alignment.End
     ) {
 
         Text(
@@ -197,13 +265,23 @@ fun BoxScope.BattleFighters(
 ) {
 
     val playerOffsetX by animateDpAsState(
-        targetValue = if (playerAttacks) playerAttackMoveX.dp else 0.dp, label = "playerAttackOffset"
+        targetValue = if (playerAttacks) playerAttackMoveX.dp else 0.dp,
+        label = "playerAttackOffset"
     )
 
     val enemyOffsetX by animateDpAsState(
         targetValue = if (enemyAttacks) -enemyAttackMoveX.dp else 0.dp, label = "enemyAttackOffset"
     )
-
+    Box(
+        modifier = Modifier
+            .align(Alignment.CenterStart)
+            .offset(x = playerOffsetX)
+            .offset(y = (playerOnGroundOffsetY + 35).dp)
+            .width(55.dp)
+            .height(10.dp)
+            .clip(RoundedCornerShape(percent = 50))
+            .background(Color.Black.copy(alpha = 0.25f))
+    )
     Text(
         text = "🧙",
         modifier = Modifier
@@ -211,6 +289,17 @@ fun BoxScope.BattleFighters(
             .offset(x = playerOffsetX)
             .offset(y = playerOnGroundOffsetY.dp),
         fontSize = 60.sp
+    )
+
+    Box(
+        modifier = Modifier
+            .align(Alignment.CenterEnd)
+            .offset(x = enemyOffsetX)
+            .offset(y = (enemyOnGroundOffsetY + 35).dp)
+            .width(55.dp)
+            .height(10.dp)
+            .clip(RoundedCornerShape(percent = 50))
+            .background(Color.Black.copy(alpha = 0.25f))
     )
 
     Text(
@@ -226,21 +315,26 @@ fun BoxScope.BattleFighters(
 
 @Composable
 fun BoxScope.BattleGround() {
+    //Gras
     Box(
         modifier = Modifier
-            .offset(y = (-30).dp)
+            .offset(y = (-32).dp)
             .align(Alignment.BottomCenter)
-            .fillMaxWidth()
-            .height(6.dp)
-            .background(Color(0xFF2E7D32))
+            .fillMaxWidth(0.92f)
+            .height(10.dp)
+            .clip(RoundedCornerShape(50))
+            .background(Color(0xFF43A047))
 
     )
+
+    // Erde
     Box(
         modifier = Modifier
             .offset(y = (-10).dp)
             .align(Alignment.BottomCenter)
-            .fillMaxWidth()
-            .height(20.dp)
+            .fillMaxWidth(0.92f)
+            .height(28.dp)
+            .clip(RoundedCornerShape(6.dp))
             .background(Color(0xFF5D4037))
     )
 }
@@ -274,4 +368,24 @@ fun enemyIcon(enemyName: String): String {
         "Stier" -> "🐂"
         else -> "👾"
     }
+}
+
+@Preview(
+    name = "Battle Scene", showBackground = true
+)
+@Composable
+fun BattleScenePreview1() {
+    BattleScene(
+        layoutScene = BattleSceneLayout(
+            enemyOnGroundOffsetY = 17,
+            playerOnGroundOffsetY = 17
+        ),
+        layoutSky = BattleSkyLayout(),
+        playerName = "Felix",
+        playerHp = 80,
+        playerMaxHp = 100,
+        enemyName = "Wolf",
+        enemyHp = 20,
+        enemyMaxHp = 30
+    )
 }

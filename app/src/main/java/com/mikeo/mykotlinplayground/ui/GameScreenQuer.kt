@@ -88,8 +88,7 @@ fun GameScreenQuer(
         enemyHp = enemy.hp,
         onPlayerAttackFinished = { playerAttacks = false },
         onEnemyAttackStarted = { enemyAttacks = true },
-        onEnemyAttackFinished = { enemyAttacks = false }
-    )
+        onEnemyAttackFinished = { enemyAttacks = false })
 
     Column(
         modifier = Modifier
@@ -112,8 +111,7 @@ fun GameScreenQuer(
             onUsePotion = { viewModel.onEvent(GameEvent.UsePotion()) },
             onUseBigPotion = { viewModel.onEvent(GameEvent.UseBigPotion()) },
             onShop = onShop,
-            onFlee = { viewModel.onEvent(GameEvent.Flee) }
-        )
+            onFlee = { viewModel.onEvent(GameEvent.Flee) })
 
         Row(
             modifier = Modifier
@@ -134,13 +132,24 @@ fun GameScreenQuer(
             )
 
             BattleScene(
-                layout = BattleSceneLayout(
+                layoutScene = BattleSceneLayout(
                     hpHeaderBackgroundOffsetY = 24,
                     battleHpHeaderOffsetY = 14,
-                    playerOnGroundOffsetY = 110,
+                    playerOnGroundOffsetY = 85,
                     playerAttackMoveX = 260,
-                    enemyOnGroundOffsetY = 115,
+                    enemyOnGroundOffsetY = 85,
                     enemyAttackMoveX = 260
+                ),
+                layoutSky = BattleSkyLayout(
+                    sunOffsetX = -30,
+                    sunOffsetY = 98,
+                    cloudStartOffsetX = 40,
+                    cloudStartOffsetY = 88,
+                    cloudCenterOffsetY = 72,
+                    cloudCenterOffsetX = 0,
+                    sunSize = 50,
+                    cloudStartSize = 40,
+                    cloudCenterSize = 47
                 ),
                 playerName = player.name,
                 playerHp = player.hp,
@@ -156,7 +165,7 @@ fun GameScreenQuer(
                 modifier = Modifier
                     .weight(1f)
                     .height(400.dp)
-                    .padding(bottom = 16.dp)
+                    .padding(20.dp)
             )
         }
     }
@@ -192,8 +201,7 @@ fun LandscapeMainPanel(
             .padding(12.dp)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
+            modifier = Modifier.fillMaxSize()
 
         ) {
             Row(
@@ -202,8 +210,7 @@ fun LandscapeMainPanel(
                     .padding(8.dp),
             ) {
                 TopHpBarsQuer(
-                    player = player,
-                    enemy = enemy
+                    player = player, enemy = enemy
                 )
             }
 
@@ -272,8 +279,7 @@ fun LandscapeMainPanel(
                             onShop = onShop,
                             onInventory = {
                                 onInventory()
-                            }
-                        )
+                            })
                     }
                 }
 
@@ -285,19 +291,15 @@ fun LandscapeMainPanel(
 
 @Composable
 fun TopHpBarsQuer(
-    player: Player,
-    enemy: Enemy
+    player: Player, enemy: Enemy
 ) {
 
-    Row(modifier = Modifier.fillMaxWidth(1f))
-    {
+    Row(modifier = Modifier.fillMaxWidth(1f)) {
         Column(modifier = Modifier.weight(1f)) {
             Row(
-                horizontalArrangement = Arrangement
-                    .spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.offset(x = (30).dp),
-            )
-            {
+            ) {
                 Text(text = player.name)
                 Text("HP: ${player.hp}/${player.maxHp}")
             }
@@ -376,17 +378,13 @@ fun PlayerStatsBlockQuer(
 
         Row {
             StatQuer(
-                label = "Waffe:",
-                value = equippedWeapon,
-                labelWidth = 70
+                label = "Waffe:", value = equippedWeapon, labelWidth = 70
             )
         }
 
         Row {
             StatQuer(
-                label = "Rüstung:",
-                value = equippedArmor,
-                labelWidth = 70
+                label = "Rüstung:", value = equippedArmor, labelWidth = 70
             )
         }
     }
@@ -410,10 +408,7 @@ fun GameActionButtonsQuer(
 ) {
 
     DebugActionButtonsQuer(
-        onTakeDamage = onTakeDamage,
-        onAddGold = onAddGold,
-        onHeal = onHeal,
-        onGainXp = onGainXp
+        onTakeDamage = onTakeDamage, onAddGold = onAddGold, onHeal = onHeal, onGainXp = onGainXp
     )
 
     MainActionButtonsQuer(
@@ -431,44 +426,35 @@ fun GameActionButtonsQuer(
 
 @Composable
 fun DebugActionButtonsQuer(
-    onTakeDamage: () -> Unit,
-    onAddGold: () -> Unit,
-    onHeal: () -> Unit,
-    onGainXp: () -> Unit
+    onTakeDamage: () -> Unit, onAddGold: () -> Unit, onHeal: () -> Unit, onGainXp: () -> Unit
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
+        modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
     ) {
 
         GameButtonQuer(
-            text = "Take Damage",
-            onClick = onTakeDamage
+            text = "Take Damage", onClick = onTakeDamage
         )
 
         Box(
             modifier = Modifier.padding(end = 25.dp)
         ) {
             GameButtonQuer(
-                text = "Add Gold",
-                onClick = onAddGold
+                text = "Add Gold", onClick = onAddGold
             )
         }
     }
     Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
+        modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
     ) {
         GameButtonQuer(
-            text = "Heilen",
-            onClick = onHeal
+            text = "Heilen", onClick = onHeal
         )
         Box(
             modifier = Modifier.padding(end = 25.dp)
         ) {
             GameButtonQuer(
-                text = "XP sammeln",
-                onClick = onGainXp
+                text = "XP sammeln", onClick = onGainXp
             )
         }
     }
@@ -487,19 +473,16 @@ fun MainActionButtonsQuer(
     onInventory: () -> Unit
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
+        modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
     ) {
         GameButtonQuer(
-            text = "Heil (${potionAmount})",
-            onClick = onUsePotion
+            text = "Heil (${potionAmount})", onClick = onUsePotion
         )
         Box(
             modifier = Modifier.padding(end = 25.dp)
         ) {
             GameButtonQuer(
-                text = "Gr-Heil (${potionBigAmount})",
-                onClick = onUseBigPotion
+                text = "Gr-Heil (${potionBigAmount})", onClick = onUseBigPotion
             )
         }
     }
@@ -524,23 +507,20 @@ fun MainActionButtonsQuer(
 
         ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Box(
                 modifier = Modifier.padding(end = 25.dp)
             ) {
                 GameButtonQuer(
-                    text = "Inventar",
-                    onClick = onInventory
+                    text = "Inventar", onClick = onInventory
                 )
             }
             Box(
                 modifier = Modifier.padding(end = 25.dp)
             ) {
                 GameButtonQuer(
-                    text = "Shop",
-                    onClick = onShop
+                    text = "Shop", onClick = onShop
                 )
             }
 
@@ -578,8 +558,7 @@ fun GameScreenQuerPreview() {
         listState = rememberLazyListState(),
         onInventory = {},
         onShop = {},
-        onGameOver = {}
-    )
+        onGameOver = {})
 }
 
 @Preview(
@@ -588,9 +567,9 @@ fun GameScreenQuerPreview() {
 @Composable
 fun BattleSceneQuerPreview() {
     BattleScene(
-        layout = BattleSceneLayout(
-            enemyOnGroundOffsetY = 30,
-            playerOnGroundOffsetY = 30
+        layoutScene = BattleSceneLayout(
+            enemyOnGroundOffsetY = 17,
+            playerOnGroundOffsetY = 17
         ),
         playerName = "Felix",
         playerHp = 80,
