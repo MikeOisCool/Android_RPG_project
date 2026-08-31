@@ -10,6 +10,8 @@ import androidx.navigation.compose.rememberNavController
 import com.mikeo.mykotlinplayground.GameViewModel
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import android.app.Activity
+import androidx.compose.ui.platform.LocalContext
 import com.mikeo.mykotlinplayground.GameEvent
 
 @Composable
@@ -19,6 +21,7 @@ fun AppNavigation() {
     val topLogState = rememberLazyListState()
     val listState = rememberLazyListState()
     val quests by viewModel.quests.collectAsState()
+    val activity = LocalContext.current as? Activity
 
     NavHost(
         navController = navController,
@@ -31,6 +34,9 @@ fun AppNavigation() {
                 onNameEntered = { name ->
                     viewModel.startGame(name)
                     navController.navigate("game_screen")
+                },
+                onExitApp = {
+                    activity?.finish()
                 }
             )
         }
@@ -41,14 +47,18 @@ fun AppNavigation() {
                 listState = listState,
                 topLogState = topLogState,
                 onGameOver = {
-                    navController.navigate("game_over_screen")
+                    navController.navigate("game_over_screen") {
+                        popUpTo("game_screen") {
+                            inclusive = true
+                        }
+                    }
                 },
                 onInventory = {
                     navController.navigate("inventory_screen")
                 },
                 onExitGame = {
                     navController.navigate("start_screen") {
-                        popUpTo("start_screen") {
+                        popUpTo("game_screen") {
                             inclusive = true
                         }
                     }
@@ -97,7 +107,7 @@ fun AppNavigation() {
             val log by viewModel.log.collectAsState()
 
             LaunchedEffect(Unit) {
-                if(log.isNotEmpty()) {
+                if (log.isNotEmpty()) {
                     listState.animateScrollToItem(log.size - 1)
                 }
             }
@@ -112,9 +122,12 @@ fun AppNavigation() {
                 onRestart = {
                     viewModel.resetGame()
                     navController.navigate("start_screen") {
-                        popUpTo("start_screen") { inclusive = true }
+                        popUpTo("game_over_screen") { inclusive = true }
 
                     }
+                },
+                onExitApp = {
+                    activity?.finish()
                 }
             )
         }

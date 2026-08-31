@@ -38,6 +38,8 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 
 - Hinweis: Die Datumsangaben sind aus den Git-Commits abgeleitet. Sie zeigen, wann ein Feature oder Refactoring ins Repository gekommen ist.
 
+- 2026-08-31: App-Verlassen und Backstack-Verhalten verbessert; StartScreen und GameOverScreen koennen die App verlassen, GameOver entfernt den toten GameScreen aus dem Zurueck-Stapel.
+- 2026-08-31: Quest-Reset und Quest-Start mit ViewModel-Tests abgesichert; `resetGame` setzt Quests auf den Anfangskatalog zurueck und `StartQuest` startet nur die gewaehlte Quest.
 - 2026-08-31: Quest-Grundsystem begonnen; Quest-Datenmodell, Quest-Katalog, StartQuest-Event, Quest-State im ViewModel, Quest-Fortschritt nach besiegten Gegnern sowie QuestScreen mit Navigation aus Hoch- und Querformat vorbereitet.
 - 2026-08-20: BattleScene-Grafik verbessert; Himmel, Sonne/Wolken, Figuren-Schatten, Plattform-Boden und leichte Idle-Animation ergaenzt.
 - 2026-08-17: GameLogic schuetzt tote Spieler vor Ausruestungswechseln; Equip/Unequip fuer Waffen und Ruestungen wird bei Tod ignoriert und mit Tests abgesichert.
@@ -135,6 +137,8 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 - GameLogic-Tests fuer blockierte Ausruestungswechsel bei totem Spieler - hinzugefuegt am 2026-08-17
 - BattleScene-Grafik mit Himmel, Deko, Schatten, Plattform-Boden und leichter Idle-Animation - verbessert am 2026-08-20
 - Quest-Grundsystem mit QuestScreen, StartQuest-Event und Fortschritt fuer gestartete Quests - begonnen am 2026-08-31
+- Quest-Reset und Quest-Start-Verhalten im ViewModel getestet - hinzugefuegt am 2026-08-31
+- App-Verlassen ueber StartScreen und GameOverScreen sowie GameOver-Backstack verbessert - angepasst am 2026-08-31
 
 ## Item-Balancing
 

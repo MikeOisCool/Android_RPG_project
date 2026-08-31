@@ -31,7 +31,8 @@ fun GameOverScreen(
     log: List<String>,
     listState: LazyListState,
     onRestart: () -> Unit,
-    onInventory: () -> Unit
+    onInventory: () -> Unit,
+    onExitApp: () -> Unit
 ) {
     val textSize = 24.sp
     Column(
@@ -98,6 +99,15 @@ fun GameOverScreen(
             containerColor = Color.Black,
             onClick = onRestart
         )
+        GameButtonHoch(
+            text = "Spiel verlassen",
+            fontSize = 24.sp,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(70.dp),
+            containerColor = Color.Black,
+            onClick = onExitApp
+        )
         GameLog(log = log, listState = listState, textColor = Color.White)
     }
 }
@@ -130,6 +140,7 @@ fun GameOverScreenPreview() {
         ),
         listState = rememberLazyListState(),
         onRestart = {},
-        onInventory = {}
+        onInventory = {},
+        onExitApp = {}
     )
 }
