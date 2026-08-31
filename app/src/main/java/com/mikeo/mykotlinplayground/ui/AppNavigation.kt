@@ -10,6 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import com.mikeo.mykotlinplayground.GameViewModel
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import com.mikeo.mykotlinplayground.GameEvent
 
 @Composable
 fun AppNavigation() {
@@ -17,6 +18,7 @@ fun AppNavigation() {
     val viewModel: GameViewModel = viewModel()
     val topLogState = rememberLazyListState()
     val listState = rememberLazyListState()
+    val quests by viewModel.quests.collectAsState()
 
     NavHost(
         navController = navController,
@@ -53,6 +55,9 @@ fun AppNavigation() {
                 },
                 onShop = {
                     navController.navigate("shop_screen")
+                },
+                onQuest = {
+                    navController.navigate("quest_screen")
                 }
 
             )
@@ -75,6 +80,17 @@ fun AppNavigation() {
             )
         }
 
+        composable(route = "quest_screen") {
+            QuestScreen(
+                quests = quests,
+                onBackToGame = {
+                    navController.popBackStack()
+                },
+                onStartQuest = { quest ->
+                    viewModel.onEvent(GameEvent.StartQuest(quest))
+                }
+            )
+        }
 
         composable("game_over_screen") {
             val player by viewModel.player.collectAsState()

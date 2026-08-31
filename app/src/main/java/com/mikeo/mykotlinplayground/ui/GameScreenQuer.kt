@@ -49,7 +49,8 @@ fun GameScreenQuer(
     listState: LazyListState,
     onGameOver: () -> Unit,
     onInventory: () -> Unit,
-    onShop: () -> Unit
+    onShop: () -> Unit,
+    onQuest: () -> Unit
 ) {
     val player by viewModel.player.collectAsState()
     val log by viewModel.log.collectAsState()
@@ -111,6 +112,7 @@ fun GameScreenQuer(
             onUsePotion = { viewModel.onEvent(GameEvent.UsePotion()) },
             onUseBigPotion = { viewModel.onEvent(GameEvent.UseBigPotion()) },
             onShop = onShop,
+            onQuest = onQuest,
             onFlee = { viewModel.onEvent(GameEvent.Flee) })
 
         Row(
@@ -186,7 +188,7 @@ fun LandscapeMainPanel(
     onFlee: () -> Unit,
     onShop: () -> Unit,
     onInventory: () -> Unit,
-
+    onQuest: () -> Unit
     ) {
 
     Box(
@@ -275,6 +277,7 @@ fun LandscapeMainPanel(
                             onAttack = onAttack,
                             onFlee = onFlee,
                             onShop = onShop,
+                            onQuest = onQuest,
                             onInventory = {
                                 onInventory()
                             })
@@ -402,6 +405,7 @@ fun GameActionButtonsQuer(
     onAttack: () -> Unit,
     onFlee: () -> Unit,
     onShop: () -> Unit,
+    onQuest: () -> Unit,
     onInventory: () -> Unit
 ) {
 
@@ -418,7 +422,8 @@ fun GameActionButtonsQuer(
         onAttack = onAttack,
         onFlee = onFlee,
         onShop = onShop,
-        onInventory = onInventory
+        onInventory = onInventory,
+        onQuest = onQuest
     )
 }
 
@@ -467,6 +472,7 @@ fun MainActionButtonsQuer(
     onUseBigPotion: () -> Unit,
     onAttack: () -> Unit,
     onShop: () -> Unit,
+    onQuest: () -> Unit,
     onFlee: () -> Unit,
     onInventory: () -> Unit
 ) {
@@ -508,14 +514,21 @@ fun MainActionButtonsQuer(
             modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Box(
-                modifier = Modifier.padding(end = 25.dp)
+                modifier = Modifier.padding(end = 2.dp)
             ) {
                 GameButtonQuer(
-                    text = "Inventar", onClick = onInventory
+                    text = "Zeug", onClick = onInventory
                 )
             }
             Box(
-                modifier = Modifier.padding(end = 25.dp)
+                modifier = Modifier.padding(end = 2.dp)
+            ) {
+                GameButtonQuer(
+                    text = "Quest", onClick = onQuest
+                )
+            }
+            Box(
+                modifier = Modifier.padding(end = 2.dp)
             ) {
                 GameButtonQuer(
                     text = "Shop", onClick = onShop
@@ -556,6 +569,7 @@ fun GameScreenQuerPreview() {
         listState = rememberLazyListState(),
         onInventory = {},
         onShop = {},
+        onQuest = {},
         onGameOver = {})
 }
 

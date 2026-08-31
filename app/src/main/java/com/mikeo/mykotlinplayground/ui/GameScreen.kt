@@ -25,6 +25,7 @@ fun GameScreen(
     onGameOver: () -> Unit,
     onInventory: () -> Unit,
     onShop: () -> Unit,
+    onQuest: () -> Unit,
     onExitGame: () -> Unit
 ) {
 
@@ -78,7 +79,8 @@ fun GameScreen(
             listState = listState,
             onGameOver = onGameOver,
             onInventory = onInventory,
-            onShop = onShop
+            onShop = onShop,
+            onQuest = onQuest
         )
     } else {
         GameScreenHoch(
@@ -86,8 +88,8 @@ fun GameScreen(
             listState = listState,
             onGameOver = onGameOver,
             onInventory = onInventory,
-            onShop = onShop
-
+            onShop = onShop,
+            onQuest = onQuest
         )
     }
 }

@@ -296,28 +296,6 @@ fun ShopInventorySection(
 }
 
 @Composable
-fun ShopButton(
-    text: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-        .fillMaxWidth(0.7f)
-        .height(65.dp)
-) {
-    Button(
-        onClick = onClick,
-        modifier = modifier,
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
-    ) {
-        Text(
-            text = text,
-            fontSize = 16.sp,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
-        )
-    }
-}
-
-@Composable
 fun PotionSellText(
     item: Item,
     playerLevel: Int,

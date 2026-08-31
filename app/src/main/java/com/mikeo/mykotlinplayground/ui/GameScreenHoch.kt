@@ -44,7 +44,8 @@ fun GameScreenHoch(
     listState: LazyListState,
     onGameOver: () -> Unit,
     onInventory: () -> Unit,
-    onShop: () -> Unit
+    onShop: () -> Unit,
+    onQuest: () -> Unit
 ) {
     val player by viewModel.player.collectAsState()
     val log by viewModel.log.collectAsState()
@@ -117,6 +118,7 @@ fun GameScreenHoch(
                     canClickAttackButton = canClickAttackButton,
                     onInventory = onInventory,
                     onShop = onShop,
+                    onQuest = onQuest,
                     onAttack = onAttack,
                     onTakeDamage = { viewModel.onEvent(GameEvent.TakeDamage()) },
                     onAddGold = { viewModel.onEvent(GameEvent.AddGold()) },
@@ -169,6 +171,7 @@ fun GameActionButtons(
     canClickAttackButton: Boolean,
     onInventory: () -> Unit,
     onShop: () -> Unit,
+    onQuest: () -> Unit,
     onAttack: () -> Unit,
     onTakeDamage: () -> Unit,
     onAddGold: () -> Unit,
@@ -188,6 +191,10 @@ fun GameActionButtons(
         )
     }
     Row {
+        GameButtonHoch(
+            text = "Quest", onClick = onQuest
+        )
+
         GameButtonHoch(
             text = "Heilen", onClick = onHeal
         )
@@ -318,7 +325,9 @@ fun GameScreenHochPreview() {
         listState = rememberLazyListState(),
         onGameOver = {},
         onInventory = {},
-        onShop = {})
+        onShop = {},
+        onQuest = {}
+    )
 }
 
 @Preview(
