@@ -217,6 +217,9 @@ fun handleEvent(
                 xpToNextLevel = newXpToNextLevel
             )
         }
+        is GameEvent.StartQuest -> {
+            player
+        }
     }
 }
 

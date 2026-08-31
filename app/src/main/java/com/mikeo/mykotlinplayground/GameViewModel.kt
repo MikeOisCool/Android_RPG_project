@@ -3,6 +3,7 @@ package com.mikeo.mykotlinplayground
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mikeo.mykotlinplayground.QuestName.allQuests
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,6 +22,8 @@ class GameViewModel : ViewModel() {
     )
     private val _player = MutableStateFlow(initialPlayer)
     private val _log = MutableStateFlow<List<String>>(emptyList())
+    private val _quest = MutableStateFlow(QuestName.allQuests)
+    val quests: StateFlow<List<Quest>> = _quest
 
     val log: StateFlow<List<String>> = _log
     val player: StateFlow<Player> = _player
@@ -230,6 +233,16 @@ class GameViewModel : ViewModel() {
                     addLog(sellItemLog(event.item, sellPriceItem))
                 }
             }
+
+            is GameEvent.StartQuest -> {
+                _quest.value = _quest.value.map { quest ->
+                    if (quest.targetEnemyName == event.quest.targetEnemyName) {
+                        quest.copy(isStarted = true)
+                    } else {
+                        quest
+                    }
+                }
+            }
         }
     }
 
@@ -423,10 +436,46 @@ class GameViewModel : ViewModel() {
         if (_player.value.isDead) return
 
         addLog("🏆 ${enemy.name} wurde besiegt!")
+
+        _quest.value = _quest.value.map { quest ->
+            updateQuestProgress(enemy, quest)
+        }
+
         handlePotionDrops()
         handleEquipmentDrops()
         rewardPlayer(enemy)
         spawnNextEnemy()
+    }
+
+    private fun updateQuestProgress(
+        enemy: Enemy,
+        questName: Quest
+    ): Quest {
+        var updatedQuest = questName
+        if (!updatedQuest.isStarted) return updatedQuest
+
+        if (_player.value.isDead) return updatedQuest
+        if (enemy.name != updatedQuest.targetEnemyName) return updatedQuest
+        updatedQuest = updatedQuest.copy(currentAmount = updatedQuest.currentAmount + 1)
+
+        if (updatedQuest.isCompleted) {
+            addLog("❤️ Quest: ${updatedQuest.title} ist abgeschlossen! Du hast ${updatedQuest.currentAmount} von ${updatedQuest.targetAmount} besiegt.")
+            updatedQuest = updatedQuest.copy(isStarted = false)
+            applyEvent(GameEvent.GainXp(updatedQuest.xpReward))
+            applyEvent(GameEvent.AddGold(updatedQuest.goldReward))
+            addLog("Quest Belohnung 💰 +${updatedQuest.goldReward} Gold")
+            addLog("Quest Belohnung 🔥 +${updatedQuest.xpReward} XP")
+            updatedQuest = updatedQuest.copy(
+                currentAmount = 0,
+                targetAmount = updatedQuest.targetAmount * 2,
+                goldReward = updatedQuest.goldReward * 2,
+                xpReward = updatedQuest.xpReward * 2
+            )
+            return updatedQuest
+        } else {
+            addLog("❤️ Quest: ${updatedQuest.title} (${updatedQuest.currentAmount}/${updatedQuest.targetAmount})")
+            return updatedQuest
+        }
     }
 
     private fun rewardPlayer(enemy: Enemy) {

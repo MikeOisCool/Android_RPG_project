@@ -30,5 +30,7 @@ sealed class GameEvent {
 
     data class BuyItem(val item: Item) : GameEvent()
     data class SellItem(val item: Item) : GameEvent()
+
+    data class StartQuest(val quest: Quest) : GameEvent()
 }
 
