@@ -35,8 +35,8 @@ object QuestName {
             xpReward = 100
         ),
         Quest(
-            title = "Finde Drachen",
-            targetEnemyName = "Dragon",
+            title = "Finde den Stier",
+            targetEnemyName = "Stier",
             targetAmount = 1,
             currentAmount = 0,
             goldReward = 500,

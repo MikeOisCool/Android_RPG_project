@@ -612,5 +612,6 @@ class GameViewModel : ViewModel() {
         clearHitTextJob = null
         _attackInProgress.value = false
         healingInProgress = false
+        _quest.value = QuestName.allQuests
     }
 }

@@ -6,7 +6,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 
 
-
 class GameViewModelTest {
 
     @Test
@@ -46,4 +45,33 @@ class GameViewModelTest {
         assertEquals(logSizeBeforeAttack, viewModel.log.value.size)
     }
 
+    @Test
+    fun resetGameResetsStartedQuests() {
+        val wolfQuest = QuestName.allQuests.first {
+            it.targetEnemyName == "Wolf"
+        }
+
+        val viewModel = GameViewModel()
+
+        viewModel.onEvent(GameEvent.StartQuest(QuestName.allQuests.first()))
+        viewModel.onEvent(GameEvent.StartQuest(QuestName.allQuests.last()))
+        viewModel.onEvent(GameEvent.StartQuest(wolfQuest))
+
+        viewModel.resetGame()
+
+        assertTrue(viewModel.quests.value.none { it.isStarted })
+    }
+
+    @Test
+    fun startQuestStartsOnlySelectedQuest() {
+        val goblinQuest = QuestName.allQuests.first { it.targetEnemyName == "Goblin" }
+
+        val viewModel = GameViewModel()
+
+
+        viewModel.onEvent(GameEvent.StartQuest(goblinQuest))
+
+        assertTrue(viewModel.quests.value.first { it.targetEnemyName == "Goblin" }.isStarted)
+        assertFalse(viewModel.quests.value.first { it.targetEnemyName == "Stier" }.isStarted)
+    }
 }
