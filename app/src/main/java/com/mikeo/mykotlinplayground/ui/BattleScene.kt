@@ -68,6 +68,7 @@ fun BattleScene(
     playerAttacks: Boolean = false,
     enemyAttacks: Boolean = false,
     onEnemyClick: () -> Unit = {},
+    onSunClick: () -> Unit = {},
     modifier: Modifier = Modifier
         .width(400.dp)
         .height(230.dp)
@@ -101,7 +102,8 @@ fun BattleScene(
                 cloudCenterOffsetX = layoutSky.cloudCenterOffsetX,
                 sunSize = layoutSky.sunSize,
                 cloudStartSize = layoutSky.cloudStartSize,
-                cloudCenterSize = layoutSky.cloudCenterSize
+                cloudCenterSize = layoutSky.cloudCenterSize,
+                onSunClick = onSunClick
             )
 
             BattleHpHeader(
@@ -182,14 +184,16 @@ fun BoxScope.BattleSkyDecorations(
     cloudCenterOffsetX: Int,
     sunSize: Int,
     cloudStartSize: Int,
-    cloudCenterSize: Int
+    cloudCenterSize: Int,
+    onSunClick: () -> Unit = {}
 ) {
     // Sonne
     Text(
         text = "☀️",
         modifier = Modifier
             .align(Alignment.Center)
-            .offset(x = sunOffsetX.dp, y = sunOffsetY.dp),
+            .offset(x = sunOffsetX.dp, y = sunOffsetY.dp)
+            .clickable { onSunClick() },
         fontSize = sunSize.sp
     )
 

@@ -64,6 +64,12 @@ fun GameScreenHoch(
             viewModel.onEvent(GameEvent.AttackEnemy)
         }
     }
+    val onFlee = {
+        if (canClickAttackButton) {
+            viewModel.onEvent(GameEvent.Flee)
+        }
+    }
+
     val potionBigAmount = player.inventory.items.find {
         it.name == ItemNamen.GROSSER_HEILTRANK
     }?.amount ?: 0
@@ -136,7 +142,8 @@ fun GameScreenHoch(
                 EnemyStatsBlockHoch(enemy = enemy)
 
                 GameButtonHoch(
-                    text = "Fliehen", onClick = { viewModel.onEvent(GameEvent.Flee) })
+                    text = "Fliehen", onClick = onFlee
+                )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -159,6 +166,7 @@ fun GameScreenHoch(
                     rightBattleText = rightBattleText,
                     leftBattleText = leftBattleText,
                     onEnemyClick = onAttack,
+                    onSunClick = onFlee,
                     modifier = Modifier
                         .fillMaxWidth(0.9f)
                         .height(230.dp)

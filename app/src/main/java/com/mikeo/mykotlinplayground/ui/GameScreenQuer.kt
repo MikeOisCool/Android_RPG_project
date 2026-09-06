@@ -70,6 +70,12 @@ fun GameScreenQuer(
             viewModel.onEvent(GameEvent.AttackEnemy)
         }
     }
+    val onFlee = {
+        if (canClickAttackButton) {
+            viewModel.onEvent(GameEvent.Flee)
+        }
+    }
+
 
     LaunchedEffect(log.size) {
         if (log.isNotEmpty()) {
@@ -116,7 +122,8 @@ fun GameScreenQuer(
             onUseBigPotion = { viewModel.onEvent(GameEvent.UseBigPotion()) },
             onShop = onShop,
             onQuest = onQuest,
-            onFlee = { viewModel.onEvent(GameEvent.Flee) })
+            onFlee = onFlee
+        )
 
         Row(
             modifier = Modifier
@@ -165,6 +172,7 @@ fun GameScreenQuer(
                 rightBattleText = rightBattleText,
                 leftBattleText = leftBattleText,
                 onEnemyClick = onAttack,
+                onSunClick = onFlee,
                 modifier = Modifier
                     .weight(1f)
                     .height(400.dp)
@@ -193,7 +201,7 @@ fun LandscapeMainPanel(
     onShop: () -> Unit,
     onInventory: () -> Unit,
     onQuest: () -> Unit
-    ) {
+) {
 
     Box(
         modifier = Modifier
@@ -414,11 +422,11 @@ fun GameActionButtonsQuer(
     onQuest: () -> Unit,
     onInventory: () -> Unit
 ) {
-if (debugMode) {
-    DebugActionButtonsQuer(
-        onTakeDamage = onTakeDamage, onAddGold = onAddGold, onHeal = onHeal, onGainXp = onGainXp
-    )
-}
+    if (debugMode) {
+        DebugActionButtonsQuer(
+            onTakeDamage = onTakeDamage, onAddGold = onAddGold, onHeal = onHeal, onGainXp = onGainXp
+        )
+    }
 
     MainActionButtonsQuer(
         potionAmount = potionAmount,

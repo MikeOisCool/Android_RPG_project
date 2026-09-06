@@ -38,6 +38,7 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 
 - Hinweis: Die Datumsangaben sind aus den Git-Commits abgeleitet. Sie zeigen, wann ein Feature oder Refactoring ins Repository gekommen ist.
 
+- 2026-09-06: BattleScene erweitert; die Sonne kann als zusaetzlicher Fliehen-Ausloeser genutzt werden und ist in Hoch- und Querformat angebunden.
 - 2026-09-06: Debug-Aktionen hinter einem Secret-Modus vorbereitet; die Debug-Buttons werden nur sichtbar, wenn der Startname das Secret aktiviert.
 - 2026-08-31: App-Verlassen und Backstack-Verhalten verbessert; StartScreen und GameOverScreen koennen die App verlassen, GameOver entfernt den toten GameScreen aus dem Zurueck-Stapel.
 - 2026-08-31: Quest-Reset und Quest-Start mit ViewModel-Tests abgesichert; `resetGame` setzt Quests auf den Anfangskatalog zurueck und `StartQuest` startet nur die gewaehlte Quest.
@@ -141,6 +142,7 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 - Quest-Reset und Quest-Start-Verhalten im ViewModel getestet - hinzugefuegt am 2026-08-31
 - App-Verlassen ueber StartScreen und GameOverScreen sowie GameOver-Backstack verbessert - angepasst am 2026-08-31
 - Debug-Modus fuer Entwickleraktionen per Startnamen-Secret - vorbereitet am 2026-09-06
+- Sonne in der BattleScene als Fliehen-Ausloeser in Hoch- und Querformat - hinzugefuegt am 2026-09-06
 
 ## Item-Balancing
 
