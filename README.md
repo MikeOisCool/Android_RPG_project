@@ -38,6 +38,7 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 
 - Hinweis: Die Datumsangaben sind aus den Git-Commits abgeleitet. Sie zeigen, wann ein Feature oder Refactoring ins Repository gekommen ist.
 
+- 2026-09-06: GameOverScreen fuer Querformat verbessert; der Screen ist scrollbar und nutzt kompaktere Abstaende, Buttonhoehen und Log-Hoehe im Landscape-Modus.
 - 2026-09-06: BattleScene erweitert; die Sonne kann als zusaetzlicher Fliehen-Ausloeser genutzt werden und ist in Hoch- und Querformat angebunden.
 - 2026-09-06: Debug-Aktionen hinter einem Secret-Modus vorbereitet; die Debug-Buttons werden nur sichtbar, wenn der Startname das Secret aktiviert.
 - 2026-08-31: App-Verlassen und Backstack-Verhalten verbessert; StartScreen und GameOverScreen koennen die App verlassen, GameOver entfernt den toten GameScreen aus dem Zurueck-Stapel.
@@ -143,6 +144,7 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 - App-Verlassen ueber StartScreen und GameOverScreen sowie GameOver-Backstack verbessert - angepasst am 2026-08-31
 - Debug-Modus fuer Entwickleraktionen per Startnamen-Secret - vorbereitet am 2026-09-06
 - Sonne in der BattleScene als Fliehen-Ausloeser in Hoch- und Querformat - hinzugefuegt am 2026-09-06
+- GameOverScreen im Querformat scrollbar und kompakter dargestellt - verbessert am 2026-09-06
 
 ## Item-Balancing
 
