@@ -51,6 +51,7 @@ fun GameButtonHoch(
 @Composable
 fun GameButtonQuer(
     text: String,
+    fontSize: TextUnit = 15.sp,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     containerColor: Color = MaterialTheme.colorScheme.primary
@@ -73,7 +74,7 @@ fun GameButtonQuer(
     ) {
         Text(
             text = text,
-            fontSize = 18.sp,
+            fontSize = fontSize,
             maxLines = 1
         )
     }

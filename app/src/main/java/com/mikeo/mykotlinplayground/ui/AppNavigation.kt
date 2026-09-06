@@ -1,18 +1,21 @@
 package com.mikeo.mykotlinplayground.ui
 
+import android.app.Activity
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.mikeo.mykotlinplayground.GameViewModel
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import android.app.Activity
-import androidx.compose.ui.platform.LocalContext
 import com.mikeo.mykotlinplayground.GameEvent
+import com.mikeo.mykotlinplayground.GameViewModel
 
 @Composable
 fun AppNavigation() {
@@ -22,6 +25,7 @@ fun AppNavigation() {
     val listState = rememberLazyListState()
     val quests by viewModel.quests.collectAsState()
     val activity = LocalContext.current as? Activity
+    var debugMode by rememberSaveable { mutableStateOf(false) }
 
     NavHost(
         navController = navController,
@@ -32,6 +36,7 @@ fun AppNavigation() {
             StartScreen(
                 startName = player.name,
                 onNameEntered = { name ->
+                    debugMode = name.trim() == "Felixdebug"
                     viewModel.startGame(name)
                     navController.navigate("game_screen")
                 },
@@ -43,6 +48,7 @@ fun AppNavigation() {
 
         composable("game_screen") {
             GameScreen(
+                debugMode = debugMode,
                 viewModel = viewModel,
                 listState = listState,
                 topLogState = topLogState,

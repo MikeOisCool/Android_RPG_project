@@ -26,6 +26,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -44,6 +45,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun GameScreenQuer(
+    debugMode: Boolean,
     viewModel: GameViewModel,
     topLogState: LazyListState,
     listState: LazyListState,
@@ -98,6 +100,7 @@ fun GameScreenQuer(
     ) {
 
         LandscapeMainPanel(
+            debugMode = debugMode,
             player = player,
             enemy = enemy,
             log = log,
@@ -173,6 +176,7 @@ fun GameScreenQuer(
 
 @Composable
 fun LandscapeMainPanel(
+    debugMode: Boolean,
     player: Player,
     enemy: Enemy,
     log: List<String>,
@@ -265,6 +269,7 @@ fun LandscapeMainPanel(
                                 ?: 0
 
                         GameActionButtonsQuer(
+                            debugMode = debugMode,
                             potionAmount = potionAmount,
                             potionBigAmount = potionBigAmount,
                             canClickAttackButton = canClickAttackButton,
@@ -393,6 +398,7 @@ fun PlayerStatsBlockQuer(
 
 @Composable
 fun GameActionButtonsQuer(
+    debugMode: Boolean,
     potionAmount: Int,
     potionBigAmount: Int,
     canClickAttackButton: Boolean,
@@ -408,10 +414,11 @@ fun GameActionButtonsQuer(
     onQuest: () -> Unit,
     onInventory: () -> Unit
 ) {
-
+if (debugMode) {
     DebugActionButtonsQuer(
         onTakeDamage = onTakeDamage, onAddGold = onAddGold, onHeal = onHeal, onGainXp = onGainXp
     )
+}
 
     MainActionButtonsQuer(
         potionAmount = potionAmount,
@@ -492,11 +499,17 @@ fun MainActionButtonsQuer(
     }
 
     Box(
-        modifier = Modifier.padding(end = 25.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(end = 25.dp),
+        contentAlignment = Alignment.Center
     ) {
         GameButtonQuer(
             text = "Angreifen",
-            modifier = Modifier.fillMaxWidth(),
+            fontSize = 20.sp,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(70.dp),
             containerColor = if (canClickAttackButton) Color.Red else Color(
                 0xff9e9e9e
             ),
@@ -507,7 +520,9 @@ fun MainActionButtonsQuer(
             })
     }
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(end = 25.dp),
 
         ) {
         Row(
@@ -540,8 +555,7 @@ fun MainActionButtonsQuer(
             text = "Fliehen",
             onClick = onFlee,
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(end = 25.dp),
+                .fillMaxWidth(),
         )
     }
 }
@@ -564,6 +578,7 @@ fun GameScreenQuerPreview() {
     viewModel.fillPreviewLog()
 
     GameScreenQuer(
+        debugMode = true,
         viewModel = viewModel,
         topLogState = rememberLazyListState(),
         listState = rememberLazyListState(),

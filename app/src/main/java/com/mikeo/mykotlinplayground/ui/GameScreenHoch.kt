@@ -40,6 +40,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun GameScreenHoch(
+    debugMode: Boolean,
     viewModel: GameViewModel,
     listState: LazyListState,
     onGameOver: () -> Unit,
@@ -88,7 +89,8 @@ fun GameScreenHoch(
         enemyHp = enemy.hp,
         onPlayerAttackFinished = { playerAttacks = false },
         onEnemyAttackStarted = { enemyAttacks = true },
-        onEnemyAttackFinished = { enemyAttacks = false })
+        onEnemyAttackFinished = { enemyAttacks = false }
+    )
 
     Column(
         modifier = Modifier
@@ -115,6 +117,7 @@ fun GameScreenHoch(
             ) {
 
                 GameActionButtons(
+                    debugMode = debugMode,
                     canClickAttackButton = canClickAttackButton,
                     onInventory = onInventory,
                     onShop = onShop,
@@ -168,6 +171,7 @@ fun GameScreenHoch(
 
 @Composable
 fun GameActionButtons(
+    debugMode: Boolean,
     canClickAttackButton: Boolean,
     onInventory: () -> Unit,
     onShop: () -> Unit,
@@ -182,32 +186,35 @@ fun GameActionButtons(
     potionBigAmount: Int,
     potionAmount: Int
 ) {
-    Row {
-        GameButtonHoch(
-            text = "Take Damage", onClick = { onTakeDamage() })
+    if(debugMode) {
+        Row {
+            GameButtonHoch(
+                text = "Take Damage", onClick = { onTakeDamage() })
 
-        GameButtonHoch(
-            text = "Add Gold", onClick = onAddGold
-        )
+            GameButtonHoch(
+                text = "Add Gold", onClick = onAddGold
+            )
+        }
     }
     Row {
         GameButtonHoch(
             text = "Quest", onClick = onQuest
         )
-
-        GameButtonHoch(
-            text = "Heilen", onClick = onHeal
-        )
-
+if(debugMode) {
+    GameButtonHoch(
+        text = "Heilen", onClick = onHeal
+    )
+}
         GameButtonHoch(
             text = "Big Heal (${potionBigAmount})", onClick = onUseBigPotion
         )
     }
 
     Row {
-        GameButtonHoch(
-            text = "XP sammeln", onClick = { onGainXp() })
-
+        if(debugMode) {
+            GameButtonHoch(
+                text = "XP sammeln", onClick = { onGainXp() })
+        }
         GameButtonHoch(
             text = "Shop öffnen", onClick = {
                 onShop()
@@ -321,6 +328,7 @@ fun PlayerStatsBlock(
 @Composable
 fun GameScreenHochPreview() {
     GameScreenHoch(
+        debugMode = true,
         viewModel = GameViewModel(),
         listState = rememberLazyListState(),
         onGameOver = {},

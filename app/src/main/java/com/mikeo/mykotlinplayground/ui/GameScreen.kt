@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 @Composable
 fun GameScreen(
     viewModel: GameViewModel = viewModel(),
+    debugMode: Boolean,
     listState: LazyListState,
     topLogState: LazyListState,
     onGameOver: () -> Unit,
@@ -74,6 +75,7 @@ fun GameScreen(
 
     if (isLandscape) {
         GameScreenQuer(
+            debugMode = debugMode,
             viewModel = viewModel,
             topLogState = topLogState,
             listState = listState,
@@ -84,6 +86,7 @@ fun GameScreen(
         )
     } else {
         GameScreenHoch(
+            debugMode = debugMode,
             viewModel = viewModel,
             listState = listState,
             onGameOver = onGameOver,
