@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.mikeo.mykotlinplayground"
+    namespace = "com.mikeo.felixquest"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.mikeo.mykotlinplayground"
+        applicationId = "com.mikeo.felixquest"
         minSdk = 26
         targetSdk = 36
         versionCode = 1

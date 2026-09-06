@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "MyKotlinPlayground"
+rootProject.name = "FelixQuest"
 include(":app")
  

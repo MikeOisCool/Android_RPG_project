@@ -10,7 +10,7 @@ Wichtig ist dabei: Michael moechte die Konzepte wirklich verstehen und nicht nur
 
 ## Arbeitsregeln fuer Codex
 
-Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
+Projektpfad: `C:\Users\acer\AndroidStudioProjects\FelixQuest`
 
 - Der Nutzer moechte Kotlin/Jetpack Compose selbst lernen und Code-Dateien selbst schreiben.
 - Codex soll keine Code-Dateien direkt aendern, ausser der Nutzer bittet ausdruecklich darum.
@@ -38,6 +38,7 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 
 - Hinweis: Die Datumsangaben sind aus den Git-Commits abgeleitet. Sie zeigen, wann ein Feature oder Refactoring ins Repository gekommen ist.
 
+- 2026-09-06: App vor dem Play-Store-Test auf Felix Quest umbenannt; `applicationId`, `namespace`, Packages, Test-Packages, Theme-Name und Gradle-Projektname nutzen jetzt `com.mikeo.felixquest` bzw. `FelixQuest`.
 - 2026-09-06: GameOverScreen fuer Querformat verbessert; der Screen ist scrollbar und nutzt kompaktere Abstaende, Buttonhoehen und Log-Hoehe im Landscape-Modus.
 - 2026-09-06: BattleScene erweitert; die Sonne kann als zusaetzlicher Fliehen-Ausloeser genutzt werden und ist in Hoch- und Querformat angebunden.
 - 2026-09-06: Debug-Aktionen hinter einem Secret-Modus vorbereitet; die Debug-Buttons werden nur sichtbar, wenn der Startname das Secret aktiviert.
@@ -145,6 +146,7 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\MyKotlinPlayground`
 - Debug-Modus fuer Entwickleraktionen per Startnamen-Secret - vorbereitet am 2026-09-06
 - Sonne in der BattleScene als Fliehen-Ausloeser in Hoch- und Querformat - hinzugefuegt am 2026-09-06
 - GameOverScreen im Querformat scrollbar und kompakter dargestellt - verbessert am 2026-09-06
+- App-ID, Namespace, Packages und Projektname fuer Felix Quest umbenannt - angepasst am 2026-09-06
 
 ## Item-Balancing
 
