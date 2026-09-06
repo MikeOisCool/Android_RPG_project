@@ -147,6 +147,7 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\FelixQuest`
 - Sonne in der BattleScene als Fliehen-Ausloeser in Hoch- und Querformat - hinzugefuegt am 2026-09-06
 - GameOverScreen im Querformat scrollbar und kompakter dargestellt - verbessert am 2026-09-06
 - App-ID, Namespace, Packages und Projektname fuer Felix Quest umbenannt - angepasst am 2026-09-06
+- GameScreenHoch ohne Debug-Modus optisch ausgeglichen - verbessert am 2026-09-06
 
 ## Item-Balancing
 

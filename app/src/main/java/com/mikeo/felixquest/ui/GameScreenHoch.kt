@@ -105,12 +105,13 @@ fun GameScreenHoch(
             .clip(RoundedCornerShape(48.dp))
             .background(Color(0xFF4CAF50))
             .verticalScroll(scrollState),
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxWidth()
         ) {
 
             GameLog(log = log, listState = listState, modifier = Modifier.height(110.dp))
@@ -142,40 +143,43 @@ fun GameScreenHoch(
                 EnemyStatsBlockHoch(enemy = enemy)
 
                 GameButtonHoch(
-                    text = "Fliehen", onClick = onFlee
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                BattleScene(
-                    layoutScene = BattleSceneLayout(
-                        playerOnGroundOffsetY = 10,
-                        playerAttackMoveX = 180,
-                        enemyOnGroundOffsetY = 10,
-                        enemyAttackMoveX = 180
-                    ),
-                    layoutSky = BattleSkyLayout(),
-                    playerName = player.name,
-                    playerHp = player.hp,
-                    playerMaxHp = player.maxHp,
-                    enemyName = enemy.name,
-                    enemyHp = enemy.hp,
-                    enemyMaxHp = enemy.maxHp,
-                    playerAttacks = playerAttacks,
-                    enemyAttacks = enemyAttacks,
-                    rightBattleText = rightBattleText,
-                    leftBattleText = leftBattleText,
-                    onEnemyClick = onAttack,
-                    onSunClick = onFlee,
-                    modifier = Modifier
-                        .fillMaxWidth(0.9f)
-                        .height(230.dp)
-                        .padding(bottom = 16.dp)
+                    text = "Fliehen",
+                    fontSize = 24.sp,
+                    onClick = onFlee
                 )
             }
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        BattleScene(
+            layoutScene = BattleSceneLayout(
+                playerOnGroundOffsetY = 10,
+                playerAttackMoveX = 180,
+                enemyOnGroundOffsetY = 10,
+                enemyAttackMoveX = 180
+            ),
+            layoutSky = BattleSkyLayout(),
+            playerName = player.name,
+            playerHp = player.hp,
+            playerMaxHp = player.maxHp,
+            enemyName = enemy.name,
+            enemyHp = enemy.hp,
+            enemyMaxHp = enemy.maxHp,
+            playerAttacks = playerAttacks,
+            enemyAttacks = enemyAttacks,
+            rightBattleText = rightBattleText,
+            leftBattleText = leftBattleText,
+            onEnemyClick = onAttack,
+            onSunClick = onFlee,
+            modifier = Modifier
+                .fillMaxWidth(0.9f)
+                .height(230.dp)
+                .padding(bottom = 16.dp)
+        )
     }
 }
+
 
 @Composable
 fun GameActionButtons(
@@ -194,10 +198,16 @@ fun GameActionButtons(
     potionBigAmount: Int,
     potionAmount: Int
 ) {
-    if(debugMode) {
+
+    val attackButtonHeight = if (debugMode) 70.dp else 85.dp
+    val normalButtonFontSize = if (debugMode) 18.sp else 20.sp
+    val attackButtonFontSize = if (debugMode) 24.sp else 24.sp
+
+    if (debugMode) {
         Row {
             GameButtonHoch(
-                text = "Take Damage", onClick = { onTakeDamage() })
+                text = "Take Damage",
+                onClick = { onTakeDamage() })
 
             GameButtonHoch(
                 text = "Add Gold", onClick = onAddGold
@@ -206,25 +216,32 @@ fun GameActionButtons(
     }
     Row {
         GameButtonHoch(
-            text = "Quest", onClick = onQuest
+            text = "Quest",
+            fontSize = normalButtonFontSize,
+            onClick = onQuest
         )
-if(debugMode) {
-    GameButtonHoch(
-        text = "Heilen", onClick = onHeal
-    )
-}
+        if (debugMode) {
+            GameButtonHoch(
+                text = "Heilen",
+                onClick = onHeal
+            )
+        }
         GameButtonHoch(
-            text = "Big Heal (${potionBigAmount})", onClick = onUseBigPotion
+            text = "Big Heal (${potionBigAmount})",
+            fontSize = normalButtonFontSize,
+            onClick = onUseBigPotion
         )
     }
 
     Row {
-        if(debugMode) {
+        if (debugMode) {
             GameButtonHoch(
                 text = "XP sammeln", onClick = { onGainXp() })
         }
         GameButtonHoch(
-            text = "Shop öffnen", onClick = {
+            text = "Shop öffnen",
+            fontSize = normalButtonFontSize,
+            onClick = {
                 onShop()
             })
     }
@@ -235,21 +252,25 @@ if(debugMode) {
     ) {
 
         GameButtonHoch(
-            text = "Heiltrank (${potionAmount})", onClick = {
+            text = "Heiltrank (${potionAmount})",
+            fontSize = normalButtonFontSize,
+            onClick = {
                 onUsePotion()
             })
 
         GameButtonHoch(
-            text = "Inventar öffnen", onClick = {
+            text = "Inventar öffnen",
+            fontSize = normalButtonFontSize,
+            onClick = {
                 onInventory()
             })
     }
     GameButtonHoch(
         text = "Angreifen",
-        fontSize = 24.sp,
+        fontSize = attackButtonFontSize,
         modifier = Modifier
             .fillMaxWidth(0.7f)
-            .height(70.dp),
+            .height(attackButtonHeight),
         containerColor = if (canClickAttackButton) Color.Red else Color(0xff9e9e9e),
         onClick = onAttack
     )
@@ -361,5 +382,5 @@ fun BattleScenePreview() {
         enemyName = "Wolf",
         enemyHp = 20,
         enemyMaxHp = 30
-        )
+    )
 }

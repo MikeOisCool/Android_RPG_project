@@ -22,7 +22,7 @@ fun GameButtonHoch(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    fontSize: TextUnit = 15.sp,
+    fontSize: TextUnit = 18.sp,
     containerColor: Color = MaterialTheme.colorScheme.primary
 ) {
     Button(
