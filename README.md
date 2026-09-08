@@ -32,14 +32,17 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\FelixQuest`
 - Codex soll aber wieder langsamer werden, wenn ein neues Kotlin/Compose-Konzept auftaucht, z.B. `remember`, `by`, `LaunchedEffect`, `Modifier`, `StateFlow` oder Testaufbau.
 - Codex soll vor dem naechsten Arbeitsschritt kurz sagen, welchen Schritt es vorschlaegt und warum, damit Michael entscheiden kann, ob dieses Thema jetzt dran ist oder ob ein anderes Thema sinnvoller ist.
 - Codex soll darauf achten, nicht zu viele gleichartige Refactor-Schritte direkt hintereinander vorzuschlagen, wenn sie thematisch besser in einen vorherigen Commit gepasst haetten.
+- Vor der ersten Play-Store-Erstellung einer neuen App soll Codex Michael daran erinnern, App-Name, Entwickler-/Store-Brand und Paketname/Application-ID bewusst festzulegen. Der Paketname ist fuer Nutzer kaum sichtbar, aber technisch dauerhaft wichtig fuer Google Play, Updates und Eindeutigkeit. Empfehlung: klein geschrieben und im Domain-Stil, z.B. `com.ouazzaniapps.felixquest`.
 - In neuen Chats zuerst diese Arbeitsregeln lesen.
 
 ## Aenderungsverlauf, neueste Eintraege zuerst
 
 - Hinweis: Die Datumsangaben sind aus den Git-Commits abgeleitet. Sie zeigen, wann ein Feature oder Refactoring ins Repository gekommen ist.
 
+
+- 2026-09-08: Paketname/Application-ID fuer den Play-Store-Start auf OuazzaniApps umgestellt; `namespace`, `applicationId`, Kotlin-Packages, Imports und Test-Packages nutzen jetzt `com.ouazzaniapps.felixquest`.
 - 2026-09-06: Eigenes Felix-Quest-App-Icon vorbereitet; Launcher-Hintergrund und Vordergrund ersetzen das Android-Standardicon.
-- 2026-09-06: App vor dem Play-Store-Test auf Felix Quest umbenannt; `applicationId`, `namespace`, Packages, Test-Packages, Theme-Name und Gradle-Projektname nutzen jetzt `com.mikeo.felixquest` bzw. `FelixQuest`.
+- 2026-09-06: App vor dem Play-Store-Test auf Felix Quest umbenannt; App-Name, Packages, Test-Packages, Theme-Name und Gradle-Projektname wurden auf Felix Quest vorbereitet.
 - 2026-09-06: GameOverScreen fuer Querformat verbessert; der Screen ist scrollbar und nutzt kompaktere Abstaende, Buttonhoehen und Log-Hoehe im Landscape-Modus.
 - 2026-09-06: BattleScene erweitert; die Sonne kann als zusaetzlicher Fliehen-Ausloeser genutzt werden und ist in Hoch- und Querformat angebunden.
 - 2026-09-06: Debug-Aktionen hinter einem Secret-Modus vorbereitet; die Debug-Buttons werden nur sichtbar, wenn der Startname das Secret aktiviert.
@@ -148,6 +151,7 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\FelixQuest`
 - Sonne in der BattleScene als Fliehen-Ausloeser in Hoch- und Querformat - hinzugefuegt am 2026-09-06
 - GameOverScreen im Querformat scrollbar und kompakter dargestellt - verbessert am 2026-09-06
 - App-ID, Namespace, Packages und Projektname fuer Felix Quest umbenannt - angepasst am 2026-09-06
+- Paketname/Application-ID fuer OuazzaniApps - angepasst am 2026-09-08
 - Eigenes Felix-Quest-App-Icon - vorbereitet am 2026-09-06
 - GameScreenHoch ohne Debug-Modus optisch ausgeglichen - verbessert am 2026-09-06
 
@@ -234,4 +238,8 @@ Beim Verkaufen gelten folgende Regeln:
 ## Status
 
 Lernprojekt in aktiver Entwicklung
+
+
+
+
 

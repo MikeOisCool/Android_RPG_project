@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.mikeo.felixquest"
+    namespace = "com.ouazzaniapps.felixquest"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.mikeo.felixquest"
+        applicationId = "com.ouazzaniapps.felixquest"
         minSdk = 26
         targetSdk = 36
         versionCode = 1
