@@ -38,6 +38,7 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\FelixQuest`
 
 - Hinweis: Die Datumsangaben sind aus den Git-Commits abgeleitet. Sie zeigen, wann ein Feature oder Refactoring ins Repository gekommen ist.
 
+- 2026-09-06: Eigenes Felix-Quest-App-Icon vorbereitet; Launcher-Hintergrund und Vordergrund ersetzen das Android-Standardicon.
 - 2026-09-06: App vor dem Play-Store-Test auf Felix Quest umbenannt; `applicationId`, `namespace`, Packages, Test-Packages, Theme-Name und Gradle-Projektname nutzen jetzt `com.mikeo.felixquest` bzw. `FelixQuest`.
 - 2026-09-06: GameOverScreen fuer Querformat verbessert; der Screen ist scrollbar und nutzt kompaktere Abstaende, Buttonhoehen und Log-Hoehe im Landscape-Modus.
 - 2026-09-06: BattleScene erweitert; die Sonne kann als zusaetzlicher Fliehen-Ausloeser genutzt werden und ist in Hoch- und Querformat angebunden.
@@ -147,6 +148,7 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\FelixQuest`
 - Sonne in der BattleScene als Fliehen-Ausloeser in Hoch- und Querformat - hinzugefuegt am 2026-09-06
 - GameOverScreen im Querformat scrollbar und kompakter dargestellt - verbessert am 2026-09-06
 - App-ID, Namespace, Packages und Projektname fuer Felix Quest umbenannt - angepasst am 2026-09-06
+- Eigenes Felix-Quest-App-Icon - vorbereitet am 2026-09-06
 - GameScreenHoch ohne Debug-Modus optisch ausgeglichen - verbessert am 2026-09-06
 
 ## Item-Balancing
@@ -232,3 +234,4 @@ Beim Verkaufen gelten folgende Regeln:
 ## Status
 
 Lernprojekt in aktiver Entwicklung
+
