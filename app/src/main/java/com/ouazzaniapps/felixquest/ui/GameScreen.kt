@@ -8,12 +8,15 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ouazzaniapps.felixquest.GameViewModel
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
 
@@ -29,6 +32,12 @@ fun GameScreen(
     onQuest: () -> Unit,
     onExitGame: () -> Unit
 ) {
+    val enemy by viewModel.enemy.collectAsState()
+    val player by viewModel.player.collectAsState()
+
+    var hasShownBullWarning by rememberSaveable { mutableStateOf(false) }
+    var showBullWarning by rememberSaveable { mutableStateOf(false) }
+
 
     var showExitDialog by remember {
         mutableStateOf(false)
@@ -73,6 +82,13 @@ fun GameScreen(
 
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
+    LaunchedEffect(enemy.name) {
+        if (enemy.name == "Stier" && !hasShownBullWarning) {
+            showBullWarning = true
+            hasShownBullWarning = true
+        }
+    }
+
     if (isLandscape) {
         GameScreenQuer(
             debugMode = debugMode,
@@ -93,6 +109,22 @@ fun GameScreen(
             onInventory = onInventory,
             onShop = onShop,
             onQuest = onQuest
+        )
+    }
+
+
+    if (showBullWarning) {
+        AlertDialog(
+            onDismissRequest = { showBullWarning = false },
+            title = { Text("Achtung, ${player.name}!") },
+            text = {
+                Text("Der Stier ist sehr stark. Ohne gute Ausrüstung ist Fliehen oft die beste Wahl. Du kannst dafür auf die Sonne drücken.")
+            },
+            confirmButton = {
+                TextButton(onClick = { showBullWarning = false }) {
+                    Text("Verstanden")
+                }
+            }
         )
     }
 }
