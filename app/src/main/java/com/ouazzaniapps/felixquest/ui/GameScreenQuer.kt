@@ -241,13 +241,15 @@ fun LandscapeMainPanel(
                 ) {
                     val weaponBonus = player.equippedWeapon?.damage ?: 0
                     val armorDefense = player.equippedArmor?.defense ?: 0
+                    val weaponDefense = player.equippedWeapon?.defense ?: 0
+                    val defense = weaponDefense + armorDefense
                     val equippedWeapon = player.equippedWeapon?.name ?: "-"
                     val equippedArmor = player.equippedArmor?.name ?: "-"
 
                     PlayerStatsBlockQuer(
                         player = player,
                         weaponBonus = weaponBonus,
-                        armorDefense = armorDefense,
+                        armorDefense = defense,
                         equippedWeapon = equippedWeapon,
                         equippedArmor = equippedArmor
                     )

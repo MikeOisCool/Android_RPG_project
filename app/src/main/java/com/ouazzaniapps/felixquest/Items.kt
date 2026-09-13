@@ -2,6 +2,41 @@ package com.ouazzaniapps.felixquest
 
 
 object GameItems {
+
+    val goblinWeapon = Item(
+        name = ItemNamen.GOBLIN_SCHWERT,
+        type = ItemType.WEAPONQUEST,
+        itemPrice = 60,
+        description = "Schaden +40",
+        amount = 1,
+        heal = 0,
+        damage = 40,
+        defense = 0
+    )
+
+    val wolfWeapon = Item(
+        name = ItemNamen.WOLF_SCHWERT,
+        type = ItemType.WEAPONQUEST,
+        itemPrice = 70,
+        description = "Schaden +50",
+        amount = 1,
+        heal = 0,
+        damage = 50,
+        defense = 0
+    )
+
+    val stierWeapon = Item(
+        name = ItemNamen.STIER_SCHWERT,
+        type = ItemType.WEAPONQUEST,
+        itemPrice = 500,
+        description = "Schaden +100",
+        amount = 1,
+        heal = 0,
+        damage = 100,
+        defense = 0
+    )
+
+
     val woodWeapon = Item(
         name = ItemNamen.HOLZSCHWERT,
         type = ItemType.WEAPON,

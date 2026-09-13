@@ -45,6 +45,8 @@ fun InventoryScreen(
     val potionItems = visibleItemsByType(items, ItemType.POTION)
     val weaponItems = visibleItemsByType(items, ItemType.WEAPON)
     val armorItems = visibleItemsByType(items, ItemType.ARMOR)
+    val weaponQuestItems = visibleItemsByType(items, ItemType.WEAPONQUEST)
+
 
     Column(
         modifier = Modifier
@@ -114,6 +116,33 @@ fun InventoryScreen(
             isEmpty = weaponItems.isEmpty()
         ) {
             weaponItems.forEach { item ->
+                EquipItem(
+                    player = player,
+                    statText = "Angriff",
+                    statValue = item.damage,
+                    isEquipped = player.equippedWeapon?.name == item.name,
+                    isEquippedText = "${item.name} ${itemIcon(item)} ablegen",
+                    item = item,
+                    onEquip = {
+                        viewModel.onEvent(GameEvent.EquipWeapon(weapon = item))
+                    },
+                    unequip = {
+                        if (player.equippedWeapon?.name == item.name) {
+                            viewModel.onEvent(GameEvent.UnequipWeapon)
+                        }
+                    }
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        InventorySection(
+            title = "Spezialwaffen",
+            emptyText = "Es sind keine Spezialwaffen im Inventar",
+            isEmpty = weaponQuestItems.isEmpty()
+        ) {
+            weaponQuestItems.forEach { item ->
                 EquipItem(
                     player = player,
                     statText = "Angriff",

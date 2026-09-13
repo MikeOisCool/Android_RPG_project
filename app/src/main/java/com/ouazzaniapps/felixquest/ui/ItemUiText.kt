@@ -8,6 +8,7 @@ fun itemIcon(item: Item): String {
     return when (item.type) {
         ItemType.POTION -> "🧪"
         ItemType.WEAPON -> "⚔️"
+        ItemType.WEAPONQUEST -> "🔮"
         ItemType.ARMOR -> "🛡️"
     }
 }

@@ -62,6 +62,7 @@ fun QuestScreen(
                 Text(text = quest.description)
                 Text(text = "Fortschritt: ${quest.currentAmount}/${quest.targetAmount}")
                 Text(text = "Belohnung: ${quest.goldReward} Gold und ${quest.xpReward} XP")
+                Text(text = "Waffe: ${quest.weapon?.name ?: "keine"}")
                 Spacer(modifier = Modifier.height(8.dp))
 
                 ShopButton(

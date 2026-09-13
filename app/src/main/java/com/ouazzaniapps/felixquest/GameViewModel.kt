@@ -468,6 +468,9 @@ class GameViewModel : ViewModel() {
             applyEvent(GameEvent.AddGold(updatedQuest.goldReward))
             addLog("Quest Belohnung 💰 +${updatedQuest.goldReward} Gold")
             addLog("Quest Belohnung 🔥 +${updatedQuest.xpReward} XP")
+            updatedQuest.weapon?.let { weapon ->
+                applyDrop(weapon)
+            }
             updatedQuest = updatedQuest.copy(
                 currentAmount = 0,
                 targetAmount = updatedQuest.targetAmount * 2,
@@ -500,7 +503,8 @@ class GameViewModel : ViewModel() {
         addLog("🔥 +${enemy.xpReward} XP")
 
         if (_player.value.level > levelVorher) {
-            _centerBattleText.value = "❤\uFE0F LEVEL UP! ${_player.value.name} ist jetzt Level ${_player.value.level}!"
+            _centerBattleText.value =
+                "❤\uFE0F LEVEL UP! ${_player.value.name} ist jetzt Level ${_player.value.level}!"
             clearCenterBattleTextLater()
             addLog(
                 "⭐ LEVEL UP! ${
@@ -595,10 +599,13 @@ class GameViewModel : ViewModel() {
         val result = when (item.type) {
             ItemType.WEAPON, ItemType.ARMOR -> DropManager.dropUniqueItem(_player.value, item)
             ItemType.POTION -> DropManager.dropStackableItem(_player.value, item)
+            ItemType.WEAPONQUEST -> DropManager.dropUniqueItem(_player.value, item)
         }
         _player.value = result.player
 
-        val isEquipment = item.type == ItemType.WEAPON || item.type == ItemType.ARMOR
+        val isEquipment = item.type == ItemType.WEAPON ||
+                    item.type == ItemType.WEAPONQUEST ||
+                    item.type == ItemType.ARMOR
 
         if (isEquipment && !hadItemBefore) {
             _centerBattleText.value = "🎁 ${item.name} gefunden!"

@@ -141,6 +141,11 @@ fun handleEvent(
                         player.inventory.items + event.item
                     }
 
+                    ItemType.WEAPONQUEST -> {
+                        player.inventory.items + event.item
+                    }
+
+
                     ItemType.ARMOR -> {
                         player.inventory.items + event.item
                     }

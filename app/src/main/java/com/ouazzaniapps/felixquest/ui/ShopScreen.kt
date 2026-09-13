@@ -150,6 +150,7 @@ fun ShopSellItems(player: Player, type: ItemType, onSell: (Item) -> Unit) {
         when (type) {
             ItemType.POTION -> StatusText("Es sind keine Tränke im Inventar")
             ItemType.WEAPON -> StatusText("Waffe muss abgelegt werden")
+            ItemType.WEAPONQUEST -> StatusText("Quest Waffe muss abgelegt werden")
             ItemType.ARMOR -> StatusText("Rüstung muss abgelegt werden")
         }
         return
@@ -166,7 +167,7 @@ fun ShopSellItems(player: Player, type: ItemType, onSell: (Item) -> Unit) {
             }
         }
 
-        ItemType.WEAPON, ItemType.ARMOR -> {
+        ItemType.WEAPON, ItemType.WEAPONQUEST, ItemType.ARMOR -> {
             sellableItems.forEach { item ->
                 ShopSellItem(
                     item = item,
@@ -317,6 +318,7 @@ fun sellableItemsByType(items: List<Item>, player: Player, type: ItemType): List
     return items.filter { it ->
         it.type == type && it.amount > 0 && when (type) {
             ItemType.WEAPON -> player.equippedWeapon?.name != it.name
+            ItemType.WEAPONQUEST -> player.equippedWeapon?.name != it.name
             ItemType.ARMOR -> player.equippedArmor?.name != it.name
             ItemType.POTION -> true
         }

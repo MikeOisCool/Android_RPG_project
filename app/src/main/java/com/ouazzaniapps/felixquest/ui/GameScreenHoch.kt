@@ -334,13 +334,15 @@ fun PlayerStatsBlock(
     Column {
         val weaponBonus = player.equippedWeapon?.damage ?: 0
         val armorDefense = player.equippedArmor?.defense ?: 0
+        val weaponDefense = player.equippedWeapon?.defense ?: 0
+        val defense = weaponDefense + armorDefense
         Row {
             Text("Angriff:", modifier = Modifier.width(120.dp))
             Text("${player.attack + weaponBonus}")
         }
         Row {
             Text("Verteidigung:", modifier = Modifier.width(120.dp))
-            Text("$armorDefense")
+            Text("$defense")
         }
         Row {
             Text("Waffe:", modifier = Modifier.width(120.dp))

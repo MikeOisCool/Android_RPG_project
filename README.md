@@ -240,12 +240,7 @@ Beim Verkaufen gelten folgende Regeln:
 
 Lernprojekt in aktiver Entwicklung
 
+### Letzte Aenderungen
 
-
-
-
-
-
-
-
+- 2026-09-13: Quest-Spezialwaffen begonnen; Goblin-, Wolf- und Stier-Quests zeigen ihre Waffenbelohnung im QuestScreen an und koennen eigene Waffen ins Inventar legen, die als Spezialwaffen ausgeruestet und verkauft werden koennen.
 

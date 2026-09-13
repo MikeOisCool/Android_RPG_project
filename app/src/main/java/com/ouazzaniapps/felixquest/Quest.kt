@@ -7,6 +7,7 @@ data class Quest(
     val currentAmount: Int,
     val goldReward: Int = 0,
     val xpReward: Int = 0,
+    val weapon: Item? = null,
     val description: String = "Besiege $targetAmount $targetEnemyName um Gold und XP zu erhalten",
     val isWählbar: Boolean = true,
     val isStarted: Boolean = false,
@@ -24,7 +25,8 @@ object QuestName {
             targetAmount = 3,
             currentAmount = 0,
             goldReward = 100,
-            xpReward = 100
+            xpReward = 100,
+            weapon = GameItems.goblinWeapon
         ),
         Quest(
             title = "Finde Wölfe",
@@ -32,7 +34,8 @@ object QuestName {
             targetAmount = 3,
             currentAmount = 0,
             goldReward = 100,
-            xpReward = 100
+            xpReward = 100,
+            weapon = GameItems.wolfWeapon
         ),
         Quest(
             title = "Finde den Stier",
@@ -40,7 +43,9 @@ object QuestName {
             targetAmount = 1,
             currentAmount = 0,
             goldReward = 500,
-            xpReward = 500
+            xpReward = 500,
+            weapon = GameItems.stierWeapon
+
         )
     )
 }

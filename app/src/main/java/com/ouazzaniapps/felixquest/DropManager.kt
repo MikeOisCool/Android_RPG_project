@@ -36,7 +36,7 @@ object DropManager {
 
         if (existingItem != null) {
             val typeName = when (item.type) {
-                ItemType.WEAPON -> "Waffe"
+                ItemType.WEAPON, ItemType.WEAPONQUEST -> "Waffe"
                 ItemType.ARMOR -> "Rüstung"
                 else -> "Item"
             }
@@ -50,6 +50,7 @@ object DropManager {
 
         val logMessage = when (item.type) {
             ItemType.WEAPON -> "\uD83D\uDDE1\uFE0F${player.name}  hat ${item.toString()} gefunden! Angriff +${item.damage} nach Auswahl!!"
+            ItemType.WEAPONQUEST -> "\uD83D\uDDE1\uFE0F${player.name}  hat ${item.toString()} gefunden! Angriff +${item.damage} nach Auswahl!!"
             ItemType.ARMOR -> "\uD83D\uDEE1\uFE0F ${player.name} hat $item gefunden! Verteidigung +${item.defense} nach Auswahl!!"
             ItemType.POTION -> error("POTION darf nicht an dropUniqueItem übergeben werden")
         }
