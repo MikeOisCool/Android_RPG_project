@@ -38,6 +38,9 @@ fun GameScreen(
     var hasShownBullWarning by rememberSaveable { mutableStateOf(false) }
     var showBullWarning by rememberSaveable { mutableStateOf(false) }
 
+    var hasShownHowToPlay by rememberSaveable { mutableStateOf(false) }
+    var showHowToPlay by rememberSaveable { mutableStateOf(false) }
+
 
     var showExitDialog by remember {
         mutableStateOf(false)
@@ -89,6 +92,13 @@ fun GameScreen(
         }
     }
 
+    LaunchedEffect(Unit) {
+        if (!hasShownHowToPlay) {
+            hasShownHowToPlay = true
+            showHowToPlay = true
+        }
+    }
+
     if (isLandscape) {
         GameScreenQuer(
             debugMode = debugMode,
@@ -111,7 +121,20 @@ fun GameScreen(
             onQuest = onQuest
         )
     }
-
+    if (showHowToPlay) {
+        AlertDialog(
+            onDismissRequest = { showHowToPlay = false },
+            title = { Text("Hallo, ${player.name}!") },
+            text = {
+                Text("Tippe auf den Feind, um ihn anzugreifen. Tippe auf die Sonne, um zu fliehen.")
+            },
+            confirmButton = {
+                TextButton(onClick = { showHowToPlay = false }) {
+                    Text("Verstanden")
+                }
+            }
+        )
+    }
 
     if (showBullWarning) {
         AlertDialog(

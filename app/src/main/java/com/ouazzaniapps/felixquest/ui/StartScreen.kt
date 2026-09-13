@@ -102,7 +102,7 @@ fun StartScreen(
             modifier = Modifier
                 .fillMaxWidth(0.7f)
                 .height(70.dp),
-            onClick = { onNameEntered(name)}
+            onClick = { onNameEntered(name) }
         )
     }
 }
