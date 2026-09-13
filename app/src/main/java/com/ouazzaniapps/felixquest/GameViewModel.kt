@@ -46,8 +46,9 @@ class GameViewModel : ViewModel() {
     private val _leftBattleText = MutableStateFlow<String?>(null)
     val leftBattleText: StateFlow<String?> = _leftBattleText
     private val _rightBattleText = MutableStateFlow<String?>(null)
-
     val rightBattleText: StateFlow<String?> = _rightBattleText
+    private val _centerBattleText = MutableStateFlow<String?>(null)
+    val centerBattleText: StateFlow<String?> = _centerBattleText
     val enemy: StateFlow<Enemy> = _enemy
     private var clearHitTextJob: Job? = null
     private val _attackInProgress = MutableStateFlow(false)
@@ -297,7 +298,9 @@ class GameViewModel : ViewModel() {
 
         if (updatedEnemy.hp <= 0) {
             _rightBattleText.value = "${damagedEnemyResult.damage} 💀 Tod"
-            _leftBattleText.value = "Sieg"
+            _leftBattleText.value = "Sieg!!!\n \uD83D\uDCB0 +${currentEnemy.goldReward} Gold\n" +
+                    "\uD83D\uDD25 +${currentEnemy.xpReward} XP"
+
 
             viewModelScope.launch {
                 try {
@@ -478,6 +481,13 @@ class GameViewModel : ViewModel() {
         }
     }
 
+    private fun clearCenterBattleTextLater() {
+        viewModelScope.launch {
+            delay(2500)
+            _centerBattleText.value = null
+        }
+    }
+
     private fun rewardPlayer(enemy: Enemy) {
         if (_player.value.isDead) return
 
@@ -490,6 +500,8 @@ class GameViewModel : ViewModel() {
         addLog("🔥 +${enemy.xpReward} XP")
 
         if (_player.value.level > levelVorher) {
+            _centerBattleText.value = "❤\uFE0F LEVEL UP! ${_player.value.name} ist jetzt Level ${_player.value.level}!"
+            clearCenterBattleTextLater()
             addLog(
                 "⭐ LEVEL UP! ${
                     _player.value.name
@@ -576,11 +588,23 @@ class GameViewModel : ViewModel() {
 
     private fun applyDrop(item: Item) {
 
+        val hadItemBefore = _player.value.inventory.items.any { inventoryItem ->
+            inventoryItem.name == item.name
+        }
+
         val result = when (item.type) {
             ItemType.WEAPON, ItemType.ARMOR -> DropManager.dropUniqueItem(_player.value, item)
             ItemType.POTION -> DropManager.dropStackableItem(_player.value, item)
         }
         _player.value = result.player
+
+        val isEquipment = item.type == ItemType.WEAPON || item.type == ItemType.ARMOR
+
+        if (isEquipment && !hadItemBefore) {
+            _centerBattleText.value = "🎁 ${item.name} gefunden!"
+            clearCenterBattleTextLater()
+        }
+
 
         result.logs.forEach {
             addLog(it)

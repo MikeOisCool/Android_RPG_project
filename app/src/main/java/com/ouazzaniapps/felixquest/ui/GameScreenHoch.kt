@@ -56,6 +56,7 @@ fun GameScreenHoch(
     var enemyAttacks by remember { mutableStateOf(false) }
     val rightBattleText by viewModel.rightBattleText.collectAsState()
     val leftBattleText by viewModel.leftBattleText.collectAsState()
+    val centerBattleText by viewModel.centerBattleText.collectAsState()
     val attackInProgress by viewModel.attackInProgress.collectAsState()
     val canClickAttackButton = !attackInProgress && enemy.hp > 0 && !player.isDead
     val onAttack = {
@@ -170,6 +171,8 @@ fun GameScreenHoch(
             enemyAttacks = enemyAttacks,
             rightBattleText = rightBattleText,
             leftBattleText = leftBattleText,
+            centerBattleText = centerBattleText,
+            centerBattleTextFontSize = 16.sp,
             onEnemyClick = onAttack,
             onSunClick = onFlee,
             modifier = Modifier

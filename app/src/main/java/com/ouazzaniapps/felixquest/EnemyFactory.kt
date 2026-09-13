@@ -26,7 +26,7 @@ object EnemyFactory {
                 xpReward = 35
             )
         )
-        if (playerLevel >= 2) {
+        if (playerLevel >= 4) {
             possibleEnemies.add(
                 Enemy(
                     "Stier",

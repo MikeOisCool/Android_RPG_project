@@ -20,6 +20,7 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\FelixQuest`
 - Der Nutzer fuehrt Git selbst aus. Codex soll normalerweise nicht selbst committen oder pushen, ausser der Nutzer bittet ausdruecklich darum.
 - Wenn ein neues Thema begonnen wird, soll Codex sich zuerst in die relevanten Dateien vollstaendig einlesen und erst danach Hints, Bewertungen oder naechste Schritte geben.
 - Bei jedem Commit-Wunsch soll Codex pruefen, ob die README oder der Aenderungsverlauf angepasst werden muss. Wenn ein relevanter Eintrag fehlt, soll Codex die README vor den Git-Zeilen angleichen.
+- Bei jedem Commit-Wunsch soll Codex nach einer README-Anpassung den eingefuegten oder geaenderten README-Text sichtbar anzeigen, bevor die Git-Zeilen genannt werden.
 - Kleine Aenderungen nicht einzeln committen, sondern sinnvoll buendeln.
 - Wenn der Nutzer `commit` schreibt, soll Codex vor den Git-Zeilen pruefen, ob es noch eine kleine naheliegende Aenderung gibt, die thematisch zu diesem Commit gehoert. Falls ja, soll Codex Michael zuerst bitten, diese kleine Aenderung noch mitzunehmen.
 - Codex soll bei Commit-Wuenschen aktiv fragen: "Passt noch etwas Kleines zu diesem Thema in denselben Commit?" und erst danach die Git-Zeilen geben.
@@ -238,6 +239,9 @@ Beim Verkaufen gelten folgende Regeln:
 ## Status
 
 Lernprojekt in aktiver Entwicklung
+
+
+
 
 
 

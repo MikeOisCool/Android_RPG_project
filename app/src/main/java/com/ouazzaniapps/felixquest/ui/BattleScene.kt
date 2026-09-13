@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -65,6 +66,8 @@ fun BattleScene(
     enemyMaxHp: Int,
     rightBattleText: String? = null,
     leftBattleText: String? = null,
+    centerBattleText: String? = null,
+    centerBattleTextFontSize: TextUnit = 18.sp,
     playerAttacks: Boolean = false,
     enemyAttacks: Boolean = false,
     onEnemyClick: () -> Unit = {},
@@ -117,7 +120,10 @@ fun BattleScene(
             )
 
             BattleFeedbackTexts(
-                rightBattleText = rightBattleText, leftBattleText = leftBattleText
+                rightBattleText = rightBattleText,
+                leftBattleText = leftBattleText,
+                centerBattleText = centerBattleText,
+                centerBattleTextFontSize = centerBattleTextFontSize
             )
 
             Box(
@@ -143,7 +149,7 @@ fun BattleScene(
 
 @Composable
 fun BoxScope.BattleFeedbackTexts(
-    rightBattleText: String?, leftBattleText: String?
+    rightBattleText: String?, leftBattleText: String?, centerBattleText: String?, centerBattleTextFontSize: TextUnit = 18.sp
 ) {
     val rightBattleTextOffset by animateDpAsState(
         targetValue = if (rightBattleText != null) (-35).dp else (-20).dp,
@@ -154,6 +160,12 @@ fun BoxScope.BattleFeedbackTexts(
     val leftBattleTextOffset by animateDpAsState(
         targetValue = if (leftBattleText != null) (-35).dp else (-20).dp,
         label = "leftBattleTextOffset"
+
+    )
+
+    val centerBattleTextOffset by animateDpAsState(
+        targetValue = if (centerBattleText != null) (-45).dp else (-30).dp,
+        label = "centerBattleTextOffset"
 
     )
 
@@ -170,6 +182,14 @@ fun BoxScope.BattleFeedbackTexts(
             battleText = rightBattleText,
             alignment = Alignment.CenterEnd,
             offsetY = rightBattleTextOffset
+        )
+    }
+    if (centerBattleText != null) {
+        BattleFeedbackText(
+            battleText = centerBattleText,
+            fontSize = centerBattleTextFontSize,
+            alignment = Alignment.Center,
+            offsetY = centerBattleTextOffset
         )
     }
 }
@@ -378,6 +398,7 @@ fun BoxScope.BattleGround() {
 @Composable
 fun BoxScope.BattleFeedbackText(
     battleText: String,
+    fontSize: TextUnit = 18.sp,
     alignment: Alignment,
     offsetY: Dp,
 ) {
@@ -390,7 +411,7 @@ fun BoxScope.BattleFeedbackText(
             .background(Color.Black.copy(alpha = 0.45f), RoundedCornerShape(8.dp))
             .padding(horizontal = 10.dp, vertical = 4.dp),
         color = if (battleText.contains("KRIT") || battleText.contains("Tod")) Color.Red else Color.White,
-        fontSize = 18.sp,
+        fontSize = fontSize,
         fontWeight = FontWeight.Bold
     )
 
