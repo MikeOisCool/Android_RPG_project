@@ -8,6 +8,7 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
@@ -21,6 +22,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -234,6 +236,15 @@ fun BoxScope.BattleSkyDecorations(
             .offset(x = cloudCenterOffsetX.dp, y = cloudCenterOffsetY.dp),
         fontSize = cloudCenterSize.sp
     )
+
+    // Wolke rechts
+    Text(
+        text = "☁️",
+        modifier = Modifier
+            .align(Alignment.TopEnd)
+            .offset(x = (-cloudStartOffsetX + 10).dp, y = (cloudStartOffsetY + 10).dp),
+        fontSize = cloudStartSize.sp
+    )
 }
 
 @Composable
@@ -364,7 +375,12 @@ fun BoxScope.BattleFighters(
             .align(Alignment.CenterEnd)
             .offset(x = enemyOffsetX)
             .offset(y = enemyOnGroundOffsetY.dp + idleEnemyOffsetY.dp + enemyVisualOffsetY)
-            .clickable { onEnemyClick() },
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) {
+                onEnemyClick()
+            },
         fontSize = 60.sp
     )
 }

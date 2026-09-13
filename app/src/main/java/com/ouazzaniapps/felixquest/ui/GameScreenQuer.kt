@@ -67,8 +67,10 @@ fun GameScreenQuer(
     val canClickAttackButton = !attackInProgress && enemy.hp > 0 && !player.isDead
     val onAttack = {
         if (canClickAttackButton) {
-            playerAttacks = true
-            viewModel.onEvent(GameEvent.AttackEnemy)
+            if (viewModel.tryAttackEnemy()) {
+                playerAttacks = false
+                playerAttacks = true
+            }
         }
     }
     val onFlee = {

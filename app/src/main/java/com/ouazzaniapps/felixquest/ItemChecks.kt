@@ -10,7 +10,9 @@ fun isUniqueItemAlreadyInInventory(item: Item, inventory: Inventory): Boolean {
 }
 
 fun isWeaponOrArmor(item: Item): Boolean {
-    return item.type == ItemType.WEAPON || item.type == ItemType.ARMOR
+    return item.type == ItemType.WEAPON ||
+            item.type == ItemType.WEAPONQUEST ||
+            item.type == ItemType.ARMOR
 }
 
 fun isPotionStackFull(item: Item, inventory: Inventory): Boolean {

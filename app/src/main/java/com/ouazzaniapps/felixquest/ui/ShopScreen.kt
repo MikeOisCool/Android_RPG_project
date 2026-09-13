@@ -51,6 +51,7 @@ fun ShopScreen(
     val scrollState = rememberScrollState()
     val sellablePotionItems = sellableItemsByType(items, player, ItemType.POTION)
     val weaponItems = visibleItemsByType(items, ItemType.WEAPON)
+    val weaponQuestItems = visibleItemsByType(items, ItemType.WEAPONQUEST)
     val armorItems = visibleItemsByType(items, ItemType.ARMOR)
     val shopItems = availableShopItems(player.level)
 
@@ -130,6 +131,21 @@ fun ShopScreen(
         }
 
         Spacer(modifier = Modifier.height(8.dp))
+        ShopInventorySection(
+            title = "Spezialwaffen",
+            emptyText = "Es sind keine Spezialwaffen im Inventar",
+            isEmpty = weaponQuestItems.isEmpty()
+        ) {
+            ShopSellItems(
+                player = player,
+                type = ItemType.WEAPONQUEST,
+                onSell = { item ->
+                    viewModel.onEvent(GameEvent.SellItem(item = item))
+                })
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
         GameButtonHoch(
             text = "Shop verlassen",
             modifier = Modifier
@@ -172,14 +188,15 @@ fun ShopSellItems(player: Player, type: ItemType, onSell: (Item) -> Unit) {
                 ShopSellItem(
                     item = item,
                     playerLevel = player.level,
-                    statText = if (type == ItemType.WEAPON) "Angriff" else "Verteidigung",
-                    statValue = if (type == ItemType.WEAPON) item.damage else item.defense,
+                    statText = if (type == ItemType.WEAPON || type == ItemType.WEAPONQUEST) "Angriff" else "Verteidigung",
+                    statValue = if (type == ItemType.WEAPON || type == ItemType.WEAPONQUEST) item.damage else item.defense,
                     onSell = {
                         onSell(item)
                     })
                 Spacer(modifier = Modifier.height(8.dp))
             }
         }
+
     }
 }
 

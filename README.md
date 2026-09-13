@@ -242,5 +242,8 @@ Lernprojekt in aktiver Entwicklung
 
 ### Letzte Aenderungen
 
+
+- 2026-09-13: BattleScene-Optik und Bedienung verbessert; Hochformat zeigt groessere Sonne und Wolken, eine dritte Wolke wurde ergaenzt, schnelle Angriffsklicks starten die Animation kontrollierter und Spezialwaffen koennen im Shop verkauft werden.
 - 2026-09-13: Quest-Spezialwaffen begonnen; Goblin-, Wolf- und Stier-Quests zeigen ihre Waffenbelohnung im QuestScreen an und koennen eigene Waffen ins Inventar legen, die als Spezialwaffen ausgeruestet und verkauft werden koennen.
+
 

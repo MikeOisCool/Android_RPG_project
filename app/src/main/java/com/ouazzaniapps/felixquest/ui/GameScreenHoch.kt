@@ -61,8 +61,10 @@ fun GameScreenHoch(
     val canClickAttackButton = !attackInProgress && enemy.hp > 0 && !player.isDead
     val onAttack = {
         if (canClickAttackButton) {
-            playerAttacks = true
-            viewModel.onEvent(GameEvent.AttackEnemy)
+            if (viewModel.tryAttackEnemy()) {
+                playerAttacks = false
+                playerAttacks = true
+            }
         }
     }
     val onFlee = {
@@ -155,12 +157,20 @@ fun GameScreenHoch(
 
         BattleScene(
             layoutScene = BattleSceneLayout(
-                playerOnGroundOffsetY = 10,
+                playerOnGroundOffsetY = 110,
                 playerAttackMoveX = 180,
-                enemyOnGroundOffsetY = 10,
+                enemyOnGroundOffsetY = 110,
                 enemyAttackMoveX = 180
             ),
-            layoutSky = BattleSkyLayout(),
+            layoutSky = BattleSkyLayout(
+                sunSize = 56,
+                cloudStartSize = 56,
+                cloudCenterSize = 68,
+                cloudStartOffsetX = 45,
+                cloudStartOffsetY = 95,
+                cloudCenterOffsetX = 30,
+                cloudCenterOffsetY = 140
+            ),
             playerName = player.name,
             playerHp = player.hp,
             playerMaxHp = player.maxHp,
@@ -177,7 +187,7 @@ fun GameScreenHoch(
             onSunClick = onFlee,
             modifier = Modifier
                 .fillMaxWidth(0.9f)
-                .height(230.dp)
+                .height(430.dp)
                 .padding(bottom = 16.dp)
         )
     }

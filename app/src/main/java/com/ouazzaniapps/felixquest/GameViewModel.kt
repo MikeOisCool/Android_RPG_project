@@ -251,6 +251,13 @@ class GameViewModel : ViewModel() {
         return !_attackInProgress.value && !_player.value.isDead && _enemy.value.hp > 0
     }
 
+    fun tryAttackEnemy(): Boolean {
+        if (!canStartAttack()) return false
+
+        onEvent(GameEvent.AttackEnemy)
+        return true
+    }
+
     private fun usePotionWithLogs(
         event: GameEvent,
         itemName: String,
