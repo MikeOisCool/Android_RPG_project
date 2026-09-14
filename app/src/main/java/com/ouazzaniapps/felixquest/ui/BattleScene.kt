@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -137,6 +138,8 @@ fun BattleScene(
                     enemyName = enemyName,
                     playerAttacks = playerAttacks,
                     enemyAttacks = enemyAttacks,
+                    rightBattleText = rightBattleText,
+                    leftBattleText = leftBattleText,
                     playerOnGroundOffsetY = layoutScene.playerOnGroundOffsetY,
                     playerAttackMoveX = layoutScene.playerAttackMoveX,
                     enemyAttackMoveX = layoutScene.enemyAttackMoveX,
@@ -299,6 +302,8 @@ fun BoxScope.BattleFighters(
     enemyName: String,
     playerAttacks: Boolean = false,
     enemyAttacks: Boolean = false,
+    rightBattleText: String?,
+    leftBattleText: String?,
     playerOnGroundOffsetY: Int,
     playerAttackMoveX: Int,
     enemyOnGroundOffsetY: Int,
@@ -306,11 +311,34 @@ fun BoxScope.BattleFighters(
     enemyAttackMoveX: Int,
     onEnemyClick: () -> Unit = {}
 ) {
+    val enemyWasHit = rightBattleText != null
+    val playerWasHit = leftBattleText != null
+
+    val enemyHitOffsetX by animateDpAsState(
+        targetValue = if (enemyWasHit) (-8).dp else 0.dp,
+        label = "enemyHitOffsetX"
+    )
+
+    val playerHitOffsetX by animateDpAsState(
+        targetValue = if (playerWasHit) 8.dp else 0.dp,
+        label = "playerHitOffsetX"
+    )
+
+    val playerShadowWidth by animateDpAsState(
+        targetValue = if (playerAttacks || playerWasHit) 45.dp else 55.dp,
+        label = "playerShadowWidth"
+    )
+
+    val enemyShadowWidth by animateDpAsState(
+        targetValue = if (enemyAttacks || enemyWasHit) 45.dp else 55.dp,
+        label = "enemyShadowWidth"
+    )
+
     val infiniteTransition = rememberInfiniteTransition(label = "idleOffsetY")
 
     val idlePlayerOffsetY by infiniteTransition.animateFloat(
         initialValue = 0f,
-        targetValue = 1.5f,
+        targetValue = 3f,
         animationSpec = infiniteRepeatable(
             animation = tween(durationMillis = 1000),
             repeatMode = RepeatMode.Reverse
@@ -320,7 +348,7 @@ fun BoxScope.BattleFighters(
 
     val idleEnemyOffsetY by infiniteTransition.animateFloat(
         initialValue = 0f,
-        targetValue = 1f,
+        targetValue = 3f,
         animationSpec = infiniteRepeatable(
             animation = tween(durationMillis = 1000),
             repeatMode = RepeatMode.Reverse
@@ -343,7 +371,7 @@ fun BoxScope.BattleFighters(
             .align(Alignment.CenterStart)
             .offset(x = playerOffsetX)
             .offset(y = (playerOnGroundOffsetY + 35).dp)
-            .width(55.dp)
+            .width(playerShadowWidth)
             .height(10.dp)
             .clip(RoundedCornerShape(percent = 50))
             .background(Color.Black.copy(alpha = 0.25f))
@@ -352,8 +380,12 @@ fun BoxScope.BattleFighters(
         text = "🧙",
         modifier = Modifier
             .align(Alignment.CenterStart)
-            .offset(x = playerOffsetX)
-            .offset(y = playerOnGroundOffsetY.dp + idlePlayerOffsetY.dp),
+            .offset(x = playerOffsetX + playerHitOffsetX)
+            .offset(y = playerOnGroundOffsetY.dp + idlePlayerOffsetY.dp)
+            .graphicsLayer {
+                scaleX = if (playerAttacks) 1.2f else 1f
+                scaleY = if (playerAttacks) 1.2f else 1f
+            },
         fontSize = 60.sp
     )
 
@@ -361,12 +393,12 @@ fun BoxScope.BattleFighters(
     Box(
         modifier = Modifier
             .align(Alignment.CenterEnd)
-            .offset(x = enemyOffsetX)
+            .offset(x = enemyOffsetX + enemyHitOffsetX)
             .offset(y = (enemyOnGroundOffsetY + 35).dp)
-            .width(55.dp)
+            .width(enemyShadowWidth)
             .height(10.dp)
             .clip(RoundedCornerShape(percent = 50))
-            .background(Color.Black.copy(alpha = 0.25f))
+            .background(Color.Black.copy(alpha = 0.25
     )
 
     Text(
@@ -375,6 +407,10 @@ fun BoxScope.BattleFighters(
             .align(Alignment.CenterEnd)
             .offset(x = enemyOffsetX)
             .offset(y = enemyOnGroundOffsetY.dp + idleEnemyOffsetY.dp + enemyVisualOffsetY)
+            .graphicsLayer {
+                scaleX = if (enemyAttacks) 1.2f else 1f
+                scaleY = if (enemyAttacks) 1.2f else 1f
+            }
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null
