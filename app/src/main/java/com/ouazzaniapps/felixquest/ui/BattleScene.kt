@@ -398,7 +398,7 @@ fun BoxScope.BattleFighters(
             .width(enemyShadowWidth)
             .height(10.dp)
             .clip(RoundedCornerShape(percent = 50))
-            .background(Color.Black.copy(alpha = 0.25
+            .background(Color.Black.copy(alpha = 0.25f))
     )
 
     Text(
