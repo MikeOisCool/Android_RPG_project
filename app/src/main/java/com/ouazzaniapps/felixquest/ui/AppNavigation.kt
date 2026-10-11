@@ -1,6 +1,6 @@
 package com.ouazzaniapps.felixquest.ui
 
-import android.app.Activity
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -9,7 +9,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -24,7 +23,7 @@ fun AppNavigation() {
     val topLogState = rememberLazyListState()
     val listState = rememberLazyListState()
     val quests by viewModel.quests.collectAsState()
-    val activity = LocalContext.current as? Activity
+    val activity = LocalActivity.current
     var debugMode by rememberSaveable { mutableStateOf(false) }
 
     NavHost(
