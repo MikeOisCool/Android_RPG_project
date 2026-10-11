@@ -55,9 +55,7 @@ fun prepareNextLevelQuest(quest: Quest): Quest {
     val nextWeaponLevel = quest.weaponLevel + 1
     val newDamage = ((quest.weapon?.damage ?: 0) * 1.5).toInt()
 
-
     val nextWeapon = quest.weapon?.copy(
-        name = "${baseWeaponName(quest.weapon.name)} ${romanNumber(nextWeaponLevel)}",
         damage = newDamage,
         description = "Schaden +${newDamage}"
     )
@@ -87,15 +85,8 @@ fun romanNumber(number: Int): String {
     }
 }
 
-fun baseWeaponName(name: String): String {
-    return name
-        .removeSuffix(" I")
-        .removeSuffix(" II")
-        .removeSuffix(" III")
-        .removeSuffix(" IV")
-        .removeSuffix(" V")
-        .removeSuffix(" VI")
-        .removeSuffix(" VII")
-        .removeSuffix(" VIII")
+fun questRewardWeapon(quest: Quest): Item? {
+    return quest.weapon?.copy(
+        name = "${quest.weapon.name} ${romanNumber(quest.weaponLevel)}"
+    )
 }
-

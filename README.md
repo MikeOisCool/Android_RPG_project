@@ -242,6 +242,8 @@ Lernprojekt in aktiver Entwicklung
 
 ### Letzte Aenderungen
 
+- 2026-10-11: Quest-Waffen-Stufen vereinheitlicht; Quest-Belohnungswaffen behalten Basisnamen, die sichtbare Stufe wird zentral fuer Drop und QuestScreen erzeugt.
+
 
 
 

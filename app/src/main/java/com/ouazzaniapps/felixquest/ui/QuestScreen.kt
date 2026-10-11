@@ -21,6 +21,8 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ouazzaniapps.felixquest.Quest
+import com.ouazzaniapps.felixquest.questRewardWeapon
+
 
 @Composable
 fun QuestScreen(
@@ -32,6 +34,7 @@ fun QuestScreen(
     val scrollState = rememberScrollState()
 
     val availableQuests = quests.filter { it.isWählbar }
+
 
     Column(
         modifier = Modifier
@@ -58,11 +61,12 @@ fun QuestScreen(
             isEmpty = availableQuests.isEmpty()
         ) {
             availableQuests.forEach { quest ->
+                val rewardWeapon = questRewardWeapon(quest)
                 Text(text = "${quest.title}", fontSize = 18.sp)
                 Text(text = quest.description)
                 Text(text = "Fortschritt: ${quest.currentAmount}/${quest.targetAmount}")
                 Text(text = "Belohnung: ${quest.goldReward} Gold und ${quest.xpReward} XP")
-                Text(text = "Waffe: ${quest.weapon?.name ?: "keine"}")
+                Text(text = "Waffe: ${rewardWeapon?.name ?: "keine"}")
                 Spacer(modifier = Modifier.height(8.dp))
 
                 ShopButton(

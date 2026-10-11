@@ -477,7 +477,7 @@ class GameViewModel : ViewModel() {
             addLog("Quest Belohnung 💰 +${updatedQuest.goldReward} Gold")
             addLog("Quest Belohnung 🔥 +${updatedQuest.xpReward} XP")
 
-            updatedQuest.weapon?.let { weapon ->
+            questRewardWeapon(updatedQuest)?.let { weapon ->
                 applyDrop(weapon)
             }
 
