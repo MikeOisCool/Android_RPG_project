@@ -405,7 +405,7 @@ fun BoxScope.BattleFighters(
         text = enemyIcon(enemyName),
         modifier = Modifier
             .align(Alignment.CenterEnd)
-            .offset(x = enemyOffsetX)
+            .offset(x = enemyOffsetX + enemyHitOffsetX)
             .offset(y = enemyOnGroundOffsetY.dp + idleEnemyOffsetY.dp + enemyVisualOffsetY)
             .graphicsLayer {
                 scaleX = if (enemyAttacks) 1.2f else 1f

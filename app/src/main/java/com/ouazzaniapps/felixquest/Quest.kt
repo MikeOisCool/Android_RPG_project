@@ -8,6 +8,7 @@ data class Quest(
     val goldReward: Int = 0,
     val xpReward: Int = 0,
     val weapon: Item? = null,
+    val weaponLevel: Int = 1,
     val description: String = "Besiege $targetAmount $targetEnemyName um Gold und XP zu erhalten",
     val isWählbar: Boolean = true,
     val isStarted: Boolean = false,
@@ -49,3 +50,52 @@ object QuestName {
         )
     )
 }
+
+fun prepareNextLevelQuest(quest: Quest): Quest {
+    val nextWeaponLevel = quest.weaponLevel + 1
+    val newDamage = ((quest.weapon?.damage ?: 0) * 1.5).toInt()
+
+
+    val nextWeapon = quest.weapon?.copy(
+        name = "${baseWeaponName(quest.weapon.name)} ${romanNumber(nextWeaponLevel)}",
+        damage = newDamage,
+        description = "Schaden +${newDamage}"
+    )
+
+    return quest.copy(
+        isStarted = false,
+        currentAmount = 0,
+        targetAmount = quest.targetAmount * 2,
+        goldReward = quest.goldReward * 2,
+        xpReward = quest.xpReward * 2,
+        weapon = nextWeapon,
+        weaponLevel = nextWeaponLevel
+    )
+}
+
+fun romanNumber(number: Int): String {
+    return when (number) {
+        1 -> "I"
+        2 -> "II"
+        3 -> "III"
+        4 -> "IV"
+        5 -> "V"
+        6 -> "VI"
+        7 -> "VII"
+        8 -> "VIII"
+        else -> number.toString()
+    }
+}
+
+fun baseWeaponName(name: String): String {
+    return name
+        .removeSuffix(" I")
+        .removeSuffix(" II")
+        .removeSuffix(" III")
+        .removeSuffix(" IV")
+        .removeSuffix(" V")
+        .removeSuffix(" VI")
+        .removeSuffix(" VII")
+        .removeSuffix(" VIII")
+}
+

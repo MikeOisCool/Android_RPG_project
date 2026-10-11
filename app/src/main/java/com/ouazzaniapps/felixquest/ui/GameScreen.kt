@@ -46,6 +46,7 @@ fun GameScreen(
 
     val context = LocalContext.current
     var textToSpeech by remember { mutableStateOf<TextToSpeech?>(null) }
+    var isTextToSpeechReady by remember { mutableStateOf(false) }
 
 
 
@@ -90,8 +91,9 @@ fun GameScreen(
     }
 
 
-    LaunchedEffect(player.level) {
+    LaunchedEffect(player.level, isTextToSpeechReady) {
         if (player.level > lastLevel) {
+            if (!isTextToSpeechReady) return@LaunchedEffect
             textToSpeech?.speak(
                 "Level up",
                 TextToSpeech.QUEUE_FLUSH,
@@ -104,7 +106,12 @@ fun GameScreen(
 
     DisposableEffect(Unit) {
 
-        textToSpeech = TextToSpeech(context) { }
+        textToSpeech = TextToSpeech(context) { status ->
+            if (status == TextToSpeech.SUCCESS) {
+                textToSpeech?.language = java.util.Locale.GERMAN
+                isTextToSpeechReady = true
+            }
+        }
 
         onDispose {
             textToSpeech?.shutdown()

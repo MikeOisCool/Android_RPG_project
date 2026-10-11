@@ -470,21 +470,18 @@ class GameViewModel : ViewModel() {
 
         if (updatedQuest.isCompleted) {
             addLog("❤️ Quest: ${updatedQuest.title} ist abgeschlossen! Du hast ${updatedQuest.currentAmount} von ${updatedQuest.targetAmount} besiegt.")
-            updatedQuest = updatedQuest.copy(isStarted = false)
+
             applyEvent(GameEvent.GainXp(updatedQuest.xpReward))
             applyEvent(GameEvent.AddGold(updatedQuest.goldReward))
+
             addLog("Quest Belohnung 💰 +${updatedQuest.goldReward} Gold")
             addLog("Quest Belohnung 🔥 +${updatedQuest.xpReward} XP")
+
             updatedQuest.weapon?.let { weapon ->
                 applyDrop(weapon)
             }
-            updatedQuest = updatedQuest.copy(
-                currentAmount = 0,
-                targetAmount = updatedQuest.targetAmount * 2,
-                goldReward = updatedQuest.goldReward * 2,
-                xpReward = updatedQuest.xpReward * 2
-            )
-            return updatedQuest
+
+            return prepareNextLevelQuest(updatedQuest)
         } else {
             addLog("❤️ Quest: ${updatedQuest.title} (${updatedQuest.currentAmount}/${updatedQuest.targetAmount})")
             return updatedQuest
