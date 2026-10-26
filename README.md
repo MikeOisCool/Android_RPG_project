@@ -242,6 +242,8 @@ Lernprojekt in aktiver Entwicklung
 
 ### Letzte Aenderungen
 
+- 2026-10-26: Silber-, Gold- und Diamantenruestung mit eigenen Preisen und Verteidigungswerten ergaenzt; Shop-Angebote und levelabhaengige Ruestungsdrops erweitert. App-Version im Build auf 1.4 (Versionscode 4) gesetzt.
+
 - 2026-10-11: Quest-Waffen-Stufen vereinheitlicht; Quest-Belohnungswaffen behalten Basisnamen, die sichtbare Stufe wird zentral fuer Drop und QuestScreen erzeugt.
 
 

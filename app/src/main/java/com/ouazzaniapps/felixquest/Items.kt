@@ -114,6 +114,44 @@ object GameItems {
         damage = 0,
         defense = 20
     )
+
+    val silverArmor = Item(
+        name = ItemNamen.SILBER_RÜSTUNG,
+        article = "eine",
+        type = ItemType.ARMOR,
+        itemPrice = 30,
+        description = "Verteidigung +25",
+        amount = 1,
+        heal = 0,
+        damage = 0,
+        defense = 25
+    )
+
+    val goldenArmor = Item(
+        name = ItemNamen.GOLD_RÜSTUNG,
+        article = "eine",
+        type = ItemType.ARMOR,
+        itemPrice = 40,
+        description = "Verteidigung +30",
+        amount = 1,
+        heal = 0,
+        damage = 0,
+        defense = 30
+    )
+
+    val diamondArmor = Item(
+        name = ItemNamen.DIAMANTEN_RÜSTUNG,
+        article = "eine",
+        type = ItemType.ARMOR,
+        itemPrice = 80,
+        description = "Verteidigung +40",
+        amount = 1,
+        heal = 0,
+        damage = 0,
+        defense = 40
+    )
+
+
     val healPotion = Item(
         name = ItemNamen.HEILTRANK,
         article = "einen",

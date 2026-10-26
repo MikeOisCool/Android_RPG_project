@@ -8,8 +8,10 @@ fun availableShopItems(playerLevel: Int): List<Item> {
     return when (playerLevel) {
         in 1..2 -> listOf(GameItems.healPotion, GameItems.woodWeapon, GameItems.simpleArmor)
         in 3..4 -> listOf(GameItems.healBigPotion, GameItems.ironWeapon, GameItems.ironArmor)
-        in 5..6 -> listOf(GameItems.silverWeapon)
-        in 8..10 -> listOf(GameItems.diamondWeapon, GameItems.goldenWeapon)
+        in 5..6 -> listOf(GameItems.silverWeapon, GameItems.silverArmor)
+        7 -> listOf(GameItems.goldenWeapon, GameItems.goldenArmor)
+        in 8..10 -> listOf(GameItems.diamondWeapon, GameItems.goldenWeapon, GameItems.goldenArmor)
+        in 11..12 -> listOf(GameItems.diamondArmor)
         else -> listOf(GameItems.healPotion, GameItems.healBigPotion)
     }
 }

@@ -544,6 +544,9 @@ class GameViewModel : ViewModel() {
         val armorDrop = when (_player.value.level) {
             in 0..3 -> GameItems.simpleArmor
             in 4..5 -> GameItems.ironArmor
+            in 6..7 -> GameItems.silverArmor
+            in 8..9 -> GameItems.goldenArmor
+            in 10..11 -> GameItems.diamondArmor
             else -> null
         }
 
