@@ -474,7 +474,9 @@ fun enemyIcon(enemyName: String): String {
         "Goblin" -> "👾"
         "Wolf" -> "🐺"
         "Ork" -> "👹"
+        "Troll" -> "\uD83E\uDDCC"
         "Stier" -> "🐂"
+        "Drache" -> "🐲"
         else -> "👾"
     }
 }

@@ -55,6 +55,34 @@ object EnemyFactory {
                 )
             )
         }
+        if (playerLevel >= 8) {
+            possibleEnemies.add(
+                Enemy(
+                    "Troll",
+                    hp = 1500,
+                    maxHp = 1500,
+                    level = 8,
+                    attack = 70,
+                    defense = 20,
+                    goldReward = 280,
+                    xpReward = 280
+                )
+            )
+        }
+        if (playerLevel >= 12) {
+            possibleEnemies.add(
+                Enemy(
+                    "Drache",
+                    hp = 10000,
+                    maxHp = 10000,
+                    level = 12,
+                    attack = 150,
+                    defense = 50,
+                    goldReward = 350,
+                    xpReward = 350
+                )
+            )
+        }
 
         val baseEnemy = possibleEnemies.random()
 
