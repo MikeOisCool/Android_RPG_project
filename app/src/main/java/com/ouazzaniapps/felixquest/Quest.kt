@@ -9,13 +9,14 @@ data class Quest(
     val xpReward: Int = 0,
     val weapon: Item? = null,
     val weaponLevel: Int = 1,
-    val description: String = "Besiege $targetAmount $targetEnemyName um Gold und XP zu erhalten",
     val isWählbar: Boolean = true,
     val isStarted: Boolean = false,
     val isRewardCollected: Boolean = false
 ) {
     val isCompleted: Boolean
         get() = currentAmount >= targetAmount
+    val description: String
+        get() = "Besiege $targetAmount $targetEnemyName um Gold und XP zu erhalten"
 }
 
 object QuestName {
