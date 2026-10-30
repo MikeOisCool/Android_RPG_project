@@ -48,6 +48,7 @@ fun GameScreenHoch(
     onGameOver: () -> Unit,
     onInventory: () -> Unit,
     onShop: () -> Unit,
+    onSaveGame: () -> Unit,
     onQuest: () -> Unit
 ) {
     val player by viewModel.player.collectAsState()
@@ -142,7 +143,12 @@ fun GameScreenHoch(
                     onUsePotion = { viewModel.onEvent(GameEvent.UsePotion()) },
                     onUseBigPotion = { viewModel.onEvent(GameEvent.UseBigPotion()) },
                     potionBigAmount = potionBigAmount,
-                    potionAmount = potionAmount
+                    potionAmount = potionAmount,
+                    onSaveGame = {
+                        if (!attackInProgress && !player.isDead) {
+                            onSaveGame()
+                        }
+                    }
                 )
 
                 EnemyStatsBlockHoch(enemy = enemy)
@@ -213,6 +219,7 @@ fun GameActionButtons(
     onGainXp: () -> Unit,
     onUsePotion: () -> Unit,
     onUseBigPotion: () -> Unit,
+    onSaveGame: () -> Unit,
     potionBigAmount: Int,
     potionAmount: Int
 ) {
@@ -262,6 +269,12 @@ fun GameActionButtons(
             onClick = {
                 onShop()
             })
+        GameButtonHoch(
+            text = "Spiel speichern",
+            onClick = {
+                onSaveGame()
+            }
+        )
     }
 
     Row(
@@ -384,6 +397,7 @@ fun GameScreenHochPreview() {
         onGameOver = {},
         onInventory = {},
         onShop = {},
+        onSaveGame = {},
         onQuest = {}
     )
 }

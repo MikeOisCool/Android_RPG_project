@@ -24,12 +24,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun StartScreen(
     startName: String,
     onNameEntered: (String) -> Unit,
+    onSavedGames: () -> Unit,
     onExitApp: () -> Unit) {
 
     var name by remember(startName) { mutableStateOf(startName)}
@@ -88,6 +90,16 @@ fun StartScreen(
             fontSize = 24.sp
         )
 
+        GameButtonHoch(
+            text = "Gespeicherter Fortschritt",
+            fontSize = 24.sp,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .fillMaxWidth(0.7f)
+                .height(70.dp),
+            onClick = onSavedGames
+        )
+
         OutlinedTextField(
             value = name,
             onValueChange = {
@@ -118,6 +130,7 @@ fun StartScreenPreview() {
     StartScreen(
         startName = "Felix",
         onNameEntered = {},
+        onSavedGames = {},
         onExitApp = {}
     )
 }

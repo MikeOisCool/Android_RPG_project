@@ -40,6 +40,9 @@ class GameViewModel : ViewModel() {
     private val potionDropChance = 30
     private val bigPotionDropChance = 20
     private val baseHeal = 25
+    private var healingJob: Job? = null
+    private var enemyDefeatedJob: Job? = null
+    private var centerTextJob: Job? = null
     private val _enemy = MutableStateFlow(
         EnemyFactory.createRandomEnemy(_player.value.level)
     )
@@ -63,6 +66,44 @@ class GameViewModel : ViewModel() {
     fun startGame(name: String) {
         _player.value = initialPlayer.copy(name = name)
         _elapsedSeconds.value = 0
+    }
+
+    fun createGameSave(): GameSave {
+        return GameSave(
+            player = _player.value,
+            enemy = _enemy.value,
+            quests = _quest.value,
+            log = _log.value,
+            elapsedSeconds = _elapsedSeconds.value
+        )
+    }
+
+    fun restoreGame(gameSave: GameSave) {
+        clearRunningGameActions()
+        _player.value = gameSave.player
+        _enemy.value = gameSave.enemy
+        _log.value = gameSave.log
+        _quest.value = gameSave.quests
+        _elapsedSeconds.value = gameSave.elapsedSeconds
+    }
+
+    private fun clearRunningGameActions() {
+        healingJob?.cancel()
+        enemyDefeatedJob?.cancel()
+        centerTextJob?.cancel()
+        clearHitTextJob?.cancel()
+
+        healingJob = null
+        enemyDefeatedJob = null
+        centerTextJob = null
+        clearHitTextJob = null
+
+        healingInProgress = false
+        _attackInProgress.value = false
+
+        _leftBattleText.value = null
+        _rightBattleText.value = null
+        _centerBattleText.value = null
     }
 
     fun onEvent(event: GameEvent) {
@@ -102,9 +143,10 @@ class GameViewModel : ViewModel() {
                     return
                 }
 
+                healingJob?.cancel()
                 healingInProgress = true
 
-                viewModelScope.launch {
+                healingJob = viewModelScope.launch {
                     try {
                         addLog("💚 Heilung startet...")
                         delay(1000)
@@ -315,7 +357,8 @@ class GameViewModel : ViewModel() {
                     "\uD83D\uDD25 +${currentEnemy.xpReward} XP"
 
 
-            viewModelScope.launch {
+            enemyDefeatedJob?.cancel()
+            enemyDefeatedJob = viewModelScope.launch {
                 try {
                     delay(1000)
                     handleEnemyDefeated(currentEnemy)
@@ -495,7 +538,9 @@ class GameViewModel : ViewModel() {
     }
 
     private fun clearCenterBattleTextLater() {
-        viewModelScope.launch {
+
+        centerTextJob?.cancel()
+        centerTextJob = viewModelScope.launch {
             delay(2500)
             _centerBattleText.value = null
         }
@@ -647,17 +692,11 @@ class GameViewModel : ViewModel() {
     }
 
     fun resetGame() {
+        clearRunningGameActions()
         _player.value = initialPlayer.copy(name = _player.value.name)
         _enemy.value = EnemyFactory.createRandomEnemy(_player.value.level)
         _log.value = emptyList()
-        _leftBattleText.value = null
-        _rightBattleText.value = null
-        _centerBattleText.value = null
         _elapsedSeconds.value = 0
-        clearHitTextJob?.cancel()
-        clearHitTextJob = null
-        _attackInProgress.value = false
-        healingInProgress = false
         _quest.value = QuestName.allQuests
     }
 }

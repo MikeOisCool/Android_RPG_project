@@ -1,5 +1,8 @@
 package com.ouazzaniapps.felixquest
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Enemy(
     val name: String,
     val hp: Int,

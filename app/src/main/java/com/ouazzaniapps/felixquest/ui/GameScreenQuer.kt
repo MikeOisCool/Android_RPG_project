@@ -54,6 +54,7 @@ fun GameScreenQuer(
     onGameOver: () -> Unit,
     onInventory: () -> Unit,
     onShop: () -> Unit,
+    onSaveGame: () -> Unit,
     onQuest: () -> Unit
 ) {
     val player by viewModel.player.collectAsState()
@@ -127,6 +128,11 @@ fun GameScreenQuer(
             onUseBigPotion = { viewModel.onEvent(GameEvent.UseBigPotion()) },
             onShop = onShop,
             onQuest = onQuest,
+            onSaveGame = {
+                if (!attackInProgress && !player.isDead) {
+                    onSaveGame()
+                }
+            },
             onFlee = onFlee
         )
 
@@ -209,6 +215,7 @@ fun LandscapeMainPanel(
     onFlee: () -> Unit,
     onShop: () -> Unit,
     onInventory: () -> Unit,
+    onSaveGame: () -> Unit,
     onQuest: () -> Unit
 ) {
 
@@ -302,6 +309,7 @@ fun LandscapeMainPanel(
                             onFlee = onFlee,
                             onShop = onShop,
                             onQuest = onQuest,
+                            onSaveGame = onSaveGame,
                             onInventory = {
                                 onInventory()
                             })
@@ -431,6 +439,7 @@ fun GameActionButtonsQuer(
     onFlee: () -> Unit,
     onShop: () -> Unit,
     onQuest: () -> Unit,
+    onSaveGame: () -> Unit,
     onInventory: () -> Unit
 ) {
     if (debugMode) {
@@ -449,6 +458,7 @@ fun GameActionButtonsQuer(
         onFlee = onFlee,
         onShop = onShop,
         onInventory = onInventory,
+        onSaveGame = onSaveGame,
         onQuest = onQuest
     )
 }
@@ -500,6 +510,7 @@ fun MainActionButtonsQuer(
     onShop: () -> Unit,
     onQuest: () -> Unit,
     onFlee: () -> Unit,
+    onSaveGame: () -> Unit,
     onInventory: () -> Unit
 ) {
     Row(
@@ -508,13 +519,20 @@ fun MainActionButtonsQuer(
         GameButtonQuer(
             text = "Heil (${potionAmount})", onClick = onUsePotion
         )
+        GameButtonHoch(
+            text = "Save",
+            onClick = onSaveGame
+        )
+
         Box(
             modifier = Modifier.padding(end = 25.dp)
         ) {
             GameButtonQuer(
                 text = "Gr-Heil (${potionBigAmount})", onClick = onUseBigPotion
             )
+
         }
+
     }
 
     Box(
@@ -605,6 +623,7 @@ fun GameScreenQuerPreview() {
         onInventory = {},
         onShop = {},
         onQuest = {},
+        onSaveGame = {},
         onGameOver = {})
 }
 

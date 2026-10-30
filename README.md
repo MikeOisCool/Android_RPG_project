@@ -242,6 +242,10 @@ Lernprojekt in aktiver Entwicklung
 
 ### Letzte Aenderungen
 
+- 2026-10-30: Tag-Nacht-Zyklus auf 120 Sekunden verkuerzt (50 Sekunden Tag, 10 Sekunden Abenddaemmerung, 50 Sekunden Nacht, 10 Sekunden Morgendaemmerung). Der Mond wird nachts vor den Sternen gezeichnet. Die Textausrichtung von GameButtonHoch ist pro Button einstellbar; Gespeicherter Fortschritt nutzt zentrierten Text. Die erste Wolf-Quest verlangt jetzt 6 Woelfe, Folgestufen verdoppeln das Ziel weiterhin.
+
+- 2026-10-30: Lokale Spielstaende mit drei Speicherplaetzen vorbereitet: Spieler samt Inventar und Ausruestung, Gegner, Quests, Kampflog und Tageszeit werden als JSON mit Speicherdatum gesichert und wiederhergestellt. Speicher- und Ladeansichten zeigen leere oder belegte Plaetze; belegte Plaetze werden erst nach Bestaetigung ueberschrieben. Speicheraktionen sind in Hoch- und Querformat angebunden. Laufende Heilungs-, Belohnungs- und Kampftext-Jobs werden beim Laden und Zuruecksetzen abgebrochen. Offen bleiben die Anzeige von Schreibfehlern, die Zurueck-Sperre waehrend des Speicherns, der Geraetetest und der Highscore.
+
 - 2026-10-30: Tag-Nacht-Zyklus mit 5 Minuten Tag, 1 Minute Abenddaemmerung, 3 Minuten Nacht und 1 Minute Morgendaemmerung ergaenzt. Die Spielzeit pausiert ausserhalb des aktiven Spielbildschirms und bei Tod; neue Durchlaeufe starten am Tag. Himmelsfarben wechseln weich ueber 10 Sekunden, nachts erscheinen Mond und drei Sterne. Linke Wolke/linker Stern oeffnet Quests, rechte Wolke/rechter Stern das Inventar; Sonne und Mond dienen zum Fliehen. Bedienhinweise in Hoch- und Querformat angepasst.
 
 - 2026-10-30: Kampflog auf die letzten 1000 Eintraege begrenzt und Logcat-Ausgabe in addLog deaktiviert; automatisches Scrollen in Hoch- und Querformat reagiert auf den Log-Inhalt statt nur auf die Anzahl. App-Version auf 1.6 (Versionscode 6) gesetzt.

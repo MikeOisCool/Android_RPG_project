@@ -23,7 +23,8 @@ fun GameButtonHoch(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     fontSize: TextUnit = 18.sp,
-    containerColor: Color = MaterialTheme.colorScheme.primary
+    containerColor: Color = MaterialTheme.colorScheme.primary,
+    textAlign: TextAlign = TextAlign.Start
 ) {
     Button(
         onClick = onClick,
@@ -43,7 +44,8 @@ fun GameButtonHoch(
     ) {
         Text(
             text = text,
-            fontSize = fontSize
+            fontSize = fontSize,
+            textAlign = textAlign
         )
     }
 }

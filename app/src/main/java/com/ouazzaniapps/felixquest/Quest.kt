@@ -1,5 +1,8 @@
 package com.ouazzaniapps.felixquest
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Quest(
     val title: String,
     val targetEnemyName: String,
@@ -33,7 +36,7 @@ object QuestName {
         Quest(
             title = "Finde Wölfe",
             targetEnemyName = "Wolf",
-            targetAmount = 3,
+            targetAmount = 6,
             currentAmount = 0,
             goldReward = 100,
             xpReward = 100,

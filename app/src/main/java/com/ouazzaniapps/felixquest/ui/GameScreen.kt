@@ -36,6 +36,7 @@ fun GameScreen(
     onInventory: () -> Unit,
     onShop: () -> Unit,
     onQuest: () -> Unit,
+    onSaveGame: () -> Unit,
     onExitGame: () -> Unit
 ) {
     val enemy by viewModel.enemy.collectAsState()
@@ -164,6 +165,7 @@ fun GameScreen(
             onGameOver = onGameOver,
             onInventory = onInventory,
             onShop = onShop,
+            onSaveGame = onSaveGame,
             onQuest = onQuest
         )
     } else {
@@ -175,6 +177,7 @@ fun GameScreen(
             onGameOver = onGameOver,
             onInventory = onInventory,
             onShop = onShop,
+            onSaveGame = onSaveGame,
             onQuest = onQuest
         )
     }

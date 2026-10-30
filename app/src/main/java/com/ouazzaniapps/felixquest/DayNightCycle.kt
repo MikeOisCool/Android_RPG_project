@@ -8,13 +8,13 @@ enum class DayPhase {
 }
 
 fun calculateDayPhase(elapsedSeconds: Int): DayPhase {
-    val cycleSeconds = elapsedSeconds % 600
+    val cycleSeconds = elapsedSeconds % 120
 
     return when (cycleSeconds) {
-        in 0..299 -> DayPhase.DAY
-        in 300..359 -> DayPhase.DUSK
-        in 360..539 -> DayPhase.NIGHT
-        in 540..599 -> DayPhase.DAWN
+        in 0..49 -> DayPhase.DAY
+        in 50..59 -> DayPhase.DUSK
+        in 60..109 -> DayPhase.NIGHT
+        in 110..119 -> DayPhase.DAWN
         else -> DayPhase.DAY
     }
 }

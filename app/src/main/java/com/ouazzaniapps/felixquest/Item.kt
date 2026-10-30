@@ -1,5 +1,8 @@
 package com.ouazzaniapps.felixquest
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Item(
     val name: String,
     val article: String = "ein",

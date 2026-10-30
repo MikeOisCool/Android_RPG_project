@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import com.ouazzaniapps.felixquest.DayPhase
 
 data class BattleSceneLayout(
@@ -242,6 +243,7 @@ fun BoxScope.BattleSkyDecorations(
         modifier = Modifier
             .align(Alignment.Center)
             .offset(x = sunOffsetX.dp, y = sunOffsetY.dp)
+            .zIndex(if (dayPhase == DayPhase.NIGHT) 1f else 0f)
             .clickable { onSunClick() },
         fontSize = sunSize.sp
     )
