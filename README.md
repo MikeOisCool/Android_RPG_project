@@ -242,6 +242,8 @@ Lernprojekt in aktiver Entwicklung
 
 ### Letzte Aenderungen
 
+- 2026-10-30: Kampflog auf die letzten 1000 Eintraege begrenzt und Logcat-Ausgabe in addLog deaktiviert; automatisches Scrollen in Hoch- und Querformat reagiert auf den Log-Inhalt statt nur auf die Anzahl. App-Version auf 1.6 (Versionscode 6) gesetzt.
+
 - 2026-10-26: Quest-Beschreibung als Getter berechnet, damit sie bei Folgestufen automatisch die aktuelle Zielanzahl anzeigt.
 
 - 2026-10-26: Troll ab Spielerlevel 8 und Drache ab Spielerlevel 12 als zufaellige Gegner ergaenzt; beide erhalten eigene Kampfwerte, Gold-/XP-Belohnungen und Symbole in der BattleScene.

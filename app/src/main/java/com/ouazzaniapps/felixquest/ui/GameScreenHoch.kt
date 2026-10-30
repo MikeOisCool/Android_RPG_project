@@ -81,7 +81,7 @@ fun GameScreenHoch(
         it.name == ItemNamen.HEILTRANK
     }?.amount ?: 0
 
-    LaunchedEffect(log.size) {
+    LaunchedEffect(log) {
         if (log.isNotEmpty()) listState.animateScrollToItem(log.size - 1)
     }
 

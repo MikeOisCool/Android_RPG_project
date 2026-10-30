@@ -611,8 +611,8 @@ class GameViewModel : ViewModel() {
         _player.value = result.player
 
         val isEquipment = item.type == ItemType.WEAPON ||
-                    item.type == ItemType.WEAPONQUEST ||
-                    item.type == ItemType.ARMOR
+                item.type == ItemType.WEAPONQUEST ||
+                item.type == ItemType.ARMOR
 
         if (isEquipment && !hadItemBefore) {
             _centerBattleText.value = "🎁 ${item.name} gefunden!"
@@ -626,8 +626,8 @@ class GameViewModel : ViewModel() {
     }
 
     private fun addLog(message: String) {
-        _log.value = _log.value + message
-        Log.d("LOG", "Loggröße: ${_log.value.size} | letzter Eintrag: $message")
+        _log.value = (_log.value + message).takeLast(1000)
+        //Log.d("LOG", "Loggröße: ${_log.value.size} | letzter Eintrag: $message")
     }
 
     fun fillPreviewLog() {

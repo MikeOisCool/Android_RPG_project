@@ -80,7 +80,7 @@ fun GameScreenQuer(
     }
 
 
-    LaunchedEffect(log.size) {
+    LaunchedEffect(log) {
         if (log.isNotEmpty()) {
             topLogState.animateScrollToItem(log.size - 1)
             listState.animateScrollToItem(log.size - 1)
