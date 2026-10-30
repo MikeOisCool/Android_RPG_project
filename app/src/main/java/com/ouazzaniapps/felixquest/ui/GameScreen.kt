@@ -20,6 +20,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ouazzaniapps.felixquest.GameViewModel
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.platform.LocalContext
+import com.ouazzaniapps.felixquest.calculateDayPhase
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.delay
 
 @Composable
 fun GameScreen(
@@ -35,6 +40,9 @@ fun GameScreen(
 ) {
     val enemy by viewModel.enemy.collectAsState()
     val player by viewModel.player.collectAsState()
+    val elapsedSeconds by viewModel.elapsedSeconds.collectAsState()
+    val dayPhase = calculateDayPhase(elapsedSeconds)
+    val lifecycleOwner = LocalLifecycleOwner.current
 
     var hasShownBullWarning by rememberSaveable { mutableStateOf(false) }
     var showBullWarning by rememberSaveable { mutableStateOf(false) }
@@ -90,6 +98,16 @@ fun GameScreen(
         )
     }
 
+    LaunchedEffect(lifecycleOwner, player.isDead) {
+        if (!player.isDead) {
+            lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                while (true) {
+                    delay(1000)
+                    viewModel.advanceGameTime()
+                }
+            }
+        }
+    }
 
     LaunchedEffect(player.level, isTextToSpeechReady) {
         if (player.level > lastLevel) {
@@ -142,6 +160,7 @@ fun GameScreen(
             viewModel = viewModel,
             topLogState = topLogState,
             listState = listState,
+            dayPhase = dayPhase,
             onGameOver = onGameOver,
             onInventory = onInventory,
             onShop = onShop,
@@ -152,6 +171,7 @@ fun GameScreen(
             debugMode = debugMode,
             viewModel = viewModel,
             listState = listState,
+            dayPhase = dayPhase,
             onGameOver = onGameOver,
             onInventory = onInventory,
             onShop = onShop,
@@ -163,7 +183,11 @@ fun GameScreen(
             onDismissRequest = { showHowToPlay = false },
             title = { Text("Hallo, ${player.name}!") },
             text = {
-                Text("Tippe auf den Feind, um ihn anzugreifen. Tippe auf die Sonne, um zu fliehen.")
+                Text("Tippe auf den Gegner, um anzugreifen.\n\n" +
+                        "Sonne oder Mond: Fliehen\n" +
+                        "Linke Wolke oder linker Stern: Quests öffnen\n" +
+                        "Rechte Wolke oder rechter Stern: Inventar öffnen\n\n" +
+                        "Tag und Nacht wechseln während des aktiven Spielens.")
             },
             confirmButton = {
                 TextButton(onClick = { showHowToPlay = false }) {
@@ -178,7 +202,7 @@ fun GameScreen(
             onDismissRequest = { showBullWarning = false },
             title = { Text("Achtung, ${player.name}!") },
             text = {
-                Text("Der Stier ist sehr stark. Ohne gute Ausrüstung ist Fliehen oft die beste Wahl. Du kannst dafür auf die Sonne drücken.")
+                Text("Der Stier ist sehr stark. Ohne gute Ausrüstung ist Fliehen oft die beste Wahl. Du kannst dafür auf die Sonne oder den Mond drücken.")
             },
             confirmButton = {
                 TextButton(onClick = { showBullWarning = false }) {

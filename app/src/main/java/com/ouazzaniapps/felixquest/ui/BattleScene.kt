@@ -1,5 +1,6 @@
 package com.ouazzaniapps.felixquest.ui
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloat
@@ -34,6 +35,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.ouazzaniapps.felixquest.DayPhase
 
 data class BattleSceneLayout(
     val hpHeaderBackgroundOffsetY: Int = 10,
@@ -61,6 +63,7 @@ data class BattleSkyLayout(
 fun BattleScene(
     layoutScene: BattleSceneLayout = BattleSceneLayout(),
     layoutSky: BattleSkyLayout = BattleSkyLayout(),
+    dayPhase: DayPhase = DayPhase.DAY,
     playerName: String,
     playerHp: Int,
     playerMaxHp: Int,
@@ -75,15 +78,30 @@ fun BattleScene(
     enemyAttacks: Boolean = false,
     onEnemyClick: () -> Unit = {},
     onSunClick: () -> Unit = {},
+    onQuestClick: () -> Unit = {},
+    onInventoryClick: () -> Unit = {},
     modifier: Modifier = Modifier
         .width(400.dp)
         .height(230.dp)
 ) {
 
+    val targetSkyColor = when (dayPhase) {
+        DayPhase.DAY -> Color(0xFF81D4FA)
+        DayPhase.DUSK -> Color(0xFFFFAB91)
+        DayPhase.NIGHT -> Color(0xFF263859)
+        DayPhase.DAWN -> Color(0xFFCEB9E8)
+    }
+
+    val skyColor by animateColorAsState(
+        targetValue = targetSkyColor, label = "skyColor",
+        animationSpec = tween(durationMillis = 10_000)
+    )
+
+
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(32.dp))
-            .background(Color(0xFF81D4FA))
+            .background(skyColor)
 
     ) {
         Box(
@@ -109,7 +127,10 @@ fun BattleScene(
                 sunSize = layoutSky.sunSize,
                 cloudStartSize = layoutSky.cloudStartSize,
                 cloudCenterSize = layoutSky.cloudCenterSize,
-                onSunClick = onSunClick
+                onSunClick = onSunClick,
+                dayPhase = dayPhase,
+                onQuestClick = onQuestClick,
+                onInventoryClick = onInventoryClick
             )
 
             BattleHpHeader(
@@ -203,6 +224,7 @@ fun BoxScope.BattleFeedbackTexts(
 fun BoxScope.BattleSkyDecorations(
     sunOffsetX: Int,
     sunOffsetY: Int,
+    dayPhase: DayPhase,
     cloudStartOffsetX: Int,
     cloudStartOffsetY: Int,
     cloudCenterOffsetY: Int,
@@ -210,11 +232,13 @@ fun BoxScope.BattleSkyDecorations(
     sunSize: Int,
     cloudStartSize: Int,
     cloudCenterSize: Int,
-    onSunClick: () -> Unit = {}
+    onSunClick: () -> Unit = {},
+    onQuestClick: () -> Unit = {},
+    onInventoryClick: () -> Unit = {}
 ) {
     // Sonne
     Text(
-        text = "☀️",
+        text = if (dayPhase == DayPhase.NIGHT) "🌙" else "☀️",
         modifier = Modifier
             .align(Alignment.Center)
             .offset(x = sunOffsetX.dp, y = sunOffsetY.dp)
@@ -224,16 +248,17 @@ fun BoxScope.BattleSkyDecorations(
 
     // Wolke links
     Text(
-        text = "☁️",
+        text = if (dayPhase == DayPhase.NIGHT) "⭐" else "☁️",
         modifier = Modifier
             .align(Alignment.TopStart)
-            .offset(x = cloudStartOffsetX.dp, y = cloudStartOffsetY.dp),
+            .offset(x = cloudStartOffsetX.dp, y = cloudStartOffsetY.dp)
+            .clickable { onQuestClick() },
         fontSize = cloudStartSize.sp
     )
 
     // Wolke mittig
     Text(
-        text = "☁️",
+        text = if (dayPhase == DayPhase.NIGHT) "⭐" else "☁️",
         modifier = Modifier
             .align(Alignment.TopCenter)
             .offset(x = cloudCenterOffsetX.dp, y = cloudCenterOffsetY.dp),
@@ -242,10 +267,11 @@ fun BoxScope.BattleSkyDecorations(
 
     // Wolke rechts
     Text(
-        text = "☁️",
+        text = if (dayPhase == DayPhase.NIGHT) "⭐" else "☁️",
         modifier = Modifier
             .align(Alignment.TopEnd)
-            .offset(x = (-cloudStartOffsetX + 10).dp, y = (cloudStartOffsetY + 10).dp),
+            .offset(x = (-cloudStartOffsetX + 10).dp, y = (cloudStartOffsetY + 10).dp)
+            .clickable { onInventoryClick() },
         fontSize = cloudStartSize.sp
     )
 }

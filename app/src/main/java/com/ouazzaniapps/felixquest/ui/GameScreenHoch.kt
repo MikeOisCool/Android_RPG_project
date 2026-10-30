@@ -31,6 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.ouazzaniapps.felixquest.DayPhase
 import com.ouazzaniapps.felixquest.Enemy
 import com.ouazzaniapps.felixquest.GameEvent
 import com.ouazzaniapps.felixquest.GameViewModel
@@ -43,6 +44,7 @@ fun GameScreenHoch(
     debugMode: Boolean,
     viewModel: GameViewModel,
     listState: LazyListState,
+    dayPhase: DayPhase,
     onGameOver: () -> Unit,
     onInventory: () -> Unit,
     onShop: () -> Unit,
@@ -162,6 +164,9 @@ fun GameScreenHoch(
                 enemyOnGroundOffsetY = 110,
                 enemyAttackMoveX = 180
             ),
+            dayPhase = dayPhase,
+            onQuestClick = onQuest,
+            onInventoryClick = onInventory,
             layoutSky = BattleSkyLayout(
                 sunSize = 56,
                 cloudStartSize = 56,
@@ -375,6 +380,7 @@ fun GameScreenHochPreview() {
         debugMode = true,
         viewModel = GameViewModel(),
         listState = rememberLazyListState(),
+        dayPhase = DayPhase.DAY,
         onGameOver = {},
         onInventory = {},
         onShop = {},

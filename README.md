@@ -242,6 +242,8 @@ Lernprojekt in aktiver Entwicklung
 
 ### Letzte Aenderungen
 
+- 2026-10-30: Tag-Nacht-Zyklus mit 5 Minuten Tag, 1 Minute Abenddaemmerung, 3 Minuten Nacht und 1 Minute Morgendaemmerung ergaenzt. Die Spielzeit pausiert ausserhalb des aktiven Spielbildschirms und bei Tod; neue Durchlaeufe starten am Tag. Himmelsfarben wechseln weich ueber 10 Sekunden, nachts erscheinen Mond und drei Sterne. Linke Wolke/linker Stern oeffnet Quests, rechte Wolke/rechter Stern das Inventar; Sonne und Mond dienen zum Fliehen. Bedienhinweise in Hoch- und Querformat angepasst.
+
 - 2026-10-30: Kampflog auf die letzten 1000 Eintraege begrenzt und Logcat-Ausgabe in addLog deaktiviert; automatisches Scrollen in Hoch- und Querformat reagiert auf den Log-Inhalt statt nur auf die Anzahl. App-Version auf 1.6 (Versionscode 6) gesetzt.
 
 - 2026-10-26: Quest-Beschreibung als Getter berechnet, damit sie bei Folgestufen automatisch die aktuelle Zielanzahl anzeigt.

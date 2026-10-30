@@ -35,6 +35,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.ouazzaniapps.felixquest.DayPhase
 import com.ouazzaniapps.felixquest.Enemy
 import com.ouazzaniapps.felixquest.GameEvent
 import com.ouazzaniapps.felixquest.GameViewModel
@@ -49,6 +50,7 @@ fun GameScreenQuer(
     viewModel: GameViewModel,
     topLogState: LazyListState,
     listState: LazyListState,
+    dayPhase: DayPhase,
     onGameOver: () -> Unit,
     onInventory: () -> Unit,
     onShop: () -> Unit,
@@ -155,6 +157,9 @@ fun GameScreenQuer(
                     enemyOnGroundOffsetY = 85,
                     enemyAttackMoveX = 260
                 ),
+                dayPhase = dayPhase,
+                onQuestClick = onQuest,
+                onInventoryClick = onInventory,
                 layoutSky = BattleSkyLayout(
                     cloudStartOffsetX = 40,
                     cloudStartOffsetY = 88,
@@ -596,6 +601,7 @@ fun GameScreenQuerPreview() {
         viewModel = viewModel,
         topLogState = rememberLazyListState(),
         listState = rememberLazyListState(),
+        dayPhase = DayPhase.DAY,
         onInventory = {},
         onShop = {},
         onQuest = {},

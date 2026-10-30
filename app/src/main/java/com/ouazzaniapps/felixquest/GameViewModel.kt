@@ -54,9 +54,15 @@ class GameViewModel : ViewModel() {
     private val _attackInProgress = MutableStateFlow(false)
     val attackInProgress: StateFlow<Boolean> = _attackInProgress
     private var healingInProgress = false
+    private val _elapsedSeconds = MutableStateFlow(0)
+    val elapsedSeconds: StateFlow<Int> = _elapsedSeconds
+    fun advanceGameTime() {
+        _elapsedSeconds.value++
+    }
 
     fun startGame(name: String) {
         _player.value = initialPlayer.copy(name = name)
+        _elapsedSeconds.value = 0
     }
 
     fun onEvent(event: GameEvent) {
@@ -646,6 +652,8 @@ class GameViewModel : ViewModel() {
         _log.value = emptyList()
         _leftBattleText.value = null
         _rightBattleText.value = null
+        _centerBattleText.value = null
+        _elapsedSeconds.value = 0
         clearHitTextJob?.cancel()
         clearHitTextJob = null
         _attackInProgress.value = false
