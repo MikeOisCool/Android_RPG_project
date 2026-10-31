@@ -147,7 +147,7 @@ fun ShopScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
         GameButtonHoch(
-            text = "Shop verlassen",
+            text = "Schließen",
             modifier = Modifier
                 .fillMaxWidth(0.7f)
                 .height(55.dp),
