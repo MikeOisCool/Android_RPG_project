@@ -165,7 +165,7 @@ fun InventoryScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         GameButtonHoch(
-            text = "Inventar Schließen",
+            text = "Schließen",
             fontSize = 24.sp,
             modifier = Modifier
                 .fillMaxWidth(0.7f)

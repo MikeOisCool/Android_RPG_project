@@ -202,7 +202,10 @@ class GameViewModel : ViewModel() {
                 } else {
                     addLog("${_player.value.name} rennt davon, vor dem Kampf!")
 
-                    val nextEnemy = EnemyFactory.createRandomEnemy(_player.value.level)
+                    val nextEnemy = EnemyFactory.createRandomEnemy(
+                        _player.value.level,
+                        dayPhase = calculateDayPhase(_elapsedSeconds.value)
+                    )
                     _enemy.value = nextEnemy
 
                     addLog("\uD83D\uDC79 Neuer Gegner erscheint: ${nextEnemy.name} mit ${nextEnemy.hp} HP!")
@@ -632,7 +635,9 @@ class GameViewModel : ViewModel() {
 
     private fun spawnNextEnemy() {
         if (_player.value.isDead) return
-        val nextEnemy = EnemyFactory.createRandomEnemy(_player.value.level)
+        val nextEnemy = EnemyFactory.createRandomEnemy(
+            _player.value.level,
+            dayPhase = calculateDayPhase(_elapsedSeconds.value))
         _enemy.value = nextEnemy
 
         addLog("👹 Ein neuer Gegner erscheint: ${nextEnemy.name} (${nextEnemy.hp} HP)!")

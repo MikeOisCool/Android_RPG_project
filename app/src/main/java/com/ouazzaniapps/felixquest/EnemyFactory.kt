@@ -2,7 +2,7 @@ package com.ouazzaniapps.felixquest
 
 object EnemyFactory {
 
-    fun createRandomEnemy(playerLevel: Int): Enemy {
+    fun createRandomEnemy(playerLevel: Int, dayPhase: DayPhase = DayPhase.DAY): Enemy {
 
         val possibleEnemies = mutableListOf(
             Enemy(
@@ -26,6 +26,7 @@ object EnemyFactory {
                 xpReward = 35
             )
         )
+
         if (playerLevel >= 4) {
             possibleEnemies.add(
                 Enemy(
@@ -55,6 +56,7 @@ object EnemyFactory {
                 )
             )
         }
+
         if (playerLevel >= 8) {
             possibleEnemies.add(
                 Enemy(
@@ -69,6 +71,7 @@ object EnemyFactory {
                 )
             )
         }
+
         if (playerLevel >= 12) {
             possibleEnemies.add(
                 Enemy(
@@ -84,6 +87,33 @@ object EnemyFactory {
             )
         }
 
+        if (dayPhase == DayPhase.NIGHT) {
+            possibleEnemies.add(
+                Enemy(
+                    name = "Geist",
+                    hp = 35,
+                    maxHp = 35,
+                    level = 1,
+                    attack = 7,
+                    defense = 2,
+                    goldReward = 25,
+                    xpReward = 30
+                )
+            )
+
+            possibleEnemies.add(
+                Enemy(
+                    name = "Skelett",
+                    hp = 45,
+                    maxHp = 45,
+                    level = 1,
+                    attack = 8,
+                    defense = 3,
+                    goldReward = 30,
+                    xpReward = 35
+                )
+            )
+        }
         val baseEnemy = possibleEnemies.random()
 
         return createScaledEnemy(baseEnemy, playerLevel)

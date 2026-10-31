@@ -81,7 +81,7 @@ fun QuestScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         GameButtonHoch(
-            text = "Quests Schließen",
+            text = "Schließen",
             fontSize = 24.sp,
             modifier = Modifier
                 .fillMaxWidth(0.7f)

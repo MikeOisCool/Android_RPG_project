@@ -500,6 +500,8 @@ fun BoxScope.BattleFeedbackText(
 fun enemyIcon(enemyName: String): String {
     return when (enemyName) {
         "Goblin" -> "👾"
+        "Geist" -> "👻"
+        "Skelett" -> "💀"
         "Wolf" -> "🐺"
         "Ork" -> "👹"
         "Troll" -> "\uD83E\uDDCC"

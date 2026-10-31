@@ -38,6 +38,8 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\FelixQuest`
 
 ## Aenderungsverlauf, neueste Eintraege zuerst
 
+- 2026-10-31: Nachts ergaenzen Geister und Skelette die bisherigen levelabhaengigen Gegner. Die aktuelle Tagesphase wird nach Siegen und beim Fliehen beruecksichtigt; laufende Kaempfe bleiben beim Phasenwechsel bestehen. Eigene Gegner-Emojis ergaenzt und Schliessen-Buttons in Inventar und Quests vereinheitlicht.
+
 - 2026-10-31: Gewonnene Kaempfe werden pro besiegtem Gegner im Player gezaehlt, mit dem Spielstand gespeichert und geladen sowie in Hochformat, Querformat und beiden Speicheransichten als Siege angezeigt. Aeltere Spielstaende starten den Zaehler bei 0. Ueberschriften der Speicheransichten vergroessert und unterstrichen.
 
 - 2026-10-31: Sechs Android-Tests fuer Spielstaende ergaenzt: leere Speicherplaetze, vollstaendiges Speichern und Laden, drei unabhaengige Plaetze, gezieltes Ueberschreiben, ungueltige Platznummern und beschaedigte JSON-Dateien. Alle sechs Tests auf Medium Phone und Pixel 8a erfolgreich; eigene Testordner schuetzen vorhandene Spielstaende.
