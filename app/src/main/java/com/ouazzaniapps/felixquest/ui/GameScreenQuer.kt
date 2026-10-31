@@ -394,6 +394,9 @@ fun PlayerStatsBlockQuer(
         Row {
             StatQuer(label = "Level:", value = "${player.level}")
             StatQuer(label = "Gold:", value = "${player.gold}")
+            StatQuer(
+                label = "Siege:", value = "${player.battlesWon}"
+            )
         }
 
         Row {
@@ -411,13 +414,14 @@ fun PlayerStatsBlockQuer(
 
         Row {
             StatQuer(
-                label = "Waffe:", value = equippedWeapon, labelWidth = 70
+                label = "Waffe:", value = equippedWeapon, labelWidth = 160
             )
+
         }
 
         Row {
             StatQuer(
-                label = "Rüstung:", value = equippedArmor, labelWidth = 70
+                label = "Rüstung:", value = equippedArmor, labelWidth = 160
             )
         }
     }

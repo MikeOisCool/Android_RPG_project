@@ -494,6 +494,10 @@ class GameViewModel : ViewModel() {
     private fun handleEnemyDefeated(enemy: Enemy) {
         if (_player.value.isDead) return
 
+        _player.value = _player.value.copy(
+            battlesWon = _player.value.battlesWon + 1
+        )
+
         addLog("🏆 ${enemy.name} wurde besiegt!")
 
         _quest.value = _quest.value.map { quest ->

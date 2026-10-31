@@ -380,6 +380,10 @@ fun PlayerStatsBlock(
             Text("Rüstung:", modifier = Modifier.width(120.dp))
             Text(player.equippedArmor?.name ?: "Keine")
         }
+        Row {
+            Text("Siege:", modifier = Modifier.width(120.dp))
+            Text("${player.battlesWon}")
+        }
     }
 }
 

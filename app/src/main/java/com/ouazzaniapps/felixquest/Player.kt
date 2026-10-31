@@ -15,7 +15,8 @@ data class Player(
     val isDead: Boolean,
     val level: Int = 1,
     val xp: Int = 0,
-    val xpToNextLevel: Int = 100
+    val xpToNextLevel: Int = 100,
+    val battlesWon: Int = 0
 )
 
 

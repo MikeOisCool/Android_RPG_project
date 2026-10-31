@@ -12,7 +12,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.ouazzaniapps.felixquest.GameSave
 import java.text.DateFormat
 import java.util.Date
@@ -37,6 +39,8 @@ fun SaveGameScreen(
         Text(
             text = "Spiel speichern",
             modifier = Modifier.fillMaxWidth(),
+            fontSize = 24.sp,
+            textDecoration = TextDecoration.Underline,
             textAlign = TextAlign.Center
         )
 
@@ -55,7 +59,7 @@ fun SaveGameScreen(
                 Text(
                     "Speicherplatz $slot\n" +
                             "${gameSave.player.name} · Level ${gameSave.player.level}\n" +
-                            "Gespeichert: $savedAt"
+                            "Siege: ${gameSave.player.battlesWon}\nGespeichert: $savedAt"
                 )
             }
                 GameButtonHoch(
