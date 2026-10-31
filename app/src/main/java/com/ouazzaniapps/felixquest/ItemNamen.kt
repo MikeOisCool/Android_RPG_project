@@ -17,6 +17,11 @@ object ItemNamen {
     const val WOLF_SCHWERT = "Wolfstöter"
     const val STIER_SCHWERT = "Stierbrecher"
 
+    const val KRIT_TRANK = "Power-Trank"
+    const val KRIT_SCHUTZTRANK = "Schutztrank"
+    const val AUSWEICHTRANK = "Ausweichtrank"
+    const val TREFFSICHERHEITSTRANK = "Treffertrank"
+
 
 }
 

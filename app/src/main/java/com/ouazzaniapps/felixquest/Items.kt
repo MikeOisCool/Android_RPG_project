@@ -174,5 +174,32 @@ object GameItems {
         damage = 0,
         defense = 0
     )
+    val critPotion = Item(
+        name = ItemNamen.KRIT_TRANK,
+        article = "einen",
+        type = ItemType.POTION,
+        itemPrice = 50,
+        description = "Die nächsten 5 eigenen Angriffe sind kritisch",
+        amount = 1,
+        heal = 0,
+        damage = 0,
+        defense = 0
+    )
+
+    val critProtectionPotion = critPotion.copy(
+        name = ItemNamen.KRIT_SCHUTZTRANK,
+        description = "Verhindert kritische Treffer der nächsten 5 Gegnerangriffe"
+
+    )
+
+    val dodgePotion = critPotion.copy(
+        name = ItemNamen.AUSWEICHTRANK,
+        description = "Du weichst den nächsten 5 Gegnerangriffen aus"
+    )
+
+    val accuracyPotion = critPotion.copy(
+        name = ItemNamen.TREFFSICHERHEITSTRANK,
+        description = "Der Gegner kann deinen nächsten 5 Angriffen nicht ausweichen"
+    )
 
 }

@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import com.ouazzaniapps.felixquest.GameEvent
 import com.ouazzaniapps.felixquest.GameViewModel
 import com.ouazzaniapps.felixquest.Item
+import com.ouazzaniapps.felixquest.ItemNamen
 import com.ouazzaniapps.felixquest.ItemType
 import com.ouazzaniapps.felixquest.Player
 import com.ouazzaniapps.felixquest.calculateItemHeal
@@ -67,6 +67,24 @@ fun InventoryScreen(
         )
         Spacer(modifier = Modifier.height(16.dp))
 
+        if (player.guaranteedCritsRemaining > 0) {
+            Text("💥 Power: noch ${player.guaranteedCritsRemaining} eigene Angriffe")
+        }
+
+        if (player.critProtectionRemaining > 0) {
+            Text("🛡️ Krit-Schutz: noch ${player.critProtectionRemaining} Gegnerangriffe")
+        }
+
+        if (player.guaranteedDodgesRemaining > 0) {
+            Text("💨 Ausweichen: noch ${player.guaranteedDodgesRemaining} Gegnerangriffe")
+        }
+
+        if (player.unavoidableAttacksRemaining > 0) {
+            Text("🎯 Treffsicherheit: noch ${player.unavoidableAttacksRemaining} eigene Angriffe")
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
         InventorySection(
             title = "Tränke",
             emptyText = "Es sind keine Tränke im Inventar",
@@ -75,7 +93,24 @@ fun InventoryScreen(
             potionItems.forEach { item ->
                 PotionItem(
                     item = item,
-                    playerLevel = player.level
+                    playerHp = player.hp,
+                    playerMaxHp = player.maxHp,
+                    playerLevel = player.level,
+                    onUse = {
+                        when (item.name) {
+                            ItemNamen.HEILTRANK ->
+                                viewModel.onEvent(GameEvent.UsePotion())
+
+                            ItemNamen.GROSSER_HEILTRANK ->
+                                viewModel.onEvent(GameEvent.UseBigPotion())
+
+                            ItemNamen.KRIT_TRANK,
+                            ItemNamen.KRIT_SCHUTZTRANK,
+                            ItemNamen.AUSWEICHTRANK,
+                            ItemNamen.TREFFSICHERHEITSTRANK ->
+                                viewModel.onEvent(GameEvent.UseMagicPotion(item.name))
+                        }
+                    }
                 )
             }
         }
@@ -188,15 +223,33 @@ private fun visibleItemsByType(
 @Composable
 fun PotionItem(
     item: Item,
+    playerHp: Int,
+    playerMaxHp: Int,
     playerLevel: Int,
+    onUse: () -> Unit
 ) {
     val healAmount = calculateItemHeal(
         baseHeal = item.heal,
         level = playerLevel
     )
 
+    val effectText = if (item.heal > 0) {
+        "Heilung +$healAmount"
+    } else {
+        item.description
+    }
+
     Text(
-        text = "${item.name} ${itemIcon(item)} x${item.amount} | Heilung +$healAmount"
+        text = "${item.name} ${itemIcon(item)} x${item.amount} | $effectText"
+    )
+
+    GameButtonHoch(
+        text = if (item.heal > 0) {
+            "${itemIcon(item)} Trinken HP $playerHp/$playerMaxHp"
+        } else {
+            "${itemIcon(item)} ${item.name} trinken"
+        },
+        onClick = onUse
     )
 }
 

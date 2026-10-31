@@ -32,6 +32,10 @@ sealed class GameEvent {
     data class SellItem(val item: Item) : GameEvent()
 
     data class StartQuest(val quest: Quest) : GameEvent()
+
+    data class UseMagicPotion(val itemName: String) : GameEvent()
+
+
 }
 
 

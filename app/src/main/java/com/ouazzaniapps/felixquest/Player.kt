@@ -16,7 +16,11 @@ data class Player(
     val level: Int = 1,
     val xp: Int = 0,
     val xpToNextLevel: Int = 100,
-    val battlesWon: Int = 0
+    val battlesWon: Int = 0,
+    val guaranteedCritsRemaining: Int = 0,
+    val critProtectionRemaining: Int = 0,
+    val guaranteedDodgesRemaining: Int = 0,
+    val unavoidableAttacksRemaining: Int = 0
 )
 
 

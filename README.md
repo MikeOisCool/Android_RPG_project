@@ -38,6 +38,8 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\FelixQuest`
 
 ## Aenderungsverlauf, neueste Eintraege zuerst
 
+- 2026-10-31: Vier Zaubertraenke mit fuenf Angriffen Wirkung ergaenzt: kritische Treffer, Schutz vor gegnerischen Krits, garantiertes Ausweichen und nicht ausweichbare eigene Angriffe. Wirkungen und Trankstapel werden im Player gespeichert; Trinken im Inventar aktiviert den Effekt und verbraucht ein Item. Zaubertraenke droppen mit 5 Prozent Chance pro besiegtem Gegner. Sechs Unit-Tests pruefen Effekte, Verbrauch sowie fehlende Tranke und tote Spieler.
+
 - 2026-10-31: Shop-Button ebenfalls in Schliessen umbenannt, passend zu Inventar und Quests.
 
 - 2026-10-31: Nachts ergaenzen Geister und Skelette die bisherigen levelabhaengigen Gegner. Die aktuelle Tagesphase wird nach Siegen und beim Fliehen beruecksichtigt; laufende Kaempfe bleiben beim Phasenwechsel bestehen. Eigene Gegner-Emojis ergaenzt und Schliessen-Buttons in Inventar und Quests vereinheitlicht.

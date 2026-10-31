@@ -33,6 +33,7 @@ class GameViewModel : ViewModel() {
     private val playerCritMultiplier = 4
     private val enemyCritMultiplier = 2
     private val playerCritChance = 20 /* 20 Prozent Wahrscheinlichkeit */
+    private val magicPotionDropChance = 5
 
     private val weaponDropChance = 80
     private val armorDropChance = 50
@@ -104,6 +105,19 @@ class GameViewModel : ViewModel() {
         _leftBattleText.value = null
         _rightBattleText.value = null
         _centerBattleText.value = null
+    }
+
+    private fun handleMagicPotionDrop() {
+        if (!chance(magicPotionDropChance)) return
+
+        val potion = listOf(
+            GameItems.critPotion,
+            GameItems.critProtectionPotion,
+            GameItems.dodgePotion,
+            GameItems.accuracyPotion
+        ).random()
+
+        applyDrop(potion)
     }
 
     fun onEvent(event: GameEvent) {
@@ -295,6 +309,19 @@ class GameViewModel : ViewModel() {
                     }
                 }
             }
+
+            is GameEvent.UseMagicPotion -> {
+                if (_player.value.isDead || _attackInProgress.value) return
+
+                val playerBefore = _player.value
+                applyEvent(event)
+
+                if (_player.value != playerBefore) {
+                    addLog("🧪 ${event.itemName} getrunken!")
+                } else {
+                    addLog("🧪 Trank nicht vorhanden oder Wirkung bereits vollständig aktiv.")
+                }
+            }
         }
     }
 
@@ -336,7 +363,19 @@ class GameViewModel : ViewModel() {
     private fun handleAttackEnemy() {
 
         val currentEnemy = _enemy.value
-        val enemyDodged = chance(enemyDodgeChance)
+        val player = _player.value
+
+        val guaranteedCrit = player.guaranteedCritsRemaining > 0
+        val unavoidableAttack = player.unavoidableAttacksRemaining > 0
+
+        _player.value = player.copy(
+            guaranteedCritsRemaining =
+                (player.guaranteedCritsRemaining - 1).coerceAtLeast(0),
+            unavoidableAttacksRemaining =
+                (player.unavoidableAttacksRemaining - 1).coerceAtLeast(0)
+        )
+
+        val enemyDodged = !unavoidableAttack && chance(enemyDodgeChance)
 
         if (enemyDodged) {
             dodgeLog(
@@ -350,7 +389,10 @@ class GameViewModel : ViewModel() {
             return
         }
 
-        val damagedEnemyResult = playerAttacksEnemy(currentEnemy)
+        val damagedEnemyResult = playerAttacksEnemy(
+            currentEnemy,
+            guaranteedCrit
+        )
         val updatedEnemy = damagedEnemyResult.enemy
 
 
@@ -378,7 +420,20 @@ class GameViewModel : ViewModel() {
     }
 
     private fun enemyAttacksPlayer(updatedEnemy: Enemy) {
-        val playerDodged = chance(playerDodgeChance)
+
+        val player = _player.value
+
+        val guaranteedDodge = player.guaranteedDodgesRemaining > 0
+        val critProtected = player.critProtectionRemaining > 0
+
+        _player.value = player.copy(
+            guaranteedDodgesRemaining =
+                (player.guaranteedDodgesRemaining - 1).coerceAtLeast(0),
+            critProtectionRemaining =
+                (player.critProtectionRemaining - 1).coerceAtLeast(0)
+        )
+
+        val playerDodged = guaranteedDodge || chance(playerDodgeChance)
 
         if (playerDodged) {
             dodgeLog(
@@ -394,7 +449,7 @@ class GameViewModel : ViewModel() {
 
         val attackEnemyDamageResult = calculateDamage(
             attackDamage = updatedEnemy.attack,
-            critChance = enemyCritChance,
+            critChance = if (critProtected) 0 else enemyCritChance,
             critMultiplier = enemyCritMultiplier
         )
 
@@ -425,7 +480,10 @@ class GameViewModel : ViewModel() {
         }
     }
 
-    private fun playerAttacksEnemy(currentEnemy: Enemy): EnemyDamageResult {
+    private fun playerAttacksEnemy(
+        currentEnemy: Enemy,
+        guaranteedCrit: Boolean = false
+                                   ): EnemyDamageResult {
 
         val weaponBonus = _player.value.equippedWeapon?.damage ?: 0
         val playerAttack = calculateAttack(
@@ -435,7 +493,7 @@ class GameViewModel : ViewModel() {
 
         val playerDamageResult = calculateDamage(
             attackDamage = playerAttack,
-            critChance = playerCritChance,
+            critChance = if (guaranteedCrit) 100 else playerCritChance,
             critMultiplier = playerCritMultiplier
         )
 
@@ -508,6 +566,7 @@ class GameViewModel : ViewModel() {
         }
 
         handlePotionDrops()
+        handleMagicPotionDrop()
         handleEquipmentDrops()
         rewardPlayer(enemy)
         spawnNextEnemy()

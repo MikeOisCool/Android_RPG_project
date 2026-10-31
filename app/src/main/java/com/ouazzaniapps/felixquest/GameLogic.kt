@@ -225,6 +225,10 @@ fun handleEvent(
         is GameEvent.StartQuest -> {
             player
         }
+
+        is GameEvent.UseMagicPotion -> {
+            useMagicPotionByName(player, event.itemName)
+        }
     }
 }
 
@@ -328,3 +332,50 @@ fun createScaledEnemy(
     )
 }
 
+private fun activatePotionEffect(
+    player: Player,
+    itemName: String
+): Player {
+    return when (itemName) {
+        ItemNamen.KRIT_TRANK ->
+            player.copy(guaranteedCritsRemaining = 5)
+
+        ItemNamen.KRIT_SCHUTZTRANK ->
+            player.copy(critProtectionRemaining = 5)
+
+        ItemNamen.AUSWEICHTRANK ->
+            player.copy(guaranteedDodgesRemaining = 5)
+
+        ItemNamen.TREFFSICHERHEITSTRANK ->
+            player.copy(unavoidableAttacksRemaining = 5)
+
+        else -> player
+    }
+}
+
+private fun useMagicPotionByName(
+    player: Player,
+    itemName: String
+): Player {
+    if (player.isDead) return player
+
+    val potion = player.inventory.items.find {
+        it.name == itemName && it.amount > 0
+    } ?: return player
+
+    val updatedPlayer = activatePotionEffect(player, potion.name)
+
+    if (updatedPlayer == player) return player
+
+    val newItems = player.inventory.items.map { item ->
+        if (item.name == potion.name) {
+            item.copy(amount = item.amount - 1)
+        } else {
+            item
+        }
+    }.filter { it.amount > 0 }
+
+    return updatedPlayer.copy(
+        inventory = player.inventory.copy(items = newItems)
+    )
+}
