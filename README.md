@@ -38,6 +38,8 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\FelixQuest`
 
 ## Aenderungsverlauf, neueste Eintraege zuerst
 
+- 2026-10-31: Sechs Android-Tests fuer Spielstaende ergaenzt: leere Speicherplaetze, vollstaendiges Speichern und Laden, drei unabhaengige Plaetze, gezieltes Ueberschreiben, ungueltige Platznummern und beschaedigte JSON-Dateien. Alle sechs Tests auf Medium Phone und Pixel 8a erfolgreich; eigene Testordner schuetzen vorhandene Spielstaende.
+
 - 2026-10-31: Die Spielanleitung beim Betreten des GameScreens erscheint nur noch auf Level 1; beim Laden hoeherer Level bleibt sie geschlossen.
 
 - Hinweis: Die Datumsangaben sind aus den Git-Commits abgeleitet. Sie zeigen, wann ein Feature oder Refactoring ins Repository gekommen ist.
