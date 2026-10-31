@@ -149,7 +149,7 @@ fun GameScreen(
     }
 
     LaunchedEffect(Unit) {
-        if (!hasShownHowToPlay) {
+        if (player.level == 1 && !hasShownHowToPlay) {
             hasShownHowToPlay = true
             showHowToPlay = true
         }
