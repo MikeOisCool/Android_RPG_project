@@ -33,13 +33,8 @@ class GameViewModel : ViewModel() {
     private val playerCritMultiplier = 4
     private val enemyCritMultiplier = 2
     private val playerCritChance = 20 /* 20 Prozent Wahrscheinlichkeit */
-    private val magicPotionDropChance = 5
 
-    private val weaponDropChance = 80
-    private val armorDropChance = 50
-    private val healDropChance = 30
-    private val potionDropChance = 30
-    private val bigPotionDropChance = 20
+
     private val baseHeal = 25
     private var healingJob: Job? = null
     private var enemyDefeatedJob: Job? = null
@@ -108,16 +103,12 @@ class GameViewModel : ViewModel() {
     }
 
     private fun handleMagicPotionDrop() {
-        if (!chance(magicPotionDropChance)) return
-
-        val potion = listOf(
-            GameItems.critPotion,
-            GameItems.critProtectionPotion,
-            GameItems.dodgePotion,
-            GameItems.accuracyPotion
-        ).random()
-
-        applyDrop(potion)
+        repeat(2) {
+            val potion = DropTable.rollMagicPotion()
+            if (potion != null) {
+                applyDrop(potion)
+            }
+        }
     }
 
     fun onEvent(event: GameEvent) {
@@ -483,7 +474,7 @@ class GameViewModel : ViewModel() {
     private fun playerAttacksEnemy(
         currentEnemy: Enemy,
         guaranteedCrit: Boolean = false
-                                   ): EnemyDamageResult {
+    ): EnemyDamageResult {
 
         val weaponBonus = _player.value.equippedWeapon?.damage ?: 0
         val playerAttack = calculateAttack(
@@ -649,54 +640,35 @@ class GameViewModel : ViewModel() {
 
     private fun handleEquipmentDrops() {
 
-        val weaponDrop = when (_player.value.level) {
-            in 1..2 -> GameItems.woodWeapon
-            in 3..4 -> GameItems.ironWeapon
-            in 5..6 -> GameItems.silverWeapon
-            in 7..8 -> GameItems.goldenWeapon
-            in 9..10 -> GameItems.diamondWeapon
-            else -> null
-        }
+        val weaponDrop = DropTable.rollWeapon(_player.value.level)
 
-        val armorDrop = when (_player.value.level) {
-            in 0..3 -> GameItems.simpleArmor
-            in 4..5 -> GameItems.ironArmor
-            in 6..7 -> GameItems.silverArmor
-            in 8..9 -> GameItems.goldenArmor
-            in 10..11 -> GameItems.diamondArmor
-            else -> null
-        }
+        val armorDrop = DropTable.rollArmor(_player.value.level)
+
 
         weaponDrop?.let { item ->
-            if (chance(weaponDropChance)) {
-                applyDrop(item)
-            }
+            applyDrop(item)
         }
         armorDrop?.let { item ->
-            if (chance(armorDropChance)) {
-                applyDrop(item)
-            }
+            applyDrop(item)
         }
     }
 
     private fun handlePotionDrops() {
 
-        if (chance(bigPotionDropChance)) applyDrop(
-            GameItems.healBigPotion
-        )
+        DropTable.rollHealPotion()?.let { applyDrop(it) }
+        DropTable.rollBigHealPotion()?.let { applyDrop(it) }
 
-        if (chance(potionDropChance)) applyDrop(
-            GameItems.healPotion
-        )
-
-        if (chance(healDropChance)) healDrop()
+        if (DropTable.rollHealDrop()) {
+            healDrop()
+        }
     }
 
     private fun spawnNextEnemy() {
         if (_player.value.isDead) return
         val nextEnemy = EnemyFactory.createRandomEnemy(
             _player.value.level,
-            dayPhase = calculateDayPhase(_elapsedSeconds.value))
+            dayPhase = calculateDayPhase(_elapsedSeconds.value)
+        )
         _enemy.value = nextEnemy
 
         addLog("👹 Ein neuer Gegner erscheint: ${nextEnemy.name} (${nextEnemy.hp} HP)!")

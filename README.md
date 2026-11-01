@@ -38,6 +38,8 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\FelixQuest`
 
 ## Aenderungsverlauf, neueste Eintraege zuerst
 
+- 2026-11-01: Drop-Auswahl in DropTable ausgelagert: levelabhaengige Waffen und Ruestungen, Heiltrank- und Zaubertrank-Drops sowie direkte Heilung. Fuenf Unit-Tests pruefen erlaubte Drop-Ergebnisse und Levelgrenzen.
+
 - 2026-10-31: Android-App-Version fuer das naechste Release auf VersionCode 7 und VersionName 1.7 erhoeht.
 
 - 2026-10-31: Vier Zaubertraenke mit fuenf Angriffen Wirkung ergaenzt: kritische Treffer, Schutz vor gegnerischen Krits, garantiertes Ausweichen und nicht ausweichbare eigene Angriffe. Wirkungen und Trankstapel werden im Player gespeichert; Trinken im Inventar aktiviert den Effekt und verbraucht ein Item. Zaubertraenke droppen mit 5 Prozent Chance pro besiegtem Gegner. Sechs Unit-Tests pruefen Effekte, Verbrauch sowie fehlende Tranke und tote Spieler.
