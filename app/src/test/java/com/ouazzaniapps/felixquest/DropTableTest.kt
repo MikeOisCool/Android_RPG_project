@@ -1,5 +1,8 @@
 package com.ouazzaniapps.felixquest
 
+import com.ouazzaniapps.felixquest.drop.DropTable
+import com.ouazzaniapps.felixquest.item.GameItems
+import com.ouazzaniapps.felixquest.item.Item
 import org.junit.Assert.assertTrue
 import org.junit.Test
 

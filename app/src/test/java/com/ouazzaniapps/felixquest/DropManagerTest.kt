@@ -1,5 +1,9 @@
 package com.ouazzaniapps.felixquest
 
+import com.ouazzaniapps.felixquest.drop.DropManager
+import com.ouazzaniapps.felixquest.item.GameItems
+import com.ouazzaniapps.felixquest.item.Inventory
+import com.ouazzaniapps.felixquest.item.ItemNamen
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue

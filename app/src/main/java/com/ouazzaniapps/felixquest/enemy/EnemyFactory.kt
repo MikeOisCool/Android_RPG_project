@@ -1,4 +1,7 @@
-package com.ouazzaniapps.felixquest
+package com.ouazzaniapps.felixquest.enemy
+
+import com.ouazzaniapps.felixquest.DayPhase
+import com.ouazzaniapps.felixquest.createScaledEnemy
 
 object EnemyFactory {
 

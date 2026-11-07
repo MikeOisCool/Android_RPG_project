@@ -27,9 +27,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ouazzaniapps.felixquest.GameEvent
 import com.ouazzaniapps.felixquest.GameViewModel
-import com.ouazzaniapps.felixquest.Item
-import com.ouazzaniapps.felixquest.ItemNamen
-import com.ouazzaniapps.felixquest.ItemType
+import com.ouazzaniapps.felixquest.item.Item
+import com.ouazzaniapps.felixquest.item.ItemNamen
+import com.ouazzaniapps.felixquest.item.ItemType
 import com.ouazzaniapps.felixquest.Player
 import com.ouazzaniapps.felixquest.calculateItemHeal
 

@@ -1,5 +1,6 @@
 package com.ouazzaniapps.felixquest
 
+import com.ouazzaniapps.felixquest.item.GameItems
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.Assert.assertEquals

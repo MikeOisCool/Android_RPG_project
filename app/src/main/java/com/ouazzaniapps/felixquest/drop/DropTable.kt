@@ -1,4 +1,8 @@
-package com.ouazzaniapps.felixquest
+package com.ouazzaniapps.felixquest.drop
+
+import com.ouazzaniapps.felixquest.item.GameItems
+import com.ouazzaniapps.felixquest.item.Item
+import com.ouazzaniapps.felixquest.chance
 
 object DropTable {
     private const val MAGIC_POTION_DROP_CHANCE = 10

@@ -1,4 +1,6 @@
-package com.ouazzaniapps.felixquest
+package com.ouazzaniapps.felixquest.item
+
+import com.ouazzaniapps.felixquest.Player
 
 fun isEquippedItem(item: Item, player: Player): Boolean {
     return player.equippedWeapon?.name == item.name || player.equippedArmor?.name == item.name

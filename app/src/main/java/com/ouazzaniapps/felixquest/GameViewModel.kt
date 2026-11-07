@@ -1,9 +1,22 @@
 package com.ouazzaniapps.felixquest
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ouazzaniapps.felixquest.QuestName.allQuests
+import com.ouazzaniapps.felixquest.drop.DropManager
+import com.ouazzaniapps.felixquest.drop.DropTable
+import com.ouazzaniapps.felixquest.enemy.Enemy
+import com.ouazzaniapps.felixquest.enemy.EnemyDamageResult
+import com.ouazzaniapps.felixquest.enemy.EnemyFactory
+import com.ouazzaniapps.felixquest.item.GameItems
+import com.ouazzaniapps.felixquest.item.Inventory
+import com.ouazzaniapps.felixquest.item.Item
+import com.ouazzaniapps.felixquest.item.ItemNamen
+import com.ouazzaniapps.felixquest.item.ItemType
+import com.ouazzaniapps.felixquest.item.hasItemInInventory
+import com.ouazzaniapps.felixquest.item.isEquippedItem
+import com.ouazzaniapps.felixquest.item.isPotionStackFull
+import com.ouazzaniapps.felixquest.item.isUniqueItemAlreadyInInventory
+import com.ouazzaniapps.felixquest.item.isWeaponOrArmor
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -369,9 +382,11 @@ class GameViewModel : ViewModel() {
         val enemyDodged = !unavoidableAttack && chance(enemyDodgeChance)
 
         if (enemyDodged) {
-            dodgeLog(
-                defenderName = currentEnemy.name,
-                attackerName = _player.value.name
+            addLog(
+                dodgeLog(
+                    defenderName = currentEnemy.name,
+                    attackerName = _player.value.name
+                )
             )
             _rightBattleText.value = "💨 Dodge"
             enemyAttacksPlayer(currentEnemy)
@@ -427,9 +442,11 @@ class GameViewModel : ViewModel() {
         val playerDodged = guaranteedDodge || chance(playerDodgeChance)
 
         if (playerDodged) {
-            dodgeLog(
-                defenderName = _player.value.name,
-                attackerName = updatedEnemy.name
+            addLog(
+                dodgeLog(
+                    defenderName = _player.value.name,
+                    attackerName = updatedEnemy.name
+                )
             )
             _leftBattleText.value = "💨 Dodge"
             clearHitTextLater()
@@ -520,28 +537,6 @@ class GameViewModel : ViewModel() {
         }
     }
 
-    private fun damageLog(
-        attackerName: String,
-        targetName: String,
-        damage: Int,
-        isCritical: Boolean
-    ): String {
-        val normalDamageLog =
-            "⚔️ $attackerName trifft $targetName für $damage Schaden!"
-        return if (isCritical) {
-            "💥 KRITISCHER TREFFER! $normalDamageLog"
-        } else {
-            normalDamageLog
-        }
-    }
-
-    private fun dodgeLog(
-        defenderName: String,
-        attackerName: String
-    ) {
-        addLog("💨 $defenderName weicht dem Angriff von $attackerName aus!")
-    }
-
 
     private fun handleEnemyDefeated(enemy: Enemy) {
         if (_player.value.isDead) return
@@ -567,12 +562,10 @@ class GameViewModel : ViewModel() {
         enemy: Enemy,
         questName: Quest
     ): Quest {
-        var updatedQuest = questName
-        if (!updatedQuest.isStarted) return updatedQuest
+        if (_player.value.isDead) return questName
 
-        if (_player.value.isDead) return updatedQuest
-        if (enemy.name != updatedQuest.targetEnemyName) return updatedQuest
-        updatedQuest = updatedQuest.copy(currentAmount = updatedQuest.currentAmount + 1)
+        val updatedQuest = advanceQuestProgress(questName, enemy.name)
+        if (updatedQuest == questName) return questName
 
         if (updatedQuest.isCompleted) {
             addLog("❤️ Quest: ${updatedQuest.title} ist abgeschlossen! Du hast ${updatedQuest.currentAmount} von ${updatedQuest.targetAmount} besiegt.")

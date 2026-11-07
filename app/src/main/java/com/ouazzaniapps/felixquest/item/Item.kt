@@ -1,4 +1,4 @@
-package com.ouazzaniapps.felixquest
+package com.ouazzaniapps.felixquest.item
 
 import kotlinx.serialization.Serializable
 

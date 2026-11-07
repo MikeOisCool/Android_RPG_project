@@ -4,6 +4,9 @@ import android.content.Context
 import android.content.ContextWrapper
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import com.ouazzaniapps.felixquest.enemy.Enemy
+import com.ouazzaniapps.felixquest.item.GameItems
+import com.ouazzaniapps.felixquest.item.Inventory
 import java.io.File
 import java.util.UUID
 import kotlinx.coroutines.runBlocking
@@ -43,9 +46,11 @@ class GameSaveStorageTest {
         val armor = GameItems.simpleArmor
         return GameSave(
             player = Player(
-                name = "Felix Äöü", inventory = Inventory(listOf(
-                    weapon, armor, GameItems.healPotion.copy(amount = 4)
-                )),
+                name = "Felix Äöü", inventory = Inventory(
+                    listOf(
+                        weapon, armor, GameItems.healPotion.copy(amount = 4)
+                    )
+                ),
                 hp = 67, maxHp = 140, attack = 19,
                 equippedWeapon = weapon, equippedArmor = armor,
                 gold = 321, isDead = false, level = 8, xp = 45, xpToNextLevel = 800

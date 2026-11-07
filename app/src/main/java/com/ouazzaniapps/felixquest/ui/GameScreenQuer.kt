@@ -31,15 +31,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ouazzaniapps.felixquest.DayPhase
-import com.ouazzaniapps.felixquest.Enemy
+import com.ouazzaniapps.felixquest.enemy.Enemy
 import com.ouazzaniapps.felixquest.GameEvent
 import com.ouazzaniapps.felixquest.GameViewModel
-import com.ouazzaniapps.felixquest.ItemNamen
+import com.ouazzaniapps.felixquest.item.ItemNamen
 import com.ouazzaniapps.felixquest.Player
 import kotlinx.coroutines.delay
 

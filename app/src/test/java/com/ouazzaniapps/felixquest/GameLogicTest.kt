@@ -1,5 +1,14 @@
 package com.ouazzaniapps.felixquest
 
+import com.ouazzaniapps.felixquest.item.GameItems
+import com.ouazzaniapps.felixquest.item.Inventory
+import com.ouazzaniapps.felixquest.item.Item
+import com.ouazzaniapps.felixquest.item.ItemNamen
+import com.ouazzaniapps.felixquest.item.hasItemInInventory
+import com.ouazzaniapps.felixquest.item.isEquippedItem
+import com.ouazzaniapps.felixquest.item.isPotionStackFull
+import com.ouazzaniapps.felixquest.item.isUniqueItemAlreadyInInventory
+import com.ouazzaniapps.felixquest.item.isWeaponOrArmor
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull

@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -31,14 +29,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ouazzaniapps.felixquest.GameEvent
 import com.ouazzaniapps.felixquest.GameViewModel
-import com.ouazzaniapps.felixquest.Item
-import com.ouazzaniapps.felixquest.ItemType
+import com.ouazzaniapps.felixquest.item.Item
+import com.ouazzaniapps.felixquest.item.ItemType
 import com.ouazzaniapps.felixquest.Player
 import com.ouazzaniapps.felixquest.availableShopItems
 import com.ouazzaniapps.felixquest.buyPrice
 import com.ouazzaniapps.felixquest.calculateItemHeal
-import com.ouazzaniapps.felixquest.isPotionStackFull
-import com.ouazzaniapps.felixquest.isUniqueItemAlreadyInInventory
+import com.ouazzaniapps.felixquest.item.isPotionStackFull
+import com.ouazzaniapps.felixquest.item.isUniqueItemAlreadyInInventory
 import com.ouazzaniapps.felixquest.sellPrice
 
 

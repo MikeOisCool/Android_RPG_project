@@ -1,5 +1,7 @@
 package com.ouazzaniapps.felixquest
 
+import com.ouazzaniapps.felixquest.item.Item
+
 sealed class GameEvent {
 
     object AttackEnemy : GameEvent()

@@ -32,10 +32,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ouazzaniapps.felixquest.DayPhase
-import com.ouazzaniapps.felixquest.Enemy
+import com.ouazzaniapps.felixquest.enemy.Enemy
 import com.ouazzaniapps.felixquest.GameEvent
 import com.ouazzaniapps.felixquest.GameViewModel
-import com.ouazzaniapps.felixquest.ItemNamen
+import com.ouazzaniapps.felixquest.item.ItemNamen
 import com.ouazzaniapps.felixquest.Player
 import kotlinx.coroutines.delay
 

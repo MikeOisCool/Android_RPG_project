@@ -1,5 +1,7 @@
 package com.ouazzaniapps.felixquest
 
+import com.ouazzaniapps.felixquest.item.GameItems
+import com.ouazzaniapps.felixquest.item.Item
 import kotlinx.serialization.Serializable
 
 @Serializable

@@ -1,4 +1,4 @@
-package com.ouazzaniapps.felixquest
+package com.ouazzaniapps.felixquest.enemy
 
 data class EnemyDamageResult(
     val enemy: Enemy,

@@ -1,4 +1,8 @@
-package com.ouazzaniapps.felixquest
+package com.ouazzaniapps.felixquest.drop
+
+import com.ouazzaniapps.felixquest.item.Item
+import com.ouazzaniapps.felixquest.item.ItemType
+import com.ouazzaniapps.felixquest.Player
 
 object DropManager {
 
