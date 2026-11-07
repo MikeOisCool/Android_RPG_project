@@ -123,8 +123,8 @@ fun GameScreenQuer(
             onAddGold = { viewModel.onEvent(GameEvent.AddGold()) },
             onHeal = { viewModel.onEvent(GameEvent.Heal()) },
             onGainXp = { viewModel.onEvent(GameEvent.GainXp()) },
-            onUsePotion = { viewModel.onEvent(GameEvent.UsePotion()) },
-            onUseBigPotion = { viewModel.onEvent(GameEvent.UseBigPotion()) },
+            onUsePotion = { viewModel.onEvent(GameEvent.UsePotion) },
+            onUseBigPotion = { viewModel.onEvent(GameEvent.UseBigPotion) },
             onShop = onShop,
             onQuest = onQuest,
             onSaveGame = {

@@ -27,6 +27,7 @@ import java.io.IOException
 import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.launch
 import androidx.compose.material3.AlertDialog
+import com.ouazzaniapps.felixquest.SaveSlotState
 
 @Composable
 fun AppNavigation() {
@@ -66,24 +67,26 @@ fun AppNavigation() {
 
         composable("saved_games_screen") {
             var saveSlots by remember {
-                mutableStateOf<List<GameSave?>?>(null)
-            }
-            var loadError by remember {
-                mutableStateOf<String?>(null)
+                mutableStateOf<List<SaveSlotState>?>(null)
             }
 
             LaunchedEffect(saveStorage) {
-                try {
-                    saveSlots = (1..3).map { slot ->
-                        saveStorage.load(slot)
+
+                saveSlots = (1..3).map { slot ->
+                    try {
+                        val gameSave = saveStorage.load(slot)
+                        if (gameSave == null) {
+                            SaveSlotState.Empty
+                        } else {
+                            SaveSlotState.Occupied(gameSave)
+                        }
+                    } catch (e: IOException) {
+                        SaveSlotState.Error("Speicherplatz $slot konnte nicht gelesen werden.")
+                    } catch (e: SerializationException) {
+                        SaveSlotState.Error("Speicherplatz $slot enthält ungültige Daten.")
                     }
-                } catch (e: IOException) {
-                    loadError = "Speicherdateien konnten nicht gelesen werden."
-                } catch (e: SerializationException) {
-                    loadError = "Ein Spielstand enthält ungültige Daten."
                 }
             }
-
             val loadedSlots = saveSlots
 
             if (loadedSlots != null) {
@@ -104,7 +107,7 @@ fun AppNavigation() {
                 )
             } else {
                 Column {
-                    Text(loadError ?: "Spielstände werden geladen …")
+                    Text("Spielstände werden geladen …")
                     TextButton(
                         onClick = { navController.popBackStack() }
                     ) {
@@ -120,7 +123,7 @@ fun AppNavigation() {
                 mutableStateOf<Int?>(null)
             }
             var saveSlots by remember {
-                mutableStateOf<List<GameSave?>?>(null)
+                mutableStateOf<List<SaveSlotState>?>(null)
             }
             var saveError by remember {
                 mutableStateOf<String?>(null)
@@ -153,28 +156,34 @@ fun AppNavigation() {
             }
 
             LaunchedEffect(saveStorage) {
-                try {
-                    saveSlots = (1..3).map { slot ->
-                        saveStorage.load(slot)
+
+                saveSlots = (1..3).map { slot ->
+                    try {
+                        val gameSave = saveStorage.load(slot)
+
+                        if (gameSave == null) {
+                            SaveSlotState.Empty
+                        } else {
+                            SaveSlotState.Occupied(gameSave)
+                        }
+                    } catch (e: IOException) {
+                        SaveSlotState.Error("Speicherplatz $slot konnte nicht gelesen werden.")
+                    } catch (e: SerializationException) {
+                        SaveSlotState.Error("Speicherplatz $slot enthält ungültige Daten.")
                     }
-                } catch (e: IOException) {
-                    saveError = "Speicherdateien konnten nicht gelesen werden."
-                } catch (e: SerializationException) {
-                    saveError = "Ein Spielstand enthält ungültige Daten."
                 }
             }
+
             val loadedSlots = saveSlots
 
             if (loadedSlots != null) {
                 SaveGameScreen(
                     saveSlots = loadedSlots,
                     onSaveGame = { slot ->
-                        if (!isSaving) {
-                            if (loadedSlots[slot - 1] == null) {
-                                saveToSlot(slot)
-                            } else {
-                                selectedSlot = slot
-                            }
+                        if (loadedSlots[slot - 1] == SaveSlotState.Empty) {
+                            saveToSlot(slot)
+                        } else {
+                            selectedSlot = slot
                         }
                     },
                     onBack = { navController.popBackStack() }

@@ -99,10 +99,10 @@ fun InventoryScreen(
                     onUse = {
                         when (item.name) {
                             ItemNamen.HEILTRANK ->
-                                viewModel.onEvent(GameEvent.UsePotion())
+                                viewModel.onEvent(GameEvent.UsePotion)
 
                             ItemNamen.GROSSER_HEILTRANK ->
-                                viewModel.onEvent(GameEvent.UseBigPotion())
+                                viewModel.onEvent(GameEvent.UseBigPotion)
 
                             ItemNamen.KRIT_TRANK,
                             ItemNamen.KRIT_SCHUTZTRANK,

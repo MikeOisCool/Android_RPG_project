@@ -16,12 +16,13 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ouazzaniapps.felixquest.GameSave
+import com.ouazzaniapps.felixquest.SaveSlotState
 import java.text.DateFormat
 import java.util.Date
 
 @Composable
 fun SavedGamesScreen(
-    saveSlots: List<GameSave?>,
+    saveSlots: List<SaveSlotState>,
     onLoadGame: (GameSave) -> Unit,
     onBack: () -> Unit
 ) {
@@ -36,34 +37,43 @@ fun SavedGamesScreen(
             Alignment.CenterVertically
         )
     ) {
-        Text("Gespeicherter Fortschritt",
+        Text(
+            "Gespeicherter Fortschritt",
             modifier = Modifier.fillMaxWidth(),
             fontSize = 24.sp,
             textDecoration = TextDecoration.Underline,
-            textAlign = TextAlign.Center)
+            textAlign = TextAlign.Center
+        )
 
         for (slot in 1..3) {
-            val gameSave = saveSlots.getOrNull(slot - 1)
+            when (val state = saveSlots[slot - 1]) {
+                is SaveSlotState.Empty -> {
+                    Text("Speicherplatz $slot ist leer")
+                }
 
-            if (gameSave == null) {
-                Text("Speicherplatz $slot – Leer")
-            } else {
+                is SaveSlotState.Occupied -> {
+                    val gameSave = state.gameSave
 
-                val savedAt = DateFormat.getDateTimeInstance(
-                    DateFormat.SHORT,
-                    DateFormat.SHORT
-                ).format(Date(gameSave.savedAtMillis))
+                    val savedAt = DateFormat.getDateTimeInstance(
+                        DateFormat.SHORT,
+                        DateFormat.SHORT
+                    ).format(Date(gameSave.savedAtMillis))
 
-                Text(
-                    "Speicherplatz $slot\n" +
-                            "${gameSave.player.name} · Level ${gameSave.player.level}\n" +
-                            "Siege: ${gameSave.player.battlesWon}\nGespeichert: $savedAt"
-                )
-                GameButtonHoch(
-                    text = "Laden",
-                    onClick = { onLoadGame(gameSave) }
-                )
+                    Text(
+                        "Speicherplatz $slot\n" +
+                                "${gameSave.player.name} · Level ${gameSave.player.level}\n" +
+                                "Siege: ${gameSave.player.battlesWon}\nGespeichert: $savedAt"
+                    )
+                    GameButtonHoch(
+                        text = "Laden",
+                        onClick = { onLoadGame(gameSave) }
+                    )
 
+                }
+
+                is SaveSlotState.Error -> {
+                    Text(state.message)
+                }
             }
         }
 

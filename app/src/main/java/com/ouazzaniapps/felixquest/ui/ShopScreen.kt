@@ -320,8 +320,14 @@ fun PotionSellText(
         baseHeal = item.heal, level = playerLevel
     )
 
+    val effectText = if (item.heal > 0) {
+        "Heilung +$healAmount"
+    } else {
+        item.description
+    }
+
     Text(
-        text = "${item.name} ${itemIcon(item)} x${item.amount} | Heilung +$healAmount | Preis: ${
+        text = "${item.name} ${itemIcon(item)} x${item.amount} | $effectText | Preis: ${
             sellPrice(
                 item = item, playerLevel = playerLevel
             )

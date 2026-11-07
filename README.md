@@ -38,13 +38,17 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\FelixQuest`
 
 ## Aenderungsverlauf, neueste Eintraege zuerst
 
+- 2026-11-07: Spielstandplaetze erhalten eigene Zustaende fuer leer, belegt und fehlerhaft; Ladefehler werden pro Platz angezeigt, sodass andere Plaetze verfuegbar bleiben. Heiltrank-Events ohne ungenutzten Mengenparameter modelliert und Zaubertrank-Wirkungen auch in der Verkaufsanzeige dargestellt.
+
+- 2026-11-07: README an den aktuellen Stand angepasst: Speichern und Laden als vorhandenes Feature eingeordnet, Zaubertrank-Drops mit zwei unabhaengigen Wuerfen zu je 10 Prozent dokumentiert und die Anzahl der DropTable-Tests auf sechs korrigiert.
+
 - 2026-11-07: Drop-, Gegner- und Item-Dateien in eigene Packages verschoben und Imports angepasst. Kampf-Logtexte nach GameLogText sowie die Quest-Fortschrittsberechnung nach QuestLogic ausgelagert. Unit-Tests erfolgreich; App- und Android-Testcode kompilieren.
 
-- 2026-11-01: Drop-Auswahl in DropTable ausgelagert: levelabhaengige Waffen und Ruestungen, Heiltrank- und Zaubertrank-Drops sowie direkte Heilung. Fuenf Unit-Tests pruefen erlaubte Drop-Ergebnisse und Levelgrenzen.
+- 2026-11-01: Drop-Auswahl in DropTable ausgelagert: levelabhaengige Waffen und Ruestungen, Heiltrank- und Zaubertrank-Drops sowie direkte Heilung. Sechs Unit-Tests pruefen erlaubte Drop-Ergebnisse und Levelgrenzen.
 
 - 2026-10-31: Android-App-Version fuer das naechste Release auf VersionCode 7 und VersionName 1.7 erhoeht.
 
-- 2026-10-31: Vier Zaubertraenke mit fuenf Angriffen Wirkung ergaenzt: kritische Treffer, Schutz vor gegnerischen Krits, garantiertes Ausweichen und nicht ausweichbare eigene Angriffe. Wirkungen und Trankstapel werden im Player gespeichert; Trinken im Inventar aktiviert den Effekt und verbraucht ein Item. Zaubertraenke droppen mit 5 Prozent Chance pro besiegtem Gegner. Sechs Unit-Tests pruefen Effekte, Verbrauch sowie fehlende Tranke und tote Spieler.
+- 2026-10-31: Vier Zaubertraenke mit fuenf Angriffen Wirkung ergaenzt: kritische Treffer, Schutz vor gegnerischen Krits, garantiertes Ausweichen und nicht ausweichbare eigene Angriffe. Wirkungen und Trankstapel werden im Player gespeichert; Trinken im Inventar aktiviert den Effekt und verbraucht ein Item. Die anfangs verwendete Drop-Chance wurde spaeter angepasst; die aktuellen Werte stehen unter Item-Balancing. Sechs Unit-Tests pruefen Effekte, Verbrauch sowie fehlende Tranke und tote Spieler.
 
 - 2026-10-31: Shop-Button ebenfalls in Schliessen umbenannt, passend zu Inventar und Quests.
 
@@ -119,6 +123,14 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\FelixQuest`
 
 ## Aktuelle Features
 
+- Drei lokale Speicherplaetze mit Laden, Ueberschreibabfrage und Anzeige von Name, Level, Siegen und Speicherdatum; gespeichert werden Spieler samt Inventar und Ausruestung, Gegner, Quests, Kampflog und Tageszeit.
+- Tag-Nacht-Zyklus ueber 120 Sekunden mit Mond und Sternen; nachts koennen zusaetzlich Geister und Skelette erscheinen.
+- Vier Zaubertraenke mit jeweils fuenf Angriffen Wirkung; aktive Wirkungen werden mit dem Player gespeichert.
+- Siege werden pro besiegtem Gegner gezaehlt und mit dem Spielstand gespeichert.
+- Linke Wolke/linker Stern oeffnet Quests, rechte Wolke/rechter Stern das Inventar; Sonne und Mond dienen zum Fliehen.
+- Kampflog auf die letzten 1000 Eintraege begrenzt.
+
+
 - Kampfsystem - seit 2026-06-14, mehrfach refactored am 2026-07-05
 - Kritische Treffer - seit 2026-06-14, Chance/Benennung refactored am 2026-07-05
 - Ausweichen - seit 2026-06-14, shared Dodge-Handling refactored am 2026-07-05
@@ -181,6 +193,14 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\FelixQuest`
 - Ruestungen haben feste Verteidigungswerte.
 - Heiltrank-Preise koennen levelabhaengig berechnet werden, weil Heiltraenke mit hoeherem Level staerker wirken.
 
+### Aktuelle Drop-Chancen
+
+- Zaubertraenke: zwei unabhaengige Wuerfe pro besiegtem Gegner, jeweils mit 10 Prozent Chance. Jeder erfolgreiche Wurf waehlt einen der vier Zaubertraenke zufaellig aus; zwei gleiche oder verschiedene Traenke sind moeglich.
+- Daraus ergeben sich vor Anwendung des Inventarlimits: 81 Prozent kein Zaubertrank, 18 Prozent genau einer und 1 Prozent zwei. Die Chance auf mindestens einen betraegt 19 Prozent.
+- Waffen: 40 Prozent innerhalb der unterstuetzten Levelbereiche 1 bis 10.
+- Ruestungen: 50 Prozent innerhalb der unterstuetzten Levelbereiche 0 bis 11.
+- Kleiner Heiltrank: 30 Prozent; grosser Heiltrank: 20 Prozent; direkte Heilung nach dem Kampf: 30 Prozent. Diese Wuerfe erfolgen unabhaengig voneinander.
+
 ## Haendler-Konzept
 
 Der Haendler ist als eigener Shop-Screen umgesetzt. Er verkauft Items levelabhaengig und nutzt Gold als Waehrung. Der Einstieg zum Haendler kann spaeter nach einem Level-Up angeboten werden, z.B. mit der Frage: "Moechtest du zum Haendler gehen?"
@@ -240,8 +260,7 @@ Beim Verkaufen gelten folgende Regeln:
 
 ## Geplante Features
 
-- Quests weiter ausbauen: Starten, Abschliessen, Belohnungen, Wiederholungen und spaeter mehrere Quest-Arten sauber testen
-- Speichern und Laden
+- Bestehende Quest-Abschluesse, Belohnungen und Wiederholungen umfassender testen; spaeter weitere Quest-Arten ergaenzen
 - Bessere Grafik/Assets
 
 ## Technologien
