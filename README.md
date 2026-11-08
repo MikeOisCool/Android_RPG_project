@@ -10,6 +10,8 @@ Wichtig ist dabei: Michael moechte die Konzepte wirklich verstehen und nicht nur
 
 ## Arbeitsregeln fuer Codex
 
+- TEMP-ERINNERUNG bis Version 1.8: Vor dem Play-Store-Upload die Animations-Debugtexte in GameScreenHoch.kt und GameScreenQuer.kt entfernen; diese Erinnerung danach aus der README löschen.
+
 Projektpfad: `C:\Users\acer\AndroidStudioProjects\FelixQuest`
 
 - Der Nutzer moechte Kotlin/Jetpack Compose selbst lernen und Code-Dateien selbst schreiben.
@@ -37,6 +39,8 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\FelixQuest`
 - In neuen Chats zuerst diese Arbeitsregeln lesen.
 
 ## Aenderungsverlauf, neueste Eintraege zuerst
+
+- 2026-11-08: Gemeinsame Logik fuer Angriffs-, Flucht- und Speicheraktionen sowie Game-Over- und Log-Scroll-Effekte ausgelagert. Inventarmengen, Gesamtangriff und Gesamtverteidigung werden fuer Hoch- und Querformat gemeinsam berechnet.
 
 - 2026-11-07: Spielstandplaetze erhalten eigene Zustaende fuer leer, belegt und fehlerhaft; Ladefehler werden pro Platz angezeigt, sodass andere Plaetze verfuegbar bleiben. Heiltrank-Events ohne ungenutzten Mengenparameter modelliert und Zaubertrank-Wirkungen auch in der Verkaufsanzeige dargestellt.
 

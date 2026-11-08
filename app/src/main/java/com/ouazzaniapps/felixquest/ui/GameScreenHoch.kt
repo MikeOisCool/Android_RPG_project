@@ -17,7 +17,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,12 +31,11 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ouazzaniapps.felixquest.DayPhase
-import com.ouazzaniapps.felixquest.enemy.Enemy
 import com.ouazzaniapps.felixquest.GameEvent
 import com.ouazzaniapps.felixquest.GameViewModel
-import com.ouazzaniapps.felixquest.item.ItemNamen
 import com.ouazzaniapps.felixquest.Player
-import kotlinx.coroutines.delay
+import com.ouazzaniapps.felixquest.enemy.Enemy
+import com.ouazzaniapps.felixquest.item.ItemNamen
 
 @Composable
 fun GameScreenHoch(
@@ -61,39 +59,36 @@ fun GameScreenHoch(
     val leftBattleText by viewModel.leftBattleText.collectAsState()
     val centerBattleText by viewModel.centerBattleText.collectAsState()
     val attackInProgress by viewModel.attackInProgress.collectAsState()
-    val canClickAttackButton = !attackInProgress && enemy.hp > 0 && !player.isDead
+    val canAttackOrFlee = isAttackOrFleeAllowed(
+        attackInProgress,
+        playerAttacks,
+        enemyAttacks,
+        player.isDead,
+        enemy.hp <= 0
+    )
     val onAttack = {
-        if (canClickAttackButton) {
-            if (viewModel.tryAttackEnemy()) {
-                playerAttacks = false
-                playerAttacks = true
-            }
-        }
+        handleAttackClick(
+            canAttackOrFlee = canAttackOrFlee,
+            tryAttackEnemy = viewModel::tryAttackEnemy,
+            onPlayerAttackStarted = { playerAttacks = true }
+        )
     }
     val onFlee = {
-        if (canClickAttackButton) {
-            viewModel.onEvent(GameEvent.Flee)
-        }
+        handleFleeClick(
+            canAttackOrFlee = canAttackOrFlee,
+            fleeButtonClick = { viewModel.onEvent(GameEvent.Flee) }
+        )
     }
 
-    val potionBigAmount = player.inventory.items.find {
-        it.name == ItemNamen.GROSSER_HEILTRANK
-    }?.amount ?: 0
+    val potionAmount = getItemAmount(player = player, itemName = ItemNamen.HEILTRANK)
+    val potionBigAmount = getItemAmount(player = player, itemName = ItemNamen.GROSSER_HEILTRANK)
 
-    val potionAmount = player.inventory.items.find {
-        it.name == ItemNamen.HEILTRANK
-    }?.amount ?: 0
+    LogAutoScrollEffect(log, listState)
 
-    LaunchedEffect(log) {
-        if (log.isNotEmpty()) listState.animateScrollToItem(log.size - 1)
-    }
-
-    LaunchedEffect(player.isDead) {
-        if (player.isDead) {
-            delay(1200)
-            onGameOver()
-        }
-    }
+    GameOverEffect(
+        isPlayerDead = player.isDead,
+        onGameOver = onGameOver
+    )
 
     BattleAnimationEffects(
         playerAttacks = playerAttacks,
@@ -119,8 +114,8 @@ fun GameScreenHoch(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth()
         ) {
-
             GameLog(log = log, listState = listState, modifier = Modifier.height(110.dp))
+            Text("Spieler-Animation: $playerAttacks | Gegner-Animation: $enemyAttacks | Angriff läuft: $attackInProgress")
 
             PlayerStatsBlock(player = player)
 
@@ -131,7 +126,7 @@ fun GameScreenHoch(
 
                 GameActionButtons(
                     debugMode = debugMode,
-                    canClickAttackButton = canClickAttackButton,
+                    canAttackOrFlee = canAttackOrFlee,
                     onInventory = onInventory,
                     onShop = onShop,
                     onQuest = onQuest,
@@ -144,11 +139,7 @@ fun GameScreenHoch(
                     onUseBigPotion = { viewModel.onEvent(GameEvent.UseBigPotion) },
                     potionBigAmount = potionBigAmount,
                     potionAmount = potionAmount,
-                    onSaveGame = {
-                        if (!attackInProgress && !player.isDead) {
-                            onSaveGame()
-                        }
-                    }
+                    onSaveGame = { handleSaveGameClick(attackInProgress, playerDead = player.isDead, onSaveGame = onSaveGame) }
                 )
 
                 EnemyStatsBlockHoch(enemy = enemy)
@@ -208,7 +199,7 @@ fun GameScreenHoch(
 @Composable
 fun GameActionButtons(
     debugMode: Boolean,
-    canClickAttackButton: Boolean,
+    canAttackOrFlee: Boolean,
     onInventory: () -> Unit,
     onShop: () -> Unit,
     onQuest: () -> Unit,
@@ -302,7 +293,7 @@ fun GameActionButtons(
         modifier = Modifier
             .fillMaxWidth(0.7f)
             .height(attackButtonHeight),
-        containerColor = if (canClickAttackButton) Color.Red else Color(0xff9e9e9e),
+        containerColor = if (canAttackOrFlee) Color.Red else Color(0xff9e9e9e),
         onClick = onAttack
     )
 }
@@ -360,13 +351,11 @@ fun PlayerStatsBlock(
     )
 
     Column {
-        val weaponBonus = player.equippedWeapon?.damage ?: 0
-        val armorDefense = player.equippedArmor?.defense ?: 0
-        val weaponDefense = player.equippedWeapon?.defense ?: 0
-        val defense = weaponDefense + armorDefense
+
+        val defense = totalDefense(player)
         Row {
             Text("Angriff:", modifier = Modifier.width(120.dp))
-            Text("${player.attack + weaponBonus}")
+            Text("${totalAttack(player)}")
         }
         Row {
             Text("Verteidigung:", modifier = Modifier.width(120.dp))

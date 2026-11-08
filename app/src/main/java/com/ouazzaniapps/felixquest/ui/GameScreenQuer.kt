@@ -35,12 +35,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ouazzaniapps.felixquest.DayPhase
-import com.ouazzaniapps.felixquest.enemy.Enemy
 import com.ouazzaniapps.felixquest.GameEvent
 import com.ouazzaniapps.felixquest.GameViewModel
-import com.ouazzaniapps.felixquest.item.ItemNamen
 import com.ouazzaniapps.felixquest.Player
-import kotlinx.coroutines.delay
+import com.ouazzaniapps.felixquest.enemy.Enemy
+import com.ouazzaniapps.felixquest.item.ItemNamen
 
 
 @Composable
@@ -66,35 +65,35 @@ fun GameScreenQuer(
     val leftBattleText by viewModel.leftBattleText.collectAsState()
     val centerBattleText by viewModel.centerBattleText.collectAsState()
     val attackInProgress by viewModel.attackInProgress.collectAsState()
-    val canClickAttackButton = !attackInProgress && enemy.hp > 0 && !player.isDead
+    val canAttackOrFlee = isAttackOrFleeAllowed(
+        attackInProgress,
+        playerAttacks,
+        enemyAttacks,
+        player.isDead,
+        enemy.hp <= 0
+    )
+
     val onAttack = {
-        if (canClickAttackButton) {
-            if (viewModel.tryAttackEnemy()) {
-                playerAttacks = false
-                playerAttacks = true
-            }
-        }
+        handleAttackClick(
+            canAttackOrFlee = canAttackOrFlee,
+            tryAttackEnemy = { viewModel.tryAttackEnemy() },
+            onPlayerAttackStarted = { playerAttacks = true }
+        )
     }
     val onFlee = {
-        if (canClickAttackButton) {
-            viewModel.onEvent(GameEvent.Flee)
-        }
+        handleFleeClick(
+            canAttackOrFlee = canAttackOrFlee,
+            fleeButtonClick = { viewModel.onEvent(GameEvent.Flee) }
+        )
     }
 
+    LogAutoScrollEffect(log, topLogState, listState)
 
-    LaunchedEffect(log) {
-        if (log.isNotEmpty()) {
-            topLogState.animateScrollToItem(log.size - 1)
-            listState.animateScrollToItem(log.size - 1)
-        }
-    }
+    GameOverEffect(
+        isPlayerDead = player.isDead,
+        onGameOver = onGameOver
+    )
 
-    LaunchedEffect(player.isDead) {
-        if (player.isDead) {
-            delay(1200)
-            onGameOver()
-        }
-    }
 
     BattleAnimationEffects(
         playerAttacks = playerAttacks,
@@ -109,14 +108,14 @@ fun GameScreenQuer(
             .fillMaxWidth()
             .verticalScroll(scrollState)
     ) {
-
+        Text("Spieler-Animation: $playerAttacks | Gegner-Animation: $enemyAttacks | Angriff läuft: $attackInProgress")
         LandscapeMainPanel(
             debugMode = debugMode,
             player = player,
             enemy = enemy,
             log = log,
             topLogState = topLogState,
-            canClickAttackButton = canClickAttackButton,
+            canAttackOrFlee = canAttackOrFlee,
             onAttack = onAttack,
             onInventory = onInventory,
             onTakeDamage = { viewModel.onEvent(GameEvent.TakeDamage()) },
@@ -128,9 +127,11 @@ fun GameScreenQuer(
             onShop = onShop,
             onQuest = onQuest,
             onSaveGame = {
-                if (!attackInProgress && !player.isDead) {
-                    onSaveGame()
-                }
+                handleSaveGameClick(
+                    attackInProgress = attackInProgress,
+                    playerDead = player.isDead,
+                    onSaveGame = onSaveGame
+                )
             },
             onFlee = onFlee
         )
@@ -203,7 +204,7 @@ fun LandscapeMainPanel(
     enemy: Enemy,
     log: List<String>,
     topLogState: LazyListState,
-    canClickAttackButton: Boolean,
+    canAttackOrFlee: Boolean,
     onTakeDamage: () -> Unit,
     onAddGold: () -> Unit,
     onHeal: () -> Unit,
@@ -252,17 +253,11 @@ fun LandscapeMainPanel(
                         .weight(1f)
                         .padding(start = 30.dp)
                 ) {
-                    val weaponBonus = player.equippedWeapon?.damage ?: 0
-                    val armorDefense = player.equippedArmor?.defense ?: 0
-                    val weaponDefense = player.equippedWeapon?.defense ?: 0
-                    val defense = weaponDefense + armorDefense
                     val equippedWeapon = player.equippedWeapon?.name ?: "-"
                     val equippedArmor = player.equippedArmor?.name ?: "-"
 
                     PlayerStatsBlockQuer(
                         player = player,
-                        weaponBonus = weaponBonus,
-                        armorDefense = defense,
                         equippedWeapon = equippedWeapon,
                         equippedArmor = equippedArmor
                     )
@@ -286,18 +281,14 @@ fun LandscapeMainPanel(
                     }
 
                     Column(modifier = Modifier.weight(3f)) {
-                        val potionAmount =
-                            player.inventory.items.find { it.name == ItemNamen.HEILTRANK }?.amount
-                                ?: 0
-                        val potionBigAmount =
-                            player.inventory.items.find { it.name == ItemNamen.GROSSER_HEILTRANK }?.amount
-                                ?: 0
+                        val potionAmount = getItemAmount(player = player, itemName = ItemNamen.HEILTRANK)
+                        val potionBigAmount = getItemAmount(player = player, itemName = ItemNamen.GROSSER_HEILTRANK)
 
                         GameActionButtonsQuer(
                             debugMode = debugMode,
                             potionAmount = potionAmount,
                             potionBigAmount = potionBigAmount,
-                            canClickAttackButton = canClickAttackButton,
+                            canAttackOrFlee = canAttackOrFlee,
                             onTakeDamage = onTakeDamage,
                             onAddGold = { onAddGold() },
                             onHeal = { onHeal() },
@@ -382,8 +373,6 @@ fun EnemyStatsBlockQuer(
 @Composable
 fun PlayerStatsBlockQuer(
     player: Player,
-    weaponBonus: Int,
-    armorDefense: Int,
     equippedWeapon: String,
     equippedArmor: String
 ) {
@@ -405,8 +394,8 @@ fun PlayerStatsBlockQuer(
         Spacer(modifier = Modifier.height(6.dp))
 
         Row {
-            StatQuer(label = "ATK:", value = "${player.attack + weaponBonus}")
-            StatQuer(label = "DEF:", value = "$armorDefense")
+            StatQuer(label = "ATK:", value = "${totalAttack(player)}")
+            StatQuer(label = "DEF:", value = "${totalDefense(player)}")
         }
 
         Spacer(modifier = Modifier.height(6.dp))
@@ -431,7 +420,7 @@ fun GameActionButtonsQuer(
     debugMode: Boolean,
     potionAmount: Int,
     potionBigAmount: Int,
-    canClickAttackButton: Boolean,
+    canAttackOrFlee: Boolean,
     onTakeDamage: () -> Unit,
     onAddGold: () -> Unit,
     onHeal: () -> Unit,
@@ -454,7 +443,7 @@ fun GameActionButtonsQuer(
     MainActionButtonsQuer(
         potionAmount = potionAmount,
         potionBigAmount = potionBigAmount,
-        canClickAttackButton = canClickAttackButton,
+        canAttackOrFlee = canAttackOrFlee,
         onUsePotion = onUsePotion,
         onUseBigPotion = onUseBigPotion,
         onAttack = onAttack,
@@ -506,7 +495,7 @@ fun DebugActionButtonsQuer(
 fun MainActionButtonsQuer(
     potionAmount: Int,
     potionBigAmount: Int,
-    canClickAttackButton: Boolean,
+    canAttackOrFlee: Boolean,
     onUsePotion: () -> Unit,
     onUseBigPotion: () -> Unit,
     onAttack: () -> Unit,
@@ -550,14 +539,11 @@ fun MainActionButtonsQuer(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(70.dp),
-            containerColor = if (canClickAttackButton) Color.Red else Color(
+            containerColor = if (canAttackOrFlee) Color.Red else Color(
                 0xff9e9e9e
             ),
-            onClick = {
-                if (!canClickAttackButton) return@GameButtonQuer
-
-                onAttack()
-            })
+            onClick = onAttack
+        )
     }
     Column(
         modifier = Modifier
