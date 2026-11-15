@@ -40,6 +40,8 @@ Projektpfad: `C:\Users\acer\AndroidStudioProjects\FelixQuest`
 
 ## Aenderungsverlauf, neueste Eintraege zuerst
 
+- 2026-11-15: Kauf-, Verkaufs- und Heilungsbehandlung in eigene GameViewModel-Handler ausgelagert. Treffertexte teilen sich einen Timer; der Mitteltext nutzt einen eigenen Timer. Die gemeinsame Timerfunktion nimmt eine Callback-Loeschaktion entgegen.
+
 - 2026-11-08: Gemeinsame Logik fuer Angriffs-, Flucht- und Speicheraktionen sowie Game-Over- und Log-Scroll-Effekte ausgelagert. Inventarmengen, Gesamtangriff und Gesamtverteidigung werden fuer Hoch- und Querformat gemeinsam berechnet.
 
 - 2026-11-07: Spielstandplaetze erhalten eigene Zustaende fuer leer, belegt und fehlerhaft; Ladefehler werden pro Platz angezeigt, sodass andere Plaetze verfuegbar bleiben. Heiltrank-Events ohne ungenutzten Mengenparameter modelliert und Zaubertrank-Wirkungen auch in der Verkaufsanzeige dargestellt.

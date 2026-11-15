@@ -51,7 +51,6 @@ class GameViewModel : ViewModel() {
     private val baseHeal = 25
     private var healingJob: Job? = null
     private var enemyDefeatedJob: Job? = null
-    private var centerTextJob: Job? = null
     private val _enemy = MutableStateFlow(
         EnemyFactory.createRandomEnemy(_player.value.level)
     )
@@ -62,6 +61,7 @@ class GameViewModel : ViewModel() {
     private val _centerBattleText = MutableStateFlow<String?>(null)
     val centerBattleText: StateFlow<String?> = _centerBattleText
     val enemy: StateFlow<Enemy> = _enemy
+    private var clearCenterTextJob: Job? = null
     private var clearHitTextJob: Job? = null
     private val _attackInProgress = MutableStateFlow(false)
     val attackInProgress: StateFlow<Boolean> = _attackInProgress
@@ -99,12 +99,12 @@ class GameViewModel : ViewModel() {
     private fun clearRunningGameActions() {
         healingJob?.cancel()
         enemyDefeatedJob?.cancel()
-        centerTextJob?.cancel()
+        clearCenterTextJob?.cancel()
         clearHitTextJob?.cancel()
 
         healingJob = null
         enemyDefeatedJob = null
-        centerTextJob = null
+        clearCenterTextJob = null
         clearHitTextJob = null
 
         healingInProgress = false
@@ -155,43 +155,7 @@ class GameViewModel : ViewModel() {
             }
 
             is GameEvent.Heal -> {
-
-                if (healingInProgress) {
-                    addLog("💁 Heilung läuft bereits!")
-                    return
-                }
-
-                healingJob?.cancel()
-                healingInProgress = true
-
-                healingJob = viewModelScope.launch {
-                    try {
-                        addLog("💚 Heilung startet...")
-                        delay(1000)
-
-                        val oldHp = _player.value.hp
-
-                        if (oldHp >= _player.value.maxHp) {
-                            addLog("💚 Bereits volle HP!")
-                            return@launch
-                        }
-                        if (_player.value.gold < event.amount) {
-                            addLog("💰 Nicht genug Gold zum Heilen!")
-                            return@launch
-                        }
-
-                        applyEvent(event)
-
-                        val newHp = _player.value.hp
-                        val healedAmount = newHp - oldHp
-
-                        addLog("💚 +$healedAmount HP geheilt")
-                        addLog("💁 ${_player.value.name} hat jetzt $newHp/${_player.value.maxHp} HP")
-
-                    } finally {
-                        healingInProgress = false
-                    }
-                }
+                handleHeal(event)
             }
 
             is GameEvent.EquipWeapon -> {
@@ -270,38 +234,11 @@ class GameViewModel : ViewModel() {
             }
 
             is GameEvent.BuyItem -> {
-                val price = buyPrice(event.item, _player.value.level)
-
-                if (isPotionStackFull(event.item, _player.value.inventory)) {
-                    addLog("🎒 ${event.item.name} ist schon voll")
-                } else if (isUniqueItemAlreadyInInventory(
-                        item = event.item,
-                        inventory = _player.value.inventory
-                    )
-                ) {
-                    addLog("🎒 ${event.item.name} ist schon im Inventar")
-                } else if (_player.value.gold < price) {
-                    addLog("💰 Nicht genug Gold für ${event.item.name}!")
-                } else {
-                    applyEvent(event)
-                    addLog(buyItemLog(event.item, price))
-                }
+                handleBuyItem(event)
             }
 
             is GameEvent.SellItem -> {
-                val sellPriceItem = sellPrice(event.item, _player.value.level)
-                val isWeaponOrArmor = isWeaponOrArmor(event.item)
-                val isEquipped = isEquippedItem(event.item, _player.value)
-
-                if (!hasItemInInventory(event.item, _player.value.inventory)) {
-                    addLog("🎒 ${event.item.name} ist nicht im Inventar")
-                } else if (isWeaponOrArmor && isEquipped) {
-                    addLog(equippedItemSellBlockedLog(event.item))
-                } else {
-
-                    applyEvent(event)
-                    addLog(sellItemLog(event.item, sellPriceItem))
-                }
+                handleSellItem(event)
             }
 
             is GameEvent.StartQuest -> {
@@ -326,6 +263,82 @@ class GameViewModel : ViewModel() {
                     addLog("🧪 Trank nicht vorhanden oder Wirkung bereits vollständig aktiv.")
                 }
             }
+        }
+    }
+
+    private fun handleHeal(event: GameEvent.Heal) {
+        if (healingInProgress) {
+            addLog("💁 Heilung läuft bereits!")
+            return
+        }
+
+        healingJob?.cancel()
+        healingInProgress = true
+
+        healingJob = viewModelScope.launch {
+            try {
+                addLog("💚 Heilung startet...")
+                delay(1000)
+
+                val oldHp = _player.value.hp
+
+                if (oldHp >= _player.value.maxHp) {
+                    addLog("💚 Bereits volle HP!")
+                    return@launch
+                }
+                if (_player.value.gold < event.amount) {
+                    addLog("💰 Nicht genug Gold zum Heilen!")
+                    return@launch
+                }
+
+                applyEvent(event)
+
+                val newHp = _player.value.hp
+                val healedAmount = newHp - oldHp
+
+                addLog("💚 +$healedAmount HP geheilt")
+                addLog("💁 ${_player.value.name} hat jetzt $newHp/${_player.value.maxHp} HP")
+
+            } finally {
+                healingInProgress = false
+            }
+        }
+    }
+
+    private fun handleSellItem(event: GameEvent.SellItem) {
+        val sellPriceItem = sellPrice(event.item, _player.value.level)
+        val isWeaponOrArmor = isWeaponOrArmor(event.item)
+        val isEquipped = isEquippedItem(event.item, _player.value)
+
+        if (!hasItemInInventory(event.item, _player.value.inventory)) {
+            addLog("🎒 ${event.item.name} ist nicht im Inventar")
+        } else if (isWeaponOrArmor && isEquipped) {
+            addLog(equippedItemSellBlockedLog(event.item))
+        } else {
+
+            applyEvent(event)
+            addLog(sellItemLog(event.item, sellPriceItem))
+        }
+    }
+
+    private fun handleBuyItem(
+        event: GameEvent.BuyItem
+    ) {
+        val price = buyPrice(event.item, _player.value.level)
+
+        if (isPotionStackFull(event.item, _player.value.inventory)) {
+            addLog("🎒 ${event.item.name} ist schon voll")
+        } else if (isUniqueItemAlreadyInInventory(
+                item = event.item,
+                inventory = _player.value.inventory
+            )
+        ) {
+            addLog("🎒 ${event.item.name} ist schon im Inventar")
+        } else if (_player.value.gold < price) {
+            addLog("💰 Nicht genug Gold für ${event.item.name}!")
+        } else {
+            applyEvent(event)
+            addLog(buyItemLog(event.item, price))
         }
     }
 
@@ -390,7 +403,10 @@ class GameViewModel : ViewModel() {
             )
             _rightBattleText.value = "💨 Dodge"
             enemyAttacksPlayer(currentEnemy)
-            clearHitTextLater()
+            clearHitTextJob = clearTextLater(job = clearHitTextJob) {
+                _rightBattleText.value = null
+                _leftBattleText.value = null
+            }
             _attackInProgress.value = false
             return
         }
@@ -449,7 +465,10 @@ class GameViewModel : ViewModel() {
                 )
             )
             _leftBattleText.value = "💨 Dodge"
-            clearHitTextLater()
+            clearHitTextJob = clearTextLater(job = clearHitTextJob) {
+                _leftBattleText.value = null
+                _rightBattleText.value = null
+            }
             return
         }
 
@@ -477,7 +496,10 @@ class GameViewModel : ViewModel() {
         } else {
             "$finalEnemyDamage DMG"
         }
-        clearHitTextLater()
+        clearHitTextJob = clearTextLater(job = clearHitTextJob, delayMillis = 1000) {
+            _leftBattleText.value = null
+            _rightBattleText.value = null
+        }
         addLog(logMessage)
         onEvent(
             GameEvent.TakeDamage(finalEnemyDamage)
@@ -522,21 +544,28 @@ class GameViewModel : ViewModel() {
         } else {
             "${damagedEnemyResult.damage} DMG"
         }
-        clearHitTextLater()
+
+        clearHitTextJob = clearTextLater(job = clearHitTextJob, delayMillis = 1000) {
+            _rightBattleText.value = null
+            _leftBattleText.value = null
+        }
+
         addLog(logMessage)
 
         return damagedEnemyResult
     }
 
-    private fun clearHitTextLater() {
-        clearHitTextJob?.cancel()
-        clearHitTextJob = viewModelScope.launch {
-            delay(1000)
-            _leftBattleText.value = null
-            _rightBattleText.value = null
+    private fun clearTextLater(
+        job: Job?,
+        delayMillis: Long = 1000,
+        clearAction: () -> Unit
+    ): Job {
+        job?.cancel()
+        return viewModelScope.launch {
+            delay(delayMillis)
+            clearAction()
         }
     }
-
 
     private fun handleEnemyDefeated(enemy: Enemy) {
         if (_player.value.isDead) return
@@ -587,15 +616,6 @@ class GameViewModel : ViewModel() {
         }
     }
 
-    private fun clearCenterBattleTextLater() {
-
-        centerTextJob?.cancel()
-        centerTextJob = viewModelScope.launch {
-            delay(2500)
-            _centerBattleText.value = null
-        }
-    }
-
     private fun rewardPlayer(enemy: Enemy) {
         if (_player.value.isDead) return
 
@@ -610,7 +630,9 @@ class GameViewModel : ViewModel() {
         if (_player.value.level > levelVorher) {
             _centerBattleText.value =
                 "❤\uFE0F LEVEL UP! ${_player.value.name} ist jetzt Level ${_player.value.level}!"
-            clearCenterBattleTextLater()
+            clearCenterTextJob = clearTextLater(job = clearCenterTextJob, 2500) {
+                _centerBattleText.value = null
+            }
             addLog(
                 "⭐ LEVEL UP! ${
                     _player.value.name
@@ -700,7 +722,9 @@ class GameViewModel : ViewModel() {
 
         if (isEquipment && !hadItemBefore) {
             _centerBattleText.value = "🎁 ${item.name} gefunden!"
-            clearCenterBattleTextLater()
+            clearCenterTextJob = clearTextLater(job = clearCenterTextJob, 2500) {
+                _centerBattleText.value = null
+            }
         }
 
 
